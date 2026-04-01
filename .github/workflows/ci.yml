@@ -1,0 +1,47 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - run: go test ./... -race -count=1
+      - run: golangci-lint run ./...
+
+  build:
+    needs: test
+    strategy:
+      matrix:
+        goos: [darwin, windows]
+        goarch: [amd64, arm64]
+        exclude:
+          - goos: windows
+            goarch: arm64
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - name: Build all servers
+        run: |
+          for server in autotask-mcp itglue-mcp datto-rmm-mcp rocketcyber-mcp; do
+            ext=""
+            [ "${{ matrix.goos }}" = "windows" ] && ext=".exe"
+            GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
+            go build -ldflags "-s -w" \
+              -o dist/${server}-${{ matrix.goos }}-${{ matrix.goarch }}${ext} \
+              ./cmd/${server}
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: binaries-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: dist/

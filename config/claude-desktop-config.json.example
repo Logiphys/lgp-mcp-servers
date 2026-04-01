@@ -1,0 +1,35 @@
+{
+  "mcpServers": {
+    "autotask-mcp": {
+      "command": "/usr/local/bin/lgp-autotask-mcp",
+      "env": {
+        "AUTOTASK_USERNAME": "your-api-username@company.com",
+        "AUTOTASK_SECRET": "your-api-secret",
+        "AUTOTASK_INTEGRATION_CODE": "your-integration-code"
+      }
+    },
+    "itglue-mcp": {
+      "command": "/usr/local/bin/lgp-itglue-mcp",
+      "env": {
+        "ITGLUE_API_KEY": "ITG.your-api-key",
+        "ITGLUE_REGION": "eu"
+      }
+    },
+    "datto-rmm-mcp": {
+      "command": "/usr/local/bin/lgp-datto-rmm-mcp",
+      "env": {
+        "DATTO_API_URL": "https://merlot-api.centrastage.net",
+        "DATTO_API_KEY": "your-api-key",
+        "DATTO_API_SECRET": "your-api-secret",
+        "DATTO_PLATFORM": "merlot"
+      }
+    },
+    "rocketcyber-mcp": {
+      "command": "/usr/local/bin/lgp-rocketcyber-mcp",
+      "env": {
+        "ROCKETCYBER_API_KEY": "your-api-key",
+        "ROCKETCYBER_REGION": "us"
+      }
+    }
+  }
+}
