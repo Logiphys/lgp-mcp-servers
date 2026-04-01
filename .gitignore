@@ -1,6 +1,10 @@
 # Build output
 dist/
 *.exe
+autotask-mcp
+itglue-mcp
+datto-rmm-mcp
+rocketcyber-mcp
 
 # Go
 *.test

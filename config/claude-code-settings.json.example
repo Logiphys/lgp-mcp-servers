@@ -18,7 +18,6 @@
     "datto-rmm-mcp": {
       "command": "/usr/local/bin/lgp-datto-rmm-mcp",
       "env": {
-        "DATTO_API_URL": "https://merlot-api.centrastage.net",
         "DATTO_API_KEY": "your-api-key",
         "DATTO_API_SECRET": "your-api-secret",
         "DATTO_PLATFORM": "merlot"
