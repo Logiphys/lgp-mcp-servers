@@ -10,8 +10,8 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerDocumentTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	// ── Documents ──────────────────────────────────────────────────────────────
+func registerDocumentReadTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	// ── Documents (Read) ───────────────────────────────────────────────────────
 
 	srv.AddTool(
 		mcp.NewTool("itglue_search_documents",
@@ -98,6 +98,82 @@ func registerDocumentTools(srv *server.MCPServer, client *Client, logger *slog.L
 			return mcputil.JSONResult(item), nil
 		},
 	)
+
+	// ── Document Sections (Read) ──────────────────────────────────────────────
+
+	srv.AddTool(
+		mcp.NewTool("itglue_list_document_sections",
+			mcp.WithDescription("List all sections within an IT Glue document."),
+			mcp.WithReadOnlyHintAnnotation(true),
+			mcp.WithNumber("document_id",
+				mcp.Description("The document ID to list sections for."),
+				mcp.Required(),
+			),
+		),
+		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			docID := req.GetInt("document_id", 0)
+			if docID == 0 {
+				return mcputil.ErrorResult(fmt.Errorf("document_id is required")), nil
+			}
+
+			path := fmt.Sprintf("/documents/%d/relationships/document_sections", docID)
+			items, meta, err := client.List(ctx, path, nil, 1, 100)
+			if err != nil {
+				logger.Error("itglue_list_document_sections failed", "document_id", docID, "error", err)
+				return mcputil.ErrorResult(err), nil
+			}
+			if len(items) == 0 {
+				return mcputil.TextResult("No sections found."), nil
+			}
+			result := map[string]any{
+				"items": items,
+				"pagination": map[string]any{
+					"current_page": meta.CurrentPage,
+					"total_pages":  meta.TotalPages,
+					"total_count":  meta.TotalCount,
+				},
+			}
+			return mcputil.JSONResult(result), nil
+		},
+	)
+
+	srv.AddTool(
+		mcp.NewTool("itglue_get_document_section",
+			mcp.WithDescription("Get a single IT Glue document section by section ID. HTML content is stripped to plain text."),
+			mcp.WithReadOnlyHintAnnotation(true),
+			mcp.WithNumber("section_id",
+				mcp.Description("The document section ID."),
+				mcp.Required(),
+			),
+		),
+		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			sectionID := req.GetInt("section_id", 0)
+			if sectionID == 0 {
+				return mcputil.ErrorResult(fmt.Errorf("section_id is required")), nil
+			}
+
+			path := fmt.Sprintf("/document_sections/%d", sectionID)
+			item, err := client.Get(ctx, path)
+			if err != nil {
+				logger.Error("itglue_get_document_section failed", "section_id", sectionID, "error", err)
+				return mcputil.ErrorResult(err), nil
+			}
+
+			// Strip HTML from content if present.
+			if attrs, ok := item["attributes"].(map[string]any); ok {
+				if content, ok := attrs["content"].(string); ok {
+					attrs["content"] = mcputil.StripHTML(content)
+				}
+			}
+
+			return mcputil.JSONResult(item), nil
+		},
+	)
+
+}
+
+func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	// ── Documents (Write) ──────────────────────────────────────────────────────
 
 	srv.AddTool(
 		mcp.NewTool("itglue_create_document",
@@ -200,76 +276,7 @@ func registerDocumentTools(srv *server.MCPServer, client *Client, logger *slog.L
 		},
 	)
 
-	// ── Document Sections ──────────────────────────────────────────────────────
-
-	srv.AddTool(
-		mcp.NewTool("itglue_list_document_sections",
-			mcp.WithDescription("List all sections within an IT Glue document."),
-			mcp.WithReadOnlyHintAnnotation(true),
-			mcp.WithNumber("document_id",
-				mcp.Description("The document ID to list sections for."),
-				mcp.Required(),
-			),
-		),
-		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			docID := req.GetInt("document_id", 0)
-			if docID == 0 {
-				return mcputil.ErrorResult(fmt.Errorf("document_id is required")), nil
-			}
-
-			path := fmt.Sprintf("/documents/%d/relationships/document_sections", docID)
-			items, meta, err := client.List(ctx, path, nil, 1, 100)
-			if err != nil {
-				logger.Error("itglue_list_document_sections failed", "document_id", docID, "error", err)
-				return mcputil.ErrorResult(err), nil
-			}
-			if len(items) == 0 {
-				return mcputil.TextResult("No sections found."), nil
-			}
-			result := map[string]any{
-				"items": items,
-				"pagination": map[string]any{
-					"current_page": meta.CurrentPage,
-					"total_pages":  meta.TotalPages,
-					"total_count":  meta.TotalCount,
-				},
-			}
-			return mcputil.JSONResult(result), nil
-		},
-	)
-
-	srv.AddTool(
-		mcp.NewTool("itglue_get_document_section",
-			mcp.WithDescription("Get a single IT Glue document section by section ID. HTML content is stripped to plain text."),
-			mcp.WithReadOnlyHintAnnotation(true),
-			mcp.WithNumber("section_id",
-				mcp.Description("The document section ID."),
-				mcp.Required(),
-			),
-		),
-		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
-			sectionID := req.GetInt("section_id", 0)
-			if sectionID == 0 {
-				return mcputil.ErrorResult(fmt.Errorf("section_id is required")), nil
-			}
-
-			path := fmt.Sprintf("/document_sections/%d", sectionID)
-			item, err := client.Get(ctx, path)
-			if err != nil {
-				logger.Error("itglue_get_document_section failed", "section_id", sectionID, "error", err)
-				return mcputil.ErrorResult(err), nil
-			}
-
-			// Strip HTML from content if present.
-			if attrs, ok := item["attributes"].(map[string]any); ok {
-				if content, ok := attrs["content"].(string); ok {
-					attrs["content"] = mcputil.StripHTML(content)
-				}
-			}
-
-			return mcputil.JSONResult(item), nil
-		},
-	)
+	// ── Document Sections (Write) ─────────────────────────────────────────────
 
 	srv.AddTool(
 		mcp.NewTool("itglue_create_document_section",

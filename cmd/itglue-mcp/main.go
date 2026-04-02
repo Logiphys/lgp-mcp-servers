@@ -29,8 +29,9 @@ func main() {
 
 	srv := server.NewMCPServer("itglue-mcp", version)
 
-	itglue.RegisterTools(srv, client, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "itglue-mcp", Version: version, BuildDate: buildDate, Prefix: "itglue"})
+	tier := config.AccessTier("ITGLUE_ACCESS_TIER")
+	itglue.RegisterTools(srv, client, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "itglue-mcp", Version: version, BuildDate: buildDate, Prefix: "itglue", AccessTier: tier})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)
