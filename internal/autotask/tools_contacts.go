@@ -9,7 +9,9 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+	// Tier 2 — Sensitive (personal data)
+	if tier >= 2 {
 	// autotask_search_contacts
 	addTool(srv,
 		mcp.NewTool("autotask_search_contacts",
@@ -57,6 +59,10 @@ func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	} // end tier >= 2
+
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_contact
 	addTool(srv,
 		mcp.NewTool("autotask_create_contact",
@@ -91,6 +97,8 @@ func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatCreateResult("Contact", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

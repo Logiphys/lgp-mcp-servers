@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
 	// === SERVICE CALLS ===
 
 	// autotask_search_service_calls
@@ -81,6 +81,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_service_call
 	addTool(srv,
 		mcp.NewTool("autotask_create_service_call",
@@ -179,6 +181,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	} // end tier >= 3
+
 	// === SERVICE CALL TICKETS ===
 
 	// autotask_search_service_call_tickets
@@ -210,6 +214,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_service_call_ticket
 	addTool(srv,
 		mcp.NewTool("autotask_create_service_call_ticket",
@@ -256,6 +262,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	} // end tier >= 3
+
 	// === SERVICE CALL TICKET RESOURCES ===
 
 	// autotask_search_service_call_ticket_resources
@@ -287,6 +295,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_service_call_ticket_resource
 	addTool(srv,
 		mcp.NewTool("autotask_create_service_call_ticket_resource",
@@ -332,6 +342,8 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			return mcputil.TextResult(FormatDeleteResult("ServiceCallTicketResource", resourceID)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

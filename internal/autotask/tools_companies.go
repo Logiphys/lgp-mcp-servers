@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
 	// autotask_search_companies
 	addTool(srv,
 		mcp.NewTool("autotask_search_companies",
@@ -46,6 +46,9 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatSearchResult("autotask_search_companies", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
+
+	// Tier 3 — Write
+	if tier >= 3 {
 
 	// autotask_create_company
 	addTool(srv,
@@ -144,6 +147,8 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	} // end tier >= 3
+
 	// Company Notes
 	// autotask_get_company_note
 	addTool(srv,
@@ -202,6 +207,8 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_company_note
 	addTool(srv,
 		mcp.NewTool("autotask_create_company_note",
@@ -234,6 +241,7 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatCreateResult("CompanyNote", id)), nil
 		},
 	)
+	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

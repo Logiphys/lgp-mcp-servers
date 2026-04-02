@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
 	// === PROJECTS ===
 
 	// autotask_search_projects
@@ -57,6 +57,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_project
 	addTool(srv,
 		mcp.NewTool("autotask_create_project",
@@ -101,6 +103,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatCreateResult("Project", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	// === TASKS ===
 
@@ -148,6 +152,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_task
 	addTool(srv,
 		mcp.NewTool("autotask_create_task",
@@ -197,6 +203,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	} // end tier >= 3
+
 	// === PHASES ===
 
 	// autotask_list_phases
@@ -227,6 +235,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_phase
 	addTool(srv,
 		mcp.NewTool("autotask_create_phase",
@@ -267,6 +277,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatCreateResult("Phase", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	// === PROJECT NOTES ===
 
@@ -327,6 +339,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_project_note
 	addTool(srv,
 		mcp.NewTool("autotask_create_project_note",
@@ -371,6 +385,8 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			return mcputil.TextResult(FormatCreateResult("ProjectNote", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

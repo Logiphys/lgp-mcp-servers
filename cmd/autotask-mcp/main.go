@@ -32,8 +32,9 @@ func main() {
 
 	srv := server.NewMCPServer("autotask-mcp", version)
 
-	autotask.RegisterTools(srv, client, picklist, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "autotask-mcp", Version: version, BuildDate: buildDate, Prefix: "autotask"})
+	tier := config.AccessTier("AUTOTASK_ACCESS_TIER")
+	autotask.RegisterTools(srv, client, picklist, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "autotask-mcp", Version: version, BuildDate: buildDate, Prefix: "autotask", AccessTier: tier})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

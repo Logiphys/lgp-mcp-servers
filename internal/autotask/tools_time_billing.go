@@ -10,9 +10,11 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
 	// === TIME ENTRIES ===
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_time_entry
 	addTool(srv,
 		mcp.NewTool("autotask_create_time_entry",
@@ -62,6 +64,10 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	} // end tier >= 3
+
+	// Tier 2 — Sensitive
+	if tier >= 2 {
 	// autotask_search_time_entries
 	addTool(srv,
 		mcp.NewTool("autotask_search_time_entries",
@@ -105,6 +111,8 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			return mcputil.TextResult(FormatSearchResult("autotask_search_time_entries", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
+
+	} // end tier >= 2
 
 	// === BILLING ITEMS ===
 
@@ -229,6 +237,8 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// === EXPENSE REPORTS ===
 
+	// Tier 2 — Sensitive
+	if tier >= 2 {
 	// autotask_get_expense_report
 	addTool(srv,
 		mcp.NewTool("autotask_get_expense_report",
@@ -293,6 +303,10 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
+	} // end tier >= 2
+
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_expense_report
 	addTool(srv,
 		mcp.NewTool("autotask_create_expense_report",
@@ -350,6 +364,8 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			return mcputil.TextResult(FormatCreateResult("ExpenseItem", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

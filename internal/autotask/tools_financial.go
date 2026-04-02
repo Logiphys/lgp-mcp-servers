@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
+func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
 	// === QUOTES ===
 
 	// autotask_get_quote
@@ -79,6 +79,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_quote
 	addTool(srv,
 		mcp.NewTool("autotask_create_quote",
@@ -121,6 +123,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 			return mcputil.TextResult(FormatCreateResult("Quote", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	// === QUOTE ITEMS ===
 
@@ -182,6 +186,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_quote_item
 	addTool(srv,
 		mcp.NewTool("autotask_create_quote_item",
@@ -328,6 +334,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
+	} // end tier >= 3
+
 	// === OPPORTUNITIES ===
 
 	// autotask_get_opportunity
@@ -394,6 +402,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_opportunity
 	addTool(srv,
 		mcp.NewTool("autotask_create_opportunity",
@@ -460,6 +470,8 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 			return mcputil.TextResult(FormatCreateResult("Opportunity", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	// === INVOICES & CONTRACTS ===
 

@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache, _ *slog.Logger) {
+func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache, _ *slog.Logger, tier int) {
 	// === TICKETS ===
 
 	// autotask_search_tickets
@@ -93,6 +93,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_ticket
 	addTool(srv,
 		mcp.NewTool("autotask_create_ticket",
@@ -188,6 +190,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
+	} // end tier >= 3
+
 	// === TICKET CHARGES ===
 
 	// autotask_get_ticket_charge
@@ -246,6 +250,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_ticket_charge
 	addTool(srv,
 		mcp.NewTool("autotask_create_ticket_charge",
@@ -379,6 +385,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
+	} // end tier >= 3
+
 	// === TICKET NOTES ===
 
 	// autotask_get_ticket_note
@@ -438,6 +446,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
+	// Tier 3 — Write
+	if tier >= 3 {
 	// autotask_create_ticket_note
 	addTool(srv,
 		mcp.NewTool("autotask_create_ticket_note",
@@ -478,6 +488,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			return mcputil.TextResult(FormatCreateResult("TicketNote", id)), nil
 		},
 	)
+
+	} // end tier >= 3
 
 	// === TICKET ATTACHMENTS ===
 
@@ -540,6 +552,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// === RESOURCES ===
 
+	// Tier 2 — Sensitive
+	if tier >= 2 {
 	// autotask_search_resources
 	addTool(srv,
 		mcp.NewTool("autotask_search_resources",
@@ -633,6 +647,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			return mcputil.TextResult(FormatSearchResult("autotask_search_configuration_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
+	} // end tier >= 2
 
 	_ = server.ToolHandlerFunc(nil)
 }
