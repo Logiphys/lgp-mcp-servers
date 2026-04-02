@@ -20,7 +20,7 @@ func registerConfigurationTools(srv *server.MCPServer, client *Client, logger *s
 				mcp.Description("Filter by organization ID."),
 			),
 			mcp.WithString("name",
-				mcp.Description("Filter by configuration name (contains match)."),
+				mcp.Description("Filter by configuration name (exact match)."),
 			),
 			mcp.WithString("configuration_type_id",
 				mcp.Description("Filter by configuration type ID."),
@@ -47,25 +47,25 @@ func registerConfigurationTools(srv *server.MCPServer, client *Client, logger *s
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			filters := make(map[string]string)
 			if v := req.GetString("organization_id", ""); v != "" {
-				filters["filter[organization_id]"] = v
+				filters["organization_id"] = v
 			}
 			if v := req.GetString("name", ""); v != "" {
-				filters["filter[name]"] = v
+				filters["name"] = v
 			}
 			if v := req.GetString("configuration_type_id", ""); v != "" {
-				filters["filter[configuration_type_id]"] = v
+				filters["configuration_type_id"] = v
 			}
 			if v := req.GetString("configuration_status_id", ""); v != "" {
-				filters["filter[configuration_status_id]"] = v
+				filters["configuration_status_id"] = v
 			}
 			if v := req.GetString("serial_number", ""); v != "" {
-				filters["filter[serial_number]"] = v
+				filters["serial_number"] = v
 			}
 			if v := req.GetString("rmm_id", ""); v != "" {
-				filters["filter[rmm_id]"] = v
+				filters["rmm_id"] = v
 			}
 			if v := req.GetString("psa_id", ""); v != "" {
-				filters["filter[psa_id]"] = v
+				filters["psa_id"] = v
 			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)

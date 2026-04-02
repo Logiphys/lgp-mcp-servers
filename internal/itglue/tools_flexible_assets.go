@@ -23,7 +23,7 @@ func registerFlexibleAssetTools(srv *server.MCPServer, client *Client, logger *s
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			filters := make(map[string]string)
 			if v := req.GetString("organization_id", ""); v != "" {
-				filters["filter[organization_id]"] = v
+				filters["organization_id"] = v
 			}
 
 			items, meta, err := client.List(ctx, "/flexible_asset_types", filters, 1, 100)
@@ -59,7 +59,7 @@ func registerFlexibleAssetTools(srv *server.MCPServer, client *Client, logger *s
 				mcp.Description("Optional: filter by organization ID."),
 			),
 			mcp.WithString("name",
-				mcp.Description("Optional: filter by asset name (contains match)."),
+				mcp.Description("Optional: filter by asset name (exact match)."),
 			),
 			mcp.WithNumber("page_number",
 				mcp.Description("Page number to retrieve (default: 1)."),
@@ -75,13 +75,13 @@ func registerFlexibleAssetTools(srv *server.MCPServer, client *Client, logger *s
 			}
 
 			filters := map[string]string{
-				"filter[flexible_asset_type_id]": typeID,
+				"flexible_asset_type_id": typeID,
 			}
 			if v := req.GetString("organization_id", ""); v != "" {
-				filters["filter[organization_id]"] = v
+				filters["organization_id"] = v
 			}
 			if v := req.GetString("name", ""); v != "" {
-				filters["filter[name]"] = v
+				filters["name"] = v
 			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)

@@ -20,7 +20,7 @@ func registerPasswordTools(srv *server.MCPServer, client *Client, logger *slog.L
 				mcp.Description("Filter by organization ID."),
 			),
 			mcp.WithString("name",
-				mcp.Description("Filter by password name (contains match)."),
+				mcp.Description("Filter by password name (exact match)."),
 			),
 			mcp.WithString("password_category_id",
 				mcp.Description("Filter by password category ID."),
@@ -41,19 +41,19 @@ func registerPasswordTools(srv *server.MCPServer, client *Client, logger *slog.L
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			filters := make(map[string]string)
 			if v := req.GetString("organization_id", ""); v != "" {
-				filters["filter[organization_id]"] = v
+				filters["organization_id"] = v
 			}
 			if v := req.GetString("name", ""); v != "" {
-				filters["filter[name]"] = v
+				filters["name"] = v
 			}
 			if v := req.GetString("password_category_id", ""); v != "" {
-				filters["filter[password_category_id]"] = v
+				filters["password_category_id"] = v
 			}
 			if v := req.GetString("url", ""); v != "" {
-				filters["filter[url]"] = v
+				filters["url"] = v
 			}
 			if v := req.GetString("username", ""); v != "" {
-				filters["filter[username]"] = v
+				filters["username"] = v
 			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)

@@ -93,8 +93,8 @@ func (t *tokenManager) getToken(ctx context.Context) (string, error) {
 }
 
 // fetchToken performs the Datto RMM password-grant OAuth2 token request.
-// The request uses Basic auth (apiKey:apiSecret) and sends the credentials
-// again as form body fields per the Datto RMM API specification.
+// Basic auth uses the public client credentials "public-client:public".
+// The actual API key/secret are sent as username/password in the form body.
 func (t *tokenManager) fetchToken(ctx context.Context) (string, error) {
 	data := url.Values{
 		"grant_type": {"password"},
@@ -107,7 +107,7 @@ func (t *tokenManager) fetchToken(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("creating token request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.SetBasicAuth(t.apiKey, t.apiSecret)
+	req.SetBasicAuth("public-client", "public")
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
@@ -214,7 +214,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body any) (
 		if bodyBytes != nil {
 			reqBody = bytes.NewReader(bodyBytes)
 		}
-		req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, reqBody)
+		req, err := http.NewRequestWithContext(ctx, method, c.baseURL+apiBasePath+path, reqBody)
 		if err != nil {
 			return nil, fmt.Errorf("creating request: %w", err)
 		}
@@ -383,7 +383,7 @@ func (c *Client) GetList(ctx context.Context, path string, params map[string]str
 // TestConnection verifies connectivity by fetching the account endpoint.
 func (c *Client) TestConnection(ctx context.Context) error {
 	_, err := c.middleware.Execute(ctx, func() (any, error) {
-		body, err := c.doRequest(ctx, http.MethodGet, apiBasePath+"/account", nil)
+		body, err := c.doRequest(ctx, http.MethodGet, "/account", nil)
 		if err != nil {
 			return nil, fmt.Errorf("connection test failed: %w", err)
 		}

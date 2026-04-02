@@ -8,9 +8,11 @@ import (
 
 	"github.com/Logiphys/lgp-mcp/internal/rocketcyber"
 	"github.com/Logiphys/lgp-mcp/pkg/config"
+	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
 )
 
 var version = "dev"
+var buildDate = ""
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
@@ -28,6 +30,7 @@ func main() {
 	srv := server.NewMCPServer("rocketcyber-mcp", version)
 
 	rocketcyber.RegisterTools(srv, client, logger)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "rocketcyber-mcp", Version: version, BuildDate: buildDate, Prefix: "rocketcyber"})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

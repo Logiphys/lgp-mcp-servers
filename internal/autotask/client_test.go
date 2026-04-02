@@ -349,7 +349,7 @@ func TestNewClientDefaultBaseURL(t *testing.T) {
 		IntegrationCode: "code",
 	}
 	client := NewClient(cfg, testLogger())
-	if client.baseURL != "https://webservices24.autotask.net/ATServicesRest" {
+	if client.baseURL != "https://webservices18.autotask.net/ATServicesRest/V1.0" {
 		t.Errorf("expected default base URL, got %s", client.baseURL)
 	}
 }

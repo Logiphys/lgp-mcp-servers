@@ -29,9 +29,9 @@ func tokenServer(t *testing.T, calls *atomic.Int32) *httptest.Server {
 		}
 		calls.Add(1)
 
-		// Verify Basic auth header.
+		// Verify Basic auth header uses public client credentials.
 		user, pass, ok := r.BasicAuth()
-		if !ok || user != "testkey" || pass != "testsecret" {
+		if !ok || user != "public-client" || pass != "public" {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}
@@ -177,7 +177,7 @@ func TestClient_Get(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	resp, err := client.Get(context.Background(), apiBasePath+"/account", nil)
+	resp, err := client.Get(context.Background(), "/account", nil)
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}
@@ -200,7 +200,7 @@ func TestClient_GetWithParams(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	resp, err := client.Get(context.Background(), apiBasePath+"/devices", map[string]string{
+	resp, err := client.Get(context.Background(), "/devices", map[string]string{
 		"page": "2",
 		"max":  "50",
 	})
@@ -223,7 +223,7 @@ func TestClient_GetRaw(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	data, err := client.GetRaw(context.Background(), apiBasePath+"/job/123/stdout", nil)
+	data, err := client.GetRaw(context.Background(), "/job/123/stdout", nil)
 	if err != nil {
 		t.Fatalf("GetRaw: %v", err)
 	}
@@ -290,7 +290,7 @@ func TestClient_GetList(t *testing.T) {
 			defer ts.Close()
 
 			client := newTestClient(t, ts.URL)
-			items, pi, err := client.GetList(context.Background(), apiBasePath+"/devices", nil)
+			items, pi, err := client.GetList(context.Background(), "/devices", nil)
 			if err != nil {
 				t.Fatalf("GetList: %v", err)
 			}
@@ -333,7 +333,7 @@ func TestClient_Post(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	resp, err := client.Post(context.Background(), apiBasePath+"/job/quick", map[string]any{
+	resp, err := client.Post(context.Background(), "/job/quick", map[string]any{
 		"jobType": "quickJob",
 	})
 	if err != nil {
@@ -363,7 +363,7 @@ func TestClient_Patch(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	resp, err := client.Patch(context.Background(), apiBasePath+"/site/site-1", map[string]any{
+	resp, err := client.Patch(context.Background(), "/site/site-1", map[string]any{
 		"name": "Updated Site",
 	})
 	if err != nil {
@@ -389,7 +389,7 @@ func TestClient_Put(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	err := client.Put(context.Background(), apiBasePath+"/device/dev-1/site", map[string]any{
+	err := client.Put(context.Background(), "/device/dev-1/site", map[string]any{
 		"siteUid": "site-2",
 	})
 	if err != nil {
@@ -415,7 +415,7 @@ func TestClient_Delete(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	err := client.Delete(context.Background(), apiBasePath+"/variable/var-1")
+	err := client.Delete(context.Background(), "/variable/var-1")
 	if err != nil {
 		t.Fatalf("Delete: %v", err)
 	}
@@ -529,7 +529,7 @@ func TestClient_Retry(t *testing.T) {
 
 	client := newTestClient(t, ts.URL)
 	client.maxRetries = 3
-	resp, err := client.Get(context.Background(), apiBasePath+"/account", nil)
+	resp, err := client.Get(context.Background(), "/account", nil)
 	if err != nil {
 		t.Fatalf("Get with retry: %v", err)
 	}
@@ -556,7 +556,7 @@ func TestClient_ContextCancellation(t *testing.T) {
 
 	client := newTestClient(t, ts.URL)
 	client.maxRetries = 0
-	_, err := client.Get(ctx, apiBasePath+"/account", nil)
+	_, err := client.Get(ctx, "/account", nil)
 	if err == nil {
 		t.Fatal("expected error due to context cancellation, got nil")
 	}
@@ -574,7 +574,7 @@ func TestClient_BearerTokenHeader(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	_, err := client.Get(context.Background(), apiBasePath+"/account", nil)
+	_, err := client.Get(context.Background(), "/account", nil)
 	if err != nil {
 		t.Fatalf("Get: %v", err)
 	}

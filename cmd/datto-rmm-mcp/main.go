@@ -8,9 +8,11 @@ import (
 
 	"github.com/Logiphys/lgp-mcp/internal/dattormm"
 	"github.com/Logiphys/lgp-mcp/pkg/config"
+	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
 )
 
 var version = "dev"
+var buildDate = ""
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stderr, &slog.HandlerOptions{
@@ -29,6 +31,7 @@ func main() {
 	srv := server.NewMCPServer("datto-rmm-mcp", version)
 
 	dattormm.RegisterTools(srv, client, logger)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-rmm-mcp", Version: version, BuildDate: buildDate, Prefix: "datto"})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

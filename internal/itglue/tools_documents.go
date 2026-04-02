@@ -23,7 +23,7 @@ func registerDocumentTools(srv *server.MCPServer, client *Client, logger *slog.L
 				mcp.Required(),
 			),
 			mcp.WithString("name",
-				mcp.Description("Filter by document name (contains match)."),
+				mcp.Description("Filter by document name (exact match)."),
 			),
 			mcp.WithNumber("page_number",
 				mcp.Description("Page number to retrieve (default: 1)."),
@@ -40,7 +40,7 @@ func registerDocumentTools(srv *server.MCPServer, client *Client, logger *slog.L
 
 			filters := make(map[string]string)
 			if v := req.GetString("name", ""); v != "" {
-				filters["filter[name]"] = v
+				filters["name"] = v
 			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)

@@ -48,7 +48,7 @@ type Client struct {
 func NewClient(cfg Config, logger *slog.Logger) *Client {
 	baseURL := cfg.BaseURL
 	if baseURL == "" {
-		baseURL = "https://webservices24.autotask.net/ATServicesRest"
+		baseURL = "https://webservices18.autotask.net/ATServicesRest/V1.0"
 	}
 
 	httpClient := apihelper.NewClient(apihelper.ClientConfig{
@@ -120,8 +120,16 @@ func (c *Client) Query(ctx context.Context, entity string, filters []Filter, opt
 			pageSize = opts.MaxSize
 		}
 
+		// Autotask API rejects null filters — ensure at least one
+		if filters == nil {
+			filters = []Filter{{Op: "gte", Field: "id", Value: 0}}
+		}
+
+		// Autotask query endpoint requires filters wrapped in an "and" group.
+		filterPayload := []Filter{{Op: "and", Items: filters}}
+
 		queryBody := map[string]any{
-			"filter":     filters,
+			"filter":     filterPayload,
 			"MaxRecords": pageSize,
 		}
 

@@ -17,7 +17,7 @@ func registerOrganizationTools(srv *server.MCPServer, client *Client, logger *sl
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
 			mcp.WithString("name",
-				mcp.Description("Filter by organization name (contains match)."),
+				mcp.Description("Filter by organization name (exact match)."),
 			),
 			mcp.WithString("organization_type_id",
 				mcp.Description("Filter by organization type ID."),
@@ -38,16 +38,16 @@ func registerOrganizationTools(srv *server.MCPServer, client *Client, logger *sl
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			filters := make(map[string]string)
 			if v := req.GetString("name", ""); v != "" {
-				filters["filter[name]"] = v
+				filters["name"] = v
 			}
 			if v := req.GetString("organization_type_id", ""); v != "" {
-				filters["filter[organization_type_id]"] = v
+				filters["organization_type_id"] = v
 			}
 			if v := req.GetString("organization_status_id", ""); v != "" {
-				filters["filter[organization_status_id]"] = v
+				filters["organization_status_id"] = v
 			}
 			if v := req.GetString("psa_id", ""); v != "" {
-				filters["filter[psa_id]"] = v
+				filters["psa_id"] = v
 			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)
