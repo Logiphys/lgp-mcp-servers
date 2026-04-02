@@ -14,19 +14,24 @@ import (
 )
 
 // RegisterTools registers all Datto Networking MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
-	registerGetWhoami(srv, client, logger)
 	registerListDevices(srv, client, logger)
-	registerGetDevicesOverview(srv, client, logger)
 	registerGetDevice(srv, client, logger)
-	registerGetRouter(srv, client, logger)
-	registerGetDeviceClientsOverview(srv, client, logger)
-	registerGetDeviceClientsUsage(srv, client, logger)
-	registerGetDeviceWanUsage(srv, client, logger)
-	registerGetDeviceApplications(srv, client, logger)
-	registerGetUserDevices(srv, client, logger)
+	registerGetDevicesOverview(srv, client, logger)
 	registerGetResellerOverview(srv, client, logger)
+	registerGetRouter(srv, client, logger)
+	registerGetWhoami(srv, client, logger)
+	registerGetUserDevices(srv, client, logger)
+
+	// Tier 2 — Sensitive (client usage data)
+	if tier >= 2 {
+		registerGetDeviceClientsOverview(srv, client, logger)
+		registerGetDeviceClientsUsage(srv, client, logger)
+		registerGetDeviceWanUsage(srv, client, logger)
+		registerGetDeviceApplications(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------
