@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.8.0] - 2026-04-02
+
+### Breaking Changes
+
+- **Tiered access control** — All servers now default to Tier 1 (safe read-only). Tools accessing sensitive data (passwords, contacts, audit logs) require `*_ACCESS_TIER=2`. Write operations (create, update, delete) require `*_ACCESS_TIER=3`. See [Access Tiers](#access-tiers-gdprprivacy) in README.
+
+### Added
+
+- `config.AccessTier()` helper for reading tier environment variables
+- `server_info` now shows `access_tier` and `tier_description`
+- Per-server `*_ACCESS_TIER` environment variables (9 servers)
+
+### Changed
+
+- `RegisterTools()` signature on all 9 servers now accepts `tier int` parameter
+- IT Glue document tools split into read/write registration functions
+
 ## [Unreleased]
 
 ### Added

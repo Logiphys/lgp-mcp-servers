@@ -5,14 +5,16 @@
       "env": {
         "AUTOTASK_USERNAME": "api-user@company.com",
         "AUTOTASK_SECRET": "your-api-secret",
-        "AUTOTASK_INTEGRATION_CODE": "your-integration-code"
+        "AUTOTASK_INTEGRATION_CODE": "your-integration-code",
+        "AUTOTASK_ACCESS_TIER": "1"
       }
     },
     "itglue-mcp": {
       "command": "/usr/local/bin/itglue-mcp",
       "env": {
         "ITGLUE_API_KEY": "ITG.your-api-key",
-        "ITGLUE_REGION": "eu"
+        "ITGLUE_REGION": "eu",
+        "ITGLUE_ACCESS_TIER": "1"
       }
     },
     "datto-rmm-mcp": {
@@ -20,48 +22,55 @@
       "env": {
         "DATTO_API_KEY": "your-api-key",
         "DATTO_API_SECRET": "your-api-secret",
-        "DATTO_PLATFORM": "merlot"
+        "DATTO_PLATFORM": "merlot",
+        "DATTO_RMM_ACCESS_TIER": "1"
       }
     },
     "rocketcyber-mcp": {
       "command": "/usr/local/bin/rocketcyber-mcp",
       "env": {
         "ROCKETCYBER_API_KEY": "your-api-key",
-        "ROCKETCYBER_REGION": "eu"
+        "ROCKETCYBER_REGION": "eu",
+        "ROCKETCYBER_ACCESS_TIER": "1"
       }
     },
     "datto-uc-mcp": {
       "command": "/usr/local/bin/datto-uc-mcp",
       "env": {
         "DATTO_UC_PUBLIC_KEY": "your-public-key",
-        "DATTO_UC_SECRET_KEY": "your-secret-key"
+        "DATTO_UC_SECRET_KEY": "your-secret-key",
+        "DATTO_UC_ACCESS_TIER": "1"
       }
     },
     "datto-edr-mcp": {
       "command": "/usr/local/bin/datto-edr-mcp",
       "env": {
         "DATTO_EDR_API_KEY": "your-access-token",
-        "DATTO_EDR_BASE_URL": "https://yourorg.infocyte.com"
+        "DATTO_EDR_BASE_URL": "https://yourorg.infocyte.com",
+        "DATTO_EDR_ACCESS_TIER": "1"
       }
     },
     "datto-backup-mcp": {
       "command": "/usr/local/bin/datto-backup-mcp",
       "env": {
         "DATTO_BACKUP_CLIENT_ID": "your-client-id",
-        "DATTO_BACKUP_CLIENT_SECRET": "your-client-secret"
+        "DATTO_BACKUP_CLIENT_SECRET": "your-client-secret",
+        "DATTO_BACKUP_ACCESS_TIER": "1"
       }
     },
     "datto-network-mcp": {
       "command": "/usr/local/bin/datto-network-mcp",
       "env": {
         "DATTO_NETWORK_PUBLIC_KEY": "your-public-key",
-        "DATTO_NETWORK_SECRET_KEY": "your-secret-key"
+        "DATTO_NETWORK_SECRET_KEY": "your-secret-key",
+        "DATTO_NETWORK_ACCESS_TIER": "1"
       }
     },
     "myitprocess-mcp": {
       "command": "/usr/local/bin/myitprocess-mcp",
       "env": {
-        "MYITPROCESS_API_KEY": "your-api-key"
+        "MYITPROCESS_API_KEY": "your-api-key",
+        "MYITPROCESS_ACCESS_TIER": "1"
       }
     }
   }

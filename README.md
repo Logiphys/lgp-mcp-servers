@@ -66,6 +66,49 @@ Each server is configured via environment variables. Add them to your Claude Cod
 
 See `config/` for full configuration examples with all 9 servers.
 
+## Access Tiers (GDPR/Privacy)
+
+Each server supports three access tiers controlled via environment variables. **Default is Tier 1** (safe read-only).
+
+| Tier | Name | Description |
+|------|------|-------------|
+| 1 | Safe Read-Only | No personal data, no credentials, no write operations |
+| 2 | Read + Sensitive Data | Adds passwords, contacts, user data, audit logs |
+| 3 | Full Access | Adds create, update, delete operations |
+
+### Environment Variables
+
+| Server | Env Var | Tier 2 adds | Tier 3 adds |
+|--------|---------|-------------|-------------|
+| Autotask | `AUTOTASK_ACCESS_TIER` | Contacts, resources, time entries, expenses | All create/update/delete |
+| IT Glue | `ITGLUE_ACCESS_TIER` | Passwords, contacts | Document CRUD |
+| Datto RMM | `DATTO_RMM_ACCESS_TIER` | Device audits, activity logs, users, jobs | Site/device/variable management |
+| Datto EDR | `DATTO_EDR_ACCESS_TIER` | Alert archive, quarantine files | Scan, isolate, restore |
+| Datto UC | `DATTO_UC_ACCESS_TIER` | Activity log, SaaS data | — |
+| RocketCyber | `ROCKETCYBER_ACCESS_TIER` | Account, defender, office details | — |
+| Datto Networking | `DATTO_NETWORK_ACCESS_TIER` | Client usage data | — |
+| Datto Backup | `DATTO_BACKUP_ACCESS_TIER` | Customer/user data | — |
+| MyITProcess | `MYITPROCESS_ACCESS_TIER` | Clients, users, meetings | — |
+
+### Example
+
+To enable sensitive data reading for IT Glue but keep everything else at default:
+
+```json
+{
+  "itglue-mcp": {
+    "command": "itglue-mcp",
+    "env": {
+      "ITGLUE_API_KEY": "your-key",
+      "ITGLUE_REGION": "eu",
+      "ITGLUE_ACCESS_TIER": "2"
+    }
+  }
+}
+```
+
+> **Migration from v0.7.x:** All tools were previously available by default. If you rely on contacts, passwords, write operations, or other sensitive tools, add the appropriate `*_ACCESS_TIER=2` or `*_ACCESS_TIER=3` to your configuration.
+
 ## Server Details
 
 ### autotask-mcp
