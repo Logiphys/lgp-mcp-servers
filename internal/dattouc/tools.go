@@ -13,7 +13,8 @@ import (
 )
 
 // RegisterTools registers all Datto Unified Continuity MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
 	registerListDevices(srv, client, logger)
 	registerGetDevice(srv, client, logger)
@@ -23,17 +24,20 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerListDeviceAlerts(srv, client, logger)
 	registerListDeviceVMRestores(srv, client, logger)
 	registerListAgents(srv, client, logger)
-	registerGetActivityLog(srv, client, logger)
-	registerListSaaSDomains(srv, client, logger)
-	registerGetSaaSSeats(srv, client, logger)
-	registerGetSaaSApplications(srv, client, logger)
 	registerGetDeviceVolumeAssets(srv, client, logger)
-	// Direct-to-Cloud (DTC) tools
 	registerListDTCAssets(srv, client, logger)
 	registerListDTCRMMTemplates(srv, client, logger)
 	registerGetDTCStoragePool(srv, client, logger)
 	registerListDTCClientAssets(srv, client, logger)
 	registerGetDTCAsset(srv, client, logger)
+	registerListSaaSDomains(srv, client, logger)
+
+	// Tier 2 — Sensitive
+	if tier >= 2 {
+		registerGetActivityLog(srv, client, logger)
+		registerGetSaaSApplications(srv, client, logger)
+		registerGetSaaSSeats(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------

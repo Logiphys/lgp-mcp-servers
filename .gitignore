@@ -3,15 +3,15 @@ dist/
 *.exe
 
 # Server binaries (if built in repo root)
-autotask-mcp
-itglue-mcp
-datto-rmm-mcp
-rocketcyber-mcp
-datto-uc-mcp
-datto-edr-mcp
-datto-backup-mcp
-datto-network-mcp
-myitprocess-mcp
+/autotask-mcp
+/itglue-mcp
+/datto-rmm-mcp
+/rocketcyber-mcp
+/datto-uc-mcp
+/datto-edr-mcp
+/datto-backup-mcp
+/datto-network-mcp
+/myitprocess-mcp
 
 # Go
 *.test
