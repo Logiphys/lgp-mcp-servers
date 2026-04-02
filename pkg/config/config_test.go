@@ -83,3 +83,32 @@ func TestLogLevel(t *testing.T) {
 		})
 	}
 }
+
+func TestAccessTier(t *testing.T) {
+	tests := []struct {
+		name string
+		env  string
+		want int
+	}{
+		{"default when unset", "", 1},
+		{"explicit tier 1", "1", 1},
+		{"explicit tier 2", "2", 2},
+		{"explicit tier 3", "3", 3},
+		{"clamp below minimum", "0", 1},
+		{"clamp above maximum", "5", 3},
+		{"invalid string", "abc", 1},
+		{"negative", "-1", 1},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.env == "" {
+				os.Unsetenv("TEST_ACCESS_TIER")
+			} else {
+				t.Setenv("TEST_ACCESS_TIER", tt.env)
+			}
+			if got := AccessTier("TEST_ACCESS_TIER"); got != tt.want {
+				t.Errorf("AccessTier(%q) = %d, want %d", tt.env, got, tt.want)
+			}
+		})
+	}
+}
