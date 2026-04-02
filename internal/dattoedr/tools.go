@@ -12,14 +12,16 @@ import (
 )
 
 // RegisterTools registers all Datto EDR MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	// Read-only tools
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
+	registerGetDashboard(srv, client, logger)
 	registerListAgents(srv, client, logger)
 	registerGetAgent(srv, client, logger)
+	registerGetAgentCount(srv, client, logger)
 	registerListAlerts(srv, client, logger)
 	registerGetAlert(srv, client, logger)
-	registerListAlertsArchive(srv, client, logger)
+	registerGetAlertCount(srv, client, logger)
 	registerListOrganizations(srv, client, logger)
 	registerListLocations(srv, client, logger)
 	registerListDeviceGroups(srv, client, logger)
@@ -27,16 +29,19 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerListRules(srv, client, logger)
 	registerListSuppressionRules(srv, client, logger)
 	registerListExtensions(srv, client, logger)
-	registerListQuarantinedFiles(srv, client, logger)
-	registerGetDashboard(srv, client, logger)
 
-	registerGetAlertCount(srv, client, logger)
-	registerGetAgentCount(srv, client, logger)
+	// Tier 2 — Sensitive
+	if tier >= 2 {
+		registerListAlertsArchive(srv, client, logger)
+		registerListQuarantinedFiles(srv, client, logger)
+	}
 
-	// Action tools
-	registerScanAgent(srv, client, logger)
-	registerIsolateHost(srv, client, logger)
-	registerRestoreHost(srv, client, logger)
+	// Tier 3 — Actions
+	if tier >= 3 {
+		registerScanAgent(srv, client, logger)
+		registerIsolateHost(srv, client, logger)
+		registerRestoreHost(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------

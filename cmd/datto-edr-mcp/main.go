@@ -25,11 +25,14 @@ func main() {
 	}
 
 	client := dattoedr.NewClient(cfg, logger)
+	tier := config.AccessTier("DATTO_EDR_ACCESS_TIER")
 
 	srv := server.NewMCPServer("datto-edr-mcp", version)
 
-	dattoedr.RegisterTools(srv, client, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-edr-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_edr"})
+	dattoedr.RegisterTools(srv, client, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-edr-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_edr", AccessTier: tier})
+
+	logger.Info("starting datto-edr-mcp", "version", version, "access_tier", tier)
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)
