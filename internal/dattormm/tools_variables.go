@@ -10,7 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
+func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
+	if tier < 3 {
+		return
+	}
 	// Account variables
 
 	srv.AddTool(

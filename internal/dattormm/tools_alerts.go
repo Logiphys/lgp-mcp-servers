@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerAlertTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
+func registerAlertTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
 	srv.AddTool(
 		mcp.NewTool("datto_get_alert",
 			mcp.WithDescription("Retrieve a single Datto RMM alert by its UID."),
@@ -33,6 +33,9 @@ func registerAlertTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 		},
 	)
 
+	// Tier 3
+	if tier >= 3 {
+
 	srv.AddTool(
 		mcp.NewTool("datto_resolve_alert",
 			mcp.WithDescription("Resolve a Datto RMM alert by its UID."),
@@ -53,4 +56,6 @@ func registerAlertTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 			return mcputil.JSONResult(result), nil
 		},
 	)
+
+	} // end tier 3
 }

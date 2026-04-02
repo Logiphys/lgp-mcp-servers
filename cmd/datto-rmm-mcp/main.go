@@ -30,8 +30,9 @@ func main() {
 
 	srv := server.NewMCPServer("datto-rmm-mcp", version)
 
-	dattormm.RegisterTools(srv, client, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-rmm-mcp", Version: version, BuildDate: buildDate, Prefix: "datto"})
+	tier := config.AccessTier("DATTO_RMM_ACCESS_TIER")
+	dattormm.RegisterTools(srv, client, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-rmm-mcp", Version: version, BuildDate: buildDate, Prefix: "datto", AccessTier: tier})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

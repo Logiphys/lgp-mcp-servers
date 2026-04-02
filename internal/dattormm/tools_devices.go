@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
 	// datto_get_device
 	srv.AddTool(
 		mcp.NewTool("datto_get_device",
@@ -155,6 +155,9 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 			return listResult(items, pageInfo), nil
 		},
 	)
+
+	// Tier 3
+	if tier >= 3 {
 
 	// datto_move_device
 	srv.AddTool(
@@ -304,6 +307,11 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 		},
 	)
 
+	} // end tier 3
+
+	// Tier 2
+	if tier >= 2 {
+
 	// datto_get_device_audit
 	srv.AddTool(
 		mcp.NewTool("datto_get_device_audit",
@@ -323,6 +331,8 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 			return mcputil.JSONResult(result), nil
 		},
 	)
+
+	} // end tier 2
 
 	_ = logger
 }

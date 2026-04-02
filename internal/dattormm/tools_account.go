@@ -9,7 +9,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
 	// datto_get_account
 	srv.AddTool(
 		mcp.NewTool("datto_get_account",
@@ -109,6 +109,9 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 		},
 	)
 
+	// Tier 2
+	if tier >= 2 {
+
 	// datto_list_users
 	srv.AddTool(
 		mcp.NewTool("datto_list_users",
@@ -156,6 +159,8 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 			return listResult(items, pageInfo), nil
 		},
 	)
+
+	} // end tier 2
 
 	// datto_list_components
 	srv.AddTool(

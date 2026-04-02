@@ -10,7 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
+func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
+	if tier < 2 {
+		return
+	}
 	srv.AddTool(
 		mcp.NewTool("datto_get_job",
 			mcp.WithDescription("Retrieve a single Datto RMM job by its UID."),

@@ -10,7 +10,7 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
 	// datto_get_site
 	srv.AddTool(
 		mcp.NewTool("datto_get_site",
@@ -150,6 +150,9 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 		},
 	)
 
+	// Tier 2
+	if tier >= 2 {
+
 	// datto_list_site_variables
 	srv.AddTool(
 		mcp.NewTool("datto_list_site_variables",
@@ -178,6 +181,8 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 			return listResult(items, pageInfo), nil
 		},
 	)
+
+	} // end tier 2
 
 	// datto_get_site_settings
 	srv.AddTool(
@@ -256,6 +261,9 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 			return listResult(items, pageInfo), nil
 		},
 	)
+
+	// Tier 3
+	if tier >= 3 {
 
 	// datto_create_site
 	srv.AddTool(
@@ -352,6 +360,8 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 			return mcputil.JSONResult(result), nil
 		},
 	)
+
+	} // end tier 3
 
 	_ = logger
 }
