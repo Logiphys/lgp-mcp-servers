@@ -48,7 +48,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    baseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/rocketcyber",
+		UserAgent:  "lgp-mcp-servers/rocketcyber",
 		Headers: map[string]string{
 			"Authorization": fmt.Sprintf("Bearer %s", cfg.APIKey),
 			"Content-Type":  "application/json",

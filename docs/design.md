@@ -17,7 +17,7 @@
 ## 1. Repository Structure
 
 ```
-lgp-mcp/                              # https://github.com/Logiphys/lgp-mcp-servers
+lgp-mcp-servers/                      # https://github.com/Logiphys/lgp-mcp-servers
 ├── go.mod
 ├── go.sum
 ├── Makefile
@@ -753,7 +753,7 @@ jobs:
 
 #### Option 3: Homebrew Tap (macOS, optional)
 ```ruby
-# logiphys/homebrew-tap/Formula/lgp-mcp.rb
+# logiphys/homebrew-tap/Formula/lgp-mcp-servers.rb
 class LgpMcp < Formula
   desc "Logiphys MCP Servers for Claude"
   homepage "https://github.com/Logiphys/lgp-mcp-servers"

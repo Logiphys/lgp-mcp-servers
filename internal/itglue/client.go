@@ -47,7 +47,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    baseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/itglue",
+		UserAgent:  "lgp-mcp-servers/itglue",
 		Headers: map[string]string{
 			"x-api-key":    cfg.APIKey,
 			"Content-Type": "application/vnd.api+json",

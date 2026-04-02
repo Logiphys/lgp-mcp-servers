@@ -55,7 +55,7 @@ func TestAccessTier(t *testing.T) {
 
 **Step 2: Run tests to verify they fail**
 
-Run: `cd /Users/zeisler/lgp-mcp && go test ./pkg/config/ -run TestAccessTier -v`
+Run: `cd /Users/zeisler/lgp-mcp-servers && go test ./pkg/config/ -run TestAccessTier -v`
 Expected: FAIL — `AccessTier` not defined
 
 **Step 3: Implement `AccessTier`**
@@ -82,7 +82,7 @@ func AccessTier(envKey string) int {
 
 **Step 4: Run tests to verify they pass**
 
-Run: `cd /Users/zeisler/lgp-mcp && go test ./pkg/config/ -run TestAccessTier -v -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && go test ./pkg/config/ -run TestAccessTier -v -race`
 Expected: PASS
 
 **Step 5: Commit**
@@ -152,7 +152,7 @@ return JSONResult(map[string]any{
 
 **Step 2: Run full test suite**
 
-Run: `cd /Users/zeisler/lgp-mcp && go test ./pkg/... -v -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && go test ./pkg/... -v -race`
 Expected: PASS (no existing tests break — ServerInfo is constructed by callers)
 
 **Step 3: Commit**
@@ -223,12 +223,12 @@ mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{
 
 **Step 3: Build and verify**
 
-Run: `cd /Users/zeisler/lgp-mcp && PATH="/opt/homebrew/bin:$PATH" make build-itglue-mcp`
+Run: `cd /Users/zeisler/lgp-mcp-servers && PATH="/opt/homebrew/bin:$PATH" make build-itglue-mcp`
 Expected: BUILD SUCCESS
 
 **Step 4: Run tests**
 
-Run: `cd /Users/zeisler/lgp-mcp && go test ./internal/itglue/... -v -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && go test ./internal/itglue/... -v -race`
 Expected: PASS
 
 **Step 5: Commit**
@@ -324,7 +324,7 @@ mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{
 
 **Step 4: Build and test**
 
-Run: `cd /Users/zeisler/lgp-mcp && PATH="/opt/homebrew/bin:$PATH" make build-autotask-mcp && go test ./internal/autotask/... -v -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && PATH="/opt/homebrew/bin:$PATH" make build-autotask-mcp && go test ./internal/autotask/... -v -race`
 Expected: PASS
 
 **Step 5: Commit**
@@ -389,7 +389,7 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 
 **Step 3: Build and test**
 
-Run: `cd /Users/zeisler/lgp-mcp && PATH="/opt/homebrew/bin:$PATH" make build-datto-rmm-mcp && go test ./internal/dattormm/... -v -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && PATH="/opt/homebrew/bin:$PATH" make build-datto-rmm-mcp && go test ./internal/dattormm/... -v -race`
 
 **Step 4: Commit**
 
@@ -665,17 +665,17 @@ git commit -m "feat(myitprocess): add tiered access — client/user data tier 2"
 
 **Step 1: Build all servers**
 
-Run: `cd /Users/zeisler/lgp-mcp && PATH="/opt/homebrew/bin:$PATH" make build`
+Run: `cd /Users/zeisler/lgp-mcp-servers && PATH="/opt/homebrew/bin:$PATH" make build`
 Expected: All 9 binaries build successfully
 
 **Step 2: Run all tests**
 
-Run: `cd /Users/zeisler/lgp-mcp && go test ./... -race`
+Run: `cd /Users/zeisler/lgp-mcp-servers && go test ./... -race`
 Expected: All PASS
 
 **Step 3: Run linter**
 
-Run: `cd /Users/zeisler/lgp-mcp && PATH="/opt/homebrew/bin:$PATH" make lint`
+Run: `cd /Users/zeisler/lgp-mcp-servers && PATH="/opt/homebrew/bin:$PATH" make lint`
 Expected: No issues
 
 **Step 4: Commit any fixes if needed**
@@ -722,7 +722,7 @@ git commit -m "docs: add tiered access documentation and migration guide"
 **Step 1: Install binaries**
 
 ```bash
-cd /Users/zeisler/lgp-mcp
+cd /Users/zeisler/lgp-mcp-servers
 for bin in dist/darwin-arm64/*; do cp "$bin" /usr/local/bin/; done
 ```
 

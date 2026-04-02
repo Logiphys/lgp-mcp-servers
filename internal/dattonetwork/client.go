@@ -40,7 +40,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    baseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/datto-network",
+		UserAgent:  "lgp-mcp-servers/datto-network",
 		Headers: map[string]string{
 			"Authorization": fmt.Sprintf("Basic %s", credentials),
 			"Content-Type":  "application/json",

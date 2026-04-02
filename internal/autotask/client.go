@@ -55,7 +55,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    baseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/autotask",
+		UserAgent:  "lgp-mcp-servers/autotask",
 		Headers: map[string]string{
 			"UserName":           cfg.Username,
 			"Secret":             cfg.Secret,

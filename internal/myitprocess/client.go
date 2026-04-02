@@ -36,7 +36,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    "https://reporting.live.myitprocess.com/public-api/v1",
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/myitprocess",
+		UserAgent:  "lgp-mcp-servers/myitprocess",
 		Headers: map[string]string{
 			"mitp-api-key": cfg.APIKey,
 			"Content-Type": "application/json",

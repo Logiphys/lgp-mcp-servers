@@ -31,7 +31,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    cfg.BaseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/datto-edr",
+		UserAgent:  "lgp-mcp-servers/datto-edr",
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},

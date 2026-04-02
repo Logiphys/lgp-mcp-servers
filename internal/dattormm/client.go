@@ -220,7 +220,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body any) (
 		}
 		req.Header.Set("Authorization", "Bearer "+tok)
 		req.Header.Set("Content-Type", "application/json")
-		req.Header.Set("User-Agent", "lgp-mcp/dattormm")
+		req.Header.Set("User-Agent", "lgp-mcp-servers/dattormm")
 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {

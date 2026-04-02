@@ -191,7 +191,7 @@ func (c *Client) doRequest(ctx context.Context, path string, params map[string]s
 			return nil, nil, fmt.Errorf("creating request: %w", err)
 		}
 		req.Header.Set("Authorization", "Bearer "+tok)
-		req.Header.Set("User-Agent", "lgp-mcp/dattobackup")
+		req.Header.Set("User-Agent", "lgp-mcp-servers/dattobackup")
 
 		resp, err := c.httpClient.Do(req)
 		if err != nil {

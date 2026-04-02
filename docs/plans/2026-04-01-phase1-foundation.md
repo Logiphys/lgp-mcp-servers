@@ -2288,7 +2288,7 @@ func NewClient(cfg ClientConfig) *Client {
 	}
 	agent := cfg.UserAgent
 	if agent == "" {
-		agent = "lgp-mcp/dev"
+		agent = "lgp-mcp-servers/dev"
 	}
 	return &Client{
 		http:    &http.Client{Timeout: timeout},
