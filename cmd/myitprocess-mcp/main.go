@@ -23,12 +23,13 @@ func main() {
 		APIKey: config.MustEnv("MYITPROCESS_API_KEY"),
 	}
 
+	tier := config.AccessTier("MYITPROCESS_ACCESS_TIER")
 	client := myitprocess.NewClient(cfg, logger)
 
 	srv := server.NewMCPServer("myitprocess-mcp", version)
 
-	myitprocess.RegisterTools(srv, client, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "myitprocess-mcp", Version: version, BuildDate: buildDate, Prefix: "myitprocess"})
+	myitprocess.RegisterTools(srv, client, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "myitprocess-mcp", Version: version, BuildDate: buildDate, Prefix: "myitprocess", AccessTier: tier})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

@@ -14,17 +14,22 @@ import (
 )
 
 // RegisterTools registers all MyITProcess MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
-	registerListClients(srv, client, logger)
-	registerListUsers(srv, client, logger)
 	registerListReviews(srv, client, logger)
 	registerListOverdueReviews(srv, client, logger)
 	registerListFindings(srv, client, logger)
 	registerListRecommendations(srv, client, logger)
 	registerGetRecommendationConfigurations(srv, client, logger)
 	registerListInitiatives(srv, client, logger)
-	registerListMeetings(srv, client, logger)
+
+	// Tier 2 — Sensitive (client/user data)
+	if tier >= 2 {
+		registerListClients(srv, client, logger)
+		registerListUsers(srv, client, logger)
+		registerListMeetings(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------
