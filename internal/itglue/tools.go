@@ -14,4 +14,10 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerDocumentTools(srv, client, logger)
 	registerFlexibleAssetTools(srv, client, logger)
 	registerHealthTools(srv, client, logger)
+	registerContactTools(srv, client, logger)
+	registerLocationTools(srv, client, logger)
+	registerMetadataTools(srv, client, logger)
+	registerDomainTools(srv, client, logger)
+	registerExpirationTools(srv, client, logger)
+	registerConfigurationInterfaceTools(srv, client, logger)
 }

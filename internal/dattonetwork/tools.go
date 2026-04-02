@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/url"
 	"strconv"
 
 	"github.com/mark3labs/mcp-go/mcp"
@@ -24,6 +25,8 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerGetDeviceClientsUsage(srv, client, logger)
 	registerGetDeviceWanUsage(srv, client, logger)
 	registerGetDeviceApplications(srv, client, logger)
+	registerGetUserDevices(srv, client, logger)
+	registerGetResellerOverview(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -259,5 +262,49 @@ func registerGetDeviceApplications(srv *server.MCPServer, client *Client, logger
 			return mcputil.ErrorResult(err), nil
 		}
 		return buildListResult(items), nil
+	})
+}
+
+func registerGetUserDevices(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_network_get_user_devices",
+		mcp.WithDescription("List devices accessible to a specific SSO user in Datto Networking."),
+		mcp.WithString("username", mcp.Description("The SSO username to look up devices for"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		username := req.GetString("username", "")
+		if username == "" {
+			return mcputil.ErrorResult(fmt.Errorf("username is required")), nil
+		}
+
+		path := fmt.Sprintf("/users/%s/devices", url.PathEscape(username))
+		items, err := client.GetList(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get user devices failed", "username", username, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items), nil
+	})
+}
+
+func registerGetResellerOverview(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_network_get_reseller_overview",
+		mcp.WithDescription("Get a network overview for all devices belonging to a reseller in Datto Networking."),
+		mcp.WithString("resellerId", mcp.Description("The reseller ID to get the network overview for"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		resellerId := req.GetString("resellerId", "")
+		if resellerId == "" {
+			return mcputil.ErrorResult(fmt.Errorf("resellerId is required")), nil
+		}
+
+		path := fmt.Sprintf("/users/%s/overview", url.PathEscape(resellerId))
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get reseller overview failed", "resellerId", resellerId, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
 	})
 }

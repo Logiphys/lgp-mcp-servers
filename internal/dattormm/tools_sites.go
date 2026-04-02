@@ -228,6 +228,35 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 		},
 	)
 
+	// datto_get_site_network_interfaces
+	srv.AddTool(
+		mcp.NewTool("datto_get_site_network_interfaces",
+			mcp.WithDescription("Fetch shortened device records with network interface info (IPs, MACs, subnet) for a specific Datto RMM site."),
+			mcp.WithReadOnlyHintAnnotation(true),
+			mcp.WithString("siteUid",
+				mcp.Description("The UID of the site."),
+				mcp.Required(),
+			),
+			mcp.WithNumber("page",
+				mcp.Description("Page number for pagination."),
+				mcp.Min(1),
+			),
+			mcp.WithNumber("max",
+				mcp.Description("Maximum number of results per page."),
+				mcp.Min(1),
+			),
+		),
+		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			siteUid := req.GetString("siteUid", "")
+			params := paginationParams(req)
+			items, pageInfo, err := client.GetList(ctx, fmt.Sprintf("/site/%s/devices/network-interface", siteUid), params)
+			if err != nil {
+				return mcputil.ErrorResult(err), nil
+			}
+			return listResult(items, pageInfo), nil
+		},
+	)
+
 	// datto_create_site
 	srv.AddTool(
 		mcp.NewTool("datto_create_site",

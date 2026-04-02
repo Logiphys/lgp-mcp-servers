@@ -255,5 +255,29 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 		},
 	)
 
+	// datto_get_dnet_site_mappings
+	srv.AddTool(
+		mcp.NewTool("datto_get_dnet_site_mappings",
+			mcp.WithDescription("Fetch sites with their mapped Datto Networking network IDs."),
+			mcp.WithReadOnlyHintAnnotation(true),
+			mcp.WithNumber("page",
+				mcp.Description("Page number for pagination."),
+				mcp.Min(1),
+			),
+			mcp.WithNumber("max",
+				mcp.Description("Maximum number of results per page."),
+				mcp.Min(1),
+			),
+		),
+		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			params := paginationParams(req)
+			items, pageInfo, err := client.GetList(ctx, "/account/dnet-site-mappings", params)
+			if err != nil {
+				return mcputil.ErrorResult(err), nil
+			}
+			return listResult(items, pageInfo), nil
+		},
+	)
+
 	_ = logger
 }

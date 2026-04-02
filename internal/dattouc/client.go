@@ -1,4 +1,4 @@
-package dattobcdr
+package dattouc
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/Logiphys/lgp-mcp/pkg/resilience"
 )
 
-// Config holds Datto BCDR API credentials and settings.
+// Config holds Datto Unified Continuity API credentials and settings.
 type Config struct {
 	PublicKey string
 	SecretKey string
@@ -26,14 +26,14 @@ type PageInfo struct {
 	PerPage    int
 }
 
-// Client is the Datto BCDR REST API client.
+// Client is the Datto Unified Continuity REST API client.
 type Client struct {
 	http       *apihelper.Client
 	middleware *resilience.Middleware
 	logger     *slog.Logger
 }
 
-// NewClient creates a new Datto BCDR API client.
+// NewClient creates a new Datto Unified Continuity API client.
 func NewClient(cfg Config, logger *slog.Logger) *Client {
 	baseURL := cfg.BaseURL
 	if baseURL == "" {
@@ -46,7 +46,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 		BaseURL:    baseURL,
 		Timeout:    30 * time.Second,
 		MaxRetries: 3,
-		UserAgent:  "lgp-mcp/datto-bcdr",
+		UserAgent:  "lgp-mcp/datto-uc",
 		Headers: map[string]string{
 			"Authorization": fmt.Sprintf("Basic %s", credentials),
 			"Content-Type":  "application/json",
@@ -77,13 +77,13 @@ func (c *Client) Get(ctx context.Context, path string, params map[string]string)
 
 	var result map[string]any
 	if err := json.Unmarshal(raw, &result); err != nil {
-		return nil, fmt.Errorf("dattobcdr: failed to parse response: %w", err)
+		return nil, fmt.Errorf("dattouc: failed to parse response: %w", err)
 	}
 	return result, nil
 }
 
 // GetList performs a GET request and extracts the data array plus pagination info.
-// The Datto BCDR API returns {"items": [...], "pagination": {...}} or a bare array.
+// The Datto API returns {"items": [...], "pagination": {...}} or a bare array.
 func (c *Client) GetList(ctx context.Context, path string, params map[string]string) ([]any, *PageInfo, error) {
 	raw, err := c.doGet(ctx, path, params)
 	if err != nil {
@@ -99,7 +99,7 @@ func (c *Client) GetList(ctx context.Context, path string, params map[string]str
 	// Try object with "items" field (Datto BCDR convention).
 	var obj map[string]any
 	if err := json.Unmarshal(raw, &obj); err != nil {
-		return nil, nil, fmt.Errorf("dattobcdr: failed to parse list response: %w", err)
+		return nil, nil, fmt.Errorf("dattouc: failed to parse list response: %w", err)
 	}
 
 	// Try "items" first, then "data".
@@ -114,7 +114,7 @@ func (c *Client) GetList(ctx context.Context, path string, params map[string]str
 
 	items, ok := data.([]any)
 	if !ok {
-		return nil, nil, fmt.Errorf("dattobcdr: unexpected data field type in list response")
+		return nil, nil, fmt.Errorf("dattouc: unexpected data field type in list response")
 	}
 
 	pi := extractPageInfo(obj, params)
@@ -125,7 +125,7 @@ func (c *Client) GetList(ctx context.Context, path string, params map[string]str
 func (c *Client) TestConnection(ctx context.Context) error {
 	_, err := c.Get(ctx, "/bcdr/device", map[string]string{"perPage": "1"})
 	if err != nil {
-		return fmt.Errorf("dattobcdr: connection test failed: %w", err)
+		return fmt.Errorf("dattouc: connection test failed: %w", err)
 	}
 	return nil
 }
@@ -135,7 +135,7 @@ func (c *Client) doGet(ctx context.Context, path string, params map[string]strin
 	result, err := c.middleware.Execute(ctx, func() (any, error) {
 		raw, err := c.http.Get(ctx, path, params)
 		if err != nil {
-			return nil, fmt.Errorf("dattobcdr: GET %s: %w", path, err)
+			return nil, fmt.Errorf("dattouc: GET %s: %w", path, err)
 		}
 		return raw, nil
 	})

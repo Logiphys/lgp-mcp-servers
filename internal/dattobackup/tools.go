@@ -97,6 +97,10 @@ func registerListAppliances(srv *server.MCPServer, client *Client, logger *slog.
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID (UUID)")),
 		mcp.WithString("name", mcp.Description("Filter by appliance name")),
 		mcp.WithString("isOnline", mcp.Description("Filter by online status: true or false")),
+		mcp.WithString("version", mcp.Description("Filter by appliance version")),
+		mcp.WithString("helix_status", mcp.Description("Filter by Helix status")),
+		mcp.WithString("order_by", mcp.Description("Field to order by")),
+		mcp.WithString("order_direction", mcp.Description("Order direction: asc|desc")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page (default 50)"), mcp.Min(1)),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -112,6 +116,18 @@ func registerListAppliances(srv *server.MCPServer, client *Client, logger *slog.
 		}
 		if v := req.GetString("isOnline", ""); v != "" {
 			params["is_online"] = v
+		}
+		if v := req.GetString("version", ""); v != "" {
+			params["version"] = v
+		}
+		if v := req.GetString("helix_status", ""); v != "" {
+			params["helix_status"] = v
+		}
+		if v := req.GetString("order_by", ""); v != "" {
+			params["order_by"] = v
+		}
+		if v := req.GetString("order_direction", ""); v != "" {
+			params["order_direction"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/v1/appliances", params)
@@ -130,6 +146,10 @@ func registerListAssets(srv *server.MCPServer, client *Client, logger *slog.Logg
 		mcp.WithString("assetTag", mcp.Description("Filter by appliance asset tag")),
 		mcp.WithString("name", mcp.Description("Filter by asset name")),
 		mcp.WithString("includeBackups", mcp.Description("Include last backup info: true or false (default false)")),
+		mcp.WithString("type", mcp.Description("Filter by asset type")),
+		mcp.WithString("ip", mcp.Description("Filter by IP address")),
+		mcp.WithString("order_by", mcp.Description("Field to order by")),
+		mcp.WithString("order_direction", mcp.Description("Order direction: asc|desc")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page (default 50)"), mcp.Min(1)),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -149,6 +169,18 @@ func registerListAssets(srv *server.MCPServer, client *Client, logger *slog.Logg
 		if v := req.GetString("includeBackups", ""); v == "true" {
 			params["include[backups]"] = "last"
 			params["include[links]"] = "all"
+		}
+		if v := req.GetString("type", ""); v != "" {
+			params["type"] = v
+		}
+		if v := req.GetString("ip", ""); v != "" {
+			params["ip"] = v
+		}
+		if v := req.GetString("order_by", ""); v != "" {
+			params["order_by"] = v
+		}
+		if v := req.GetString("order_direction", ""); v != "" {
+			params["order_direction"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/v1/assets", params)
@@ -208,6 +240,11 @@ func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logg
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID (UUID)")),
 		mcp.WithString("assetTag", mcp.Description("Filter by appliance asset tag")),
 		mcp.WithString("isDismissed", mcp.Description("Filter by dismissed status: true or false")),
+		mcp.WithString("is_muted", mcp.Description("Filter by muted status: true|false")),
+		mcp.WithString("customer_name", mcp.Description("Filter by customer name")),
+		mcp.WithString("appliance_name", mcp.Description("Filter by appliance name")),
+		mcp.WithString("order_by", mcp.Description("Field to order by")),
+		mcp.WithString("order_direction", mcp.Description("Order direction: asc|desc")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page (default 50)"), mcp.Min(1)),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -229,6 +266,21 @@ func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logg
 		}
 		if v := req.GetString("isDismissed", ""); v != "" {
 			params["is_dismissed"] = v
+		}
+		if v := req.GetString("is_muted", ""); v != "" {
+			params["is_muted"] = v
+		}
+		if v := req.GetString("customer_name", ""); v != "" {
+			params["customer_name"] = v
+		}
+		if v := req.GetString("appliance_name", ""); v != "" {
+			params["appliance_name"] = v
+		}
+		if v := req.GetString("order_by", ""); v != "" {
+			params["order_by"] = v
+		}
+		if v := req.GetString("order_direction", ""); v != "" {
+			params["order_direction"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/v1/backupiq/alerts", params)

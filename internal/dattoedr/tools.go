@@ -2,6 +2,7 @@ package dattoedr
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 
@@ -30,10 +31,22 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerListQuarantinedFiles(srv, client, logger)
 	registerGetDashboard(srv, client, logger)
 
+	registerListScans(srv, client, logger)
+	registerGetScan(srv, client, logger)
+	registerListScanHosts(srv, client, logger)
+	registerListJobs(srv, client, logger)
+	registerGetHostScanResult(srv, client, logger)
+	registerGetResponseResult(srv, client, logger)
+	registerGetTaskStatus(srv, client, logger)
+	registerListActivityTraces(srv, client, logger)
+	registerGetAlertCount(srv, client, logger)
+	registerGetAgentCount(srv, client, logger)
+
 	// Action tools
 	registerScanAgent(srv, client, logger)
 	registerIsolateHost(srv, client, logger)
 	registerRestoreHost(srv, client, logger)
+	registerRunExtension(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -385,6 +398,226 @@ func registerGetDashboard(srv *server.MCPServer, client *Client, logger *slog.Lo
 	})
 }
 
+func registerListScans(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_list_scans",
+		mcp.WithDescription("List Datto EDR scan history with status and timestamps. Supports LoopBack pagination."),
+		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
+		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
+		mcp.WithString("order", mcp.Description("Sort order (e.g. 'createdAt DESC')")),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		limit := req.GetInt("limit", 100)
+		if limit > 1000 {
+			limit = 1000
+		}
+		params := BuildJSONFilter(limit, req.GetInt("skip", 0), req.GetString("order", ""))
+
+		items, err := client.GetList(ctx, "/api/Scans", params)
+		if err != nil {
+			logger.ErrorContext(ctx, "list scans failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items), nil
+	})
+}
+
+func registerGetScan(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_scan",
+		mcp.WithDescription("Get details of a specific Datto EDR scan by ID."),
+		mcp.WithString("id", mcp.Description("The scan ID"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		id := req.GetString("id", "")
+		if id == "" {
+			return mcputil.ErrorResult(fmt.Errorf("id is required")), nil
+		}
+
+		path := fmt.Sprintf("/api/Scans/%s", id)
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get scan failed", "id", id, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+func registerListScanHosts(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_list_scan_hosts",
+		mcp.WithDescription("List hosts scanned with per-host results. Filter by scanId. Supports LoopBack pagination."),
+		mcp.WithString("scanId", mcp.Description("Filter by scan ID")),
+		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
+		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
+		mcp.WithString("order", mcp.Description("Sort order (e.g. 'createdAt DESC')")),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		limit := req.GetInt("limit", 100)
+		if limit > 1000 {
+			limit = 1000
+		}
+		params := BuildJSONFilter(limit, req.GetInt("skip", 0), req.GetString("order", ""))
+
+		scanId := req.GetString("scanId", "")
+		if scanId != "" {
+			// Add where clause to the JSON filter
+			params["filter"] = addWhereToJSONFilter(params["filter"], "scanId", scanId)
+		}
+
+		items, err := client.GetList(ctx, "/api/ScanHosts", params)
+		if err != nil {
+			logger.ErrorContext(ctx, "list scan hosts failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items), nil
+	})
+}
+
+func registerListJobs(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_list_jobs",
+		mcp.WithDescription("List Datto EDR background jobs. Supports LoopBack pagination."),
+		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
+		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
+		mcp.WithString("order", mcp.Description("Sort order (e.g. 'createdAt DESC')")),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		limit := req.GetInt("limit", 100)
+		if limit > 1000 {
+			limit = 1000
+		}
+		params := BuildJSONFilter(limit, req.GetInt("skip", 0), req.GetString("order", ""))
+
+		items, err := client.GetList(ctx, "/api/Jobs", params)
+		if err != nil {
+			logger.ErrorContext(ctx, "list jobs failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items), nil
+	})
+}
+
+func registerGetHostScanResult(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_host_scan_result",
+		mcp.WithDescription("Get detailed scan result for a specific host by ID."),
+		mcp.WithString("id", mcp.Description("The host scan result ID"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		id := req.GetString("id", "")
+		if id == "" {
+			return mcputil.ErrorResult(fmt.Errorf("id is required")), nil
+		}
+
+		path := fmt.Sprintf("/api/HostScanResults/%s", id)
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get host scan result failed", "id", id, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+func registerGetResponseResult(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_response_result",
+		mcp.WithDescription("Get the result of a response action by ID."),
+		mcp.WithString("id", mcp.Description("The response result ID"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		id := req.GetString("id", "")
+		if id == "" {
+			return mcputil.ErrorResult(fmt.Errorf("id is required")), nil
+		}
+
+		path := fmt.Sprintf("/api/ResponseResults/%s", id)
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get response result failed", "id", id, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+func registerGetTaskStatus(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_task_status",
+		mcp.WithDescription("Check the status of an async task by ID."),
+		mcp.WithString("id", mcp.Description("The user task ID"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		id := req.GetString("id", "")
+		if id == "" {
+			return mcputil.ErrorResult(fmt.Errorf("id is required")), nil
+		}
+
+		path := fmt.Sprintf("/api/UserTasks/%s", id)
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get task status failed", "id", id, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+func registerListActivityTraces(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_list_activity_traces",
+		mcp.WithDescription("List timeline of host activities. Filter by agentId. Supports LoopBack pagination."),
+		mcp.WithString("agentId", mcp.Description("Filter by agent ID")),
+		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
+		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
+		mcp.WithString("order", mcp.Description("Sort order (e.g. 'createdAt DESC')")),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		params := make(map[string]string)
+		addLoopBackPagination(params, req)
+		AddWhereFilter(params, "agentId", req.GetString("agentId", ""))
+
+		items, err := client.GetList(ctx, "/api/ActivityTraces", params)
+		if err != nil {
+			logger.ErrorContext(ctx, "list activity traces failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items), nil
+	})
+}
+
+func registerGetAlertCount(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_alert_count",
+		mcp.WithDescription("Get the total count of Datto EDR alerts."),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		result, err := client.Get(ctx, "/api/Alerts/count", nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get alert count failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+func registerGetAgentCount(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_get_agent_count",
+		mcp.WithDescription("Get the total count of Datto EDR agents."),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		result, err := client.Get(ctx, "/api/Agents/count", nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get agent count failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
 // --- action tool registrations ----------------------------------------------
 
 func registerScanAgent(srv *server.MCPServer, client *Client, logger *slog.Logger) {
@@ -448,4 +681,46 @@ func registerRestoreHost(srv *server.MCPServer, client *Client, logger *slog.Log
 		}
 		return mcputil.JSONResult(result), nil
 	})
+}
+
+func registerRunExtension(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("datto_edr_run_extension",
+		mcp.WithDescription("Run a Datto EDR extension on a target agent."),
+		mcp.WithString("extensionId", mcp.Description("The extension ID to run"), mcp.Required()),
+		mcp.WithString("agentId", mcp.Description("The agent ID to run the extension on"), mcp.Required()),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		extensionId := req.GetString("extensionId", "")
+		if extensionId == "" {
+			return mcputil.ErrorResult(fmt.Errorf("extensionId is required")), nil
+		}
+		agentId := req.GetString("agentId", "")
+		if agentId == "" {
+			return mcputil.ErrorResult(fmt.Errorf("agentId is required")), nil
+		}
+
+		body := map[string]any{"extensionId": extensionId, "agentId": agentId}
+		result, err := client.Post(ctx, "/api/Extensions/run", body)
+		if err != nil {
+			logger.ErrorContext(ctx, "run extension failed", "extensionId", extensionId, "agentId", agentId, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+
+// addWhereToJSONFilter adds a where clause to an existing JSON filter string.
+func addWhereToJSONFilter(filterJSON, field, value string) string {
+	filter := make(map[string]any)
+	if filterJSON != "" {
+		_ = json.Unmarshal([]byte(filterJSON), &filter)
+	}
+	where, ok := filter["where"].(map[string]any)
+	if !ok {
+		where = make(map[string]any)
+	}
+	where[field] = value
+	filter["where"] = where
+	b, _ := json.Marshal(filter)
+	return string(b)
 }

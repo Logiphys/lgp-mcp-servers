@@ -80,6 +80,7 @@ func registerGetAccount(srv *server.MCPServer, client *Client, logger *slog.Logg
 	tool := mcp.NewTool("rocketcyber_get_account",
 		mcp.WithDescription("Get RocketCyber account details. If accountId is provided, returns that specific account; otherwise returns the current account."),
 		mcp.WithNumber("accountId", mcp.Description("Optional account ID to retrieve a specific account")),
+		mcp.WithString("details", mcp.Description("Set to 'true' to include sub-account details")),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
 	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -87,6 +88,9 @@ func registerGetAccount(srv *server.MCPServer, client *Client, logger *slog.Logg
 		params := make(map[string]string)
 		if id := req.GetInt("accountId", 0); id > 0 {
 			params["accountId"] = strconv.Itoa(id)
+		}
+		if v := req.GetString("details", ""); v != "" {
+			params["details"] = v
 		}
 
 		result, err := client.Get(ctx, path, params)
@@ -103,6 +107,9 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		mcp.WithDescription("List RocketCyber agents with optional filters. Supports pagination and date range filtering."),
 		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
+		mcp.WithString("connectivity", mcp.Description("Filter by connectivity status: online|offline|isolated")),
+		mcp.WithString("os", mcp.Description("Filter by operating system")),
+		mcp.WithString("sort", mcp.Description("Sort order (e.g. 'hostname:asc')")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithString("startDate", mcp.Description("Start date filter (ISO 8601 format)")),
@@ -118,6 +125,15 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		}
 		if v := req.GetString("hostname", ""); v != "" {
 			params["hostname"] = v
+		}
+		if v := req.GetString("connectivity", ""); v != "" {
+			params["connectivity"] = v
+		}
+		if v := req.GetString("os", ""); v != "" {
+			params["os"] = v
+		}
+		if v := req.GetString("sort", ""); v != "" {
+			params["sort"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/agents", params)
@@ -135,6 +151,7 @@ func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.L
 		mcp.WithString("status", mcp.Description("Filter by status: open, resolved, draft, or suppressed")),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
 		mcp.WithString("title", mcp.Description("Filter by incident title (partial match)")),
+		mcp.WithString("sort", mcp.Description("Sort order (e.g. 'createdAt:desc')")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithString("startDate", mcp.Description("Start date filter (ISO 8601 format)")),
@@ -154,6 +171,9 @@ func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.L
 		if v := req.GetString("title", ""); v != "" {
 			params["title"] = v
 		}
+		if v := req.GetString("sort", ""); v != "" {
+			params["sort"] = v
+		}
 
 		items, pageInfo, err := client.GetList(ctx, "/incidents", params)
 		if err != nil {
@@ -169,8 +189,9 @@ func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		mcp.WithDescription("List RocketCyber security events with optional filters. Supports pagination and date range filtering. The appId is required — use rocketcyber_list_apps to find valid app IDs."),
 		mcp.WithNumber("appId", mcp.Description("Required: App ID to retrieve events for (use rocketcyber_list_apps to find IDs)"), mcp.Required()),
 		mcp.WithString("eventType", mcp.Description("Filter by event type")),
-		mcp.WithString("severity", mcp.Description("Filter by severity level")),
+		mcp.WithString("verdict", mcp.Description("Filter by verdict: informational|suspicious|malicious")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
+		mcp.WithString("sort", mcp.Description("Sort order (e.g. 'createdAt:desc')")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithString("startDate", mcp.Description("Start date filter (ISO 8601 format)")),
@@ -187,11 +208,14 @@ func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		if v := req.GetString("eventType", ""); v != "" {
 			params["eventType"] = v
 		}
-		if v := req.GetString("severity", ""); v != "" {
-			params["severity"] = v
+		if v := req.GetString("verdict", ""); v != "" {
+			params["verdict"] = v
 		}
 		if v := req.GetString("hostname", ""); v != "" {
 			params["hostname"] = v
+		}
+		if v := req.GetString("sort", ""); v != "" {
+			params["sort"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/events", params)
@@ -231,6 +255,9 @@ func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.L
 	tool := mcp.NewTool("rocketcyber_list_firewalls",
 		mcp.WithDescription("List RocketCyber-monitored firewalls with optional filters. Supports pagination."),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
+		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
+		mcp.WithString("type", mcp.Description("Filter by firewall type")),
+		mcp.WithString("sort", mcp.Description("Sort order (e.g. 'hostname:asc')")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -240,6 +267,15 @@ func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.L
 		addPaginationParams(params, req)
 		if v := req.GetString("hostname", ""); v != "" {
 			params["hostname"] = v
+		}
+		if id := req.GetInt("accountId", 0); id > 0 {
+			params["accountId"] = strconv.Itoa(id)
+		}
+		if v := req.GetString("type", ""); v != "" {
+			params["type"] = v
+		}
+		if v := req.GetString("sort", ""); v != "" {
+			params["sort"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/firewalls", params)
