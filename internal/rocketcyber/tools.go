@@ -13,19 +13,25 @@ import (
 )
 
 // RegisterTools registers all RocketCyber MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+// The tier parameter controls access levels: 1 = safe read-only, 2+ = sensitive.
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
-	registerGetAccount(srv, client, logger)
 	registerListAgents(srv, client, logger)
-	registerListIncidents(srv, client, logger)
 	registerListEvents(srv, client, logger)
 	registerGetEventSummary(srv, client, logger)
-	registerListFirewalls(srv, client, logger)
+	registerListIncidents(srv, client, logger)
 	registerListApps(srv, client, logger)
-	registerGetDefender(srv, client, logger)
-	registerGetOffice(srv, client, logger)
+	registerListFirewalls(srv, client, logger)
 	registerListSuppressionRules(srv, client, logger)
 	registerGetSuppressionRule(srv, client, logger)
+
+	// Tier 2 — Sensitive
+	if tier >= 2 {
+		registerGetAccount(srv, client, logger)
+		registerGetDefender(srv, client, logger)
+		registerGetOffice(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------
