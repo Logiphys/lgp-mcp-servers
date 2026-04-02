@@ -28,7 +28,7 @@
 
 ```bash
 cd lgp-mcp
-go mod init github.com/Logiphys/lgp-mcp
+go mod init github.com/Logiphys/lgp-mcp-servers
 ```
 
 **Step 2: Add dependencies**
@@ -45,7 +45,7 @@ go mod tidy
 cat go.mod
 ```
 
-Expected: module `github.com/Logiphys/lgp-mcp` with go 1.23+, require block with mcp-go and x/sync.
+Expected: module `github.com/Logiphys/lgp-mcp-servers` with go 1.23+, require block with mcp-go and x/sync.
 
 **Step 4: Commit**
 

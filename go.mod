@@ -1,4 +1,4 @@
-module github.com/Logiphys/lgp-mcp
+module github.com/Logiphys/lgp-mcp-servers
 
 go 1.26.1
 

@@ -6,9 +6,9 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/Logiphys/lgp-mcp/internal/myitprocess"
-	"github.com/Logiphys/lgp-mcp/pkg/config"
-	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
+	"github.com/Logiphys/lgp-mcp-servers/internal/myitprocess"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/config"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 )
 
 var version = "dev"

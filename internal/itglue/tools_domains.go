@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )

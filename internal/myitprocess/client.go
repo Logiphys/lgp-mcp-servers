@@ -7,8 +7,8 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/Logiphys/lgp-mcp/pkg/apihelper"
-	"github.com/Logiphys/lgp-mcp/pkg/resilience"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/apihelper"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/resilience"
 )
 
 // Config holds MyITProcess API credentials and settings.

@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-02
 **Status:** Approved
-**Repo:** github.com/Logiphys/lgp-gateway (separate repo)
+**Repo:** github.com/Logiphys/lgp-mcp-gateway (separate repo)
 
 ## Problem
 
@@ -131,7 +131,7 @@ roles:
 
 | Component | Technology |
 |---|---|
-| Gateway | Go (separate repo `lgp-gateway`) |
+| Gateway | Go (separate repo `lgp-mcp-gateway`) |
 | Client transport | Streamable HTTP (MCP spec 2025) |
 | Backend transport | stdio (subprocesses) |
 | Auth | Entra ID OAuth2 / JWT validation |

@@ -9,7 +9,7 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 )
 
 // RegisterTools registers all Datto Backup MCP tools on the given server.

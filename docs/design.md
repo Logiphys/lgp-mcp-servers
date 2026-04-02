@@ -17,7 +17,7 @@
 ## 1. Repository Structure
 
 ```
-lgp-mcp/                              # https://github.com/Logiphys/lgp-mcp
+lgp-mcp/                              # https://github.com/Logiphys/lgp-mcp-servers
 ├── go.mod
 ├── go.sum
 ├── Makefile
@@ -600,7 +600,7 @@ Signal handling (SIGINT/SIGTERM) for graceful shutdown in all 4 binaries.
 ### 4.1 Go Module
 
 ```
-module github.com/Logiphys/lgp-mcp
+module github.com/Logiphys/lgp-mcp-servers
 
 go 1.23
 
@@ -615,7 +615,7 @@ Minimal dependencies — Go stdlib for HTTP, JSON, logging (`slog`), testing.
 ### 4.2 Makefile
 
 ```makefile
-MODULE      := github.com/Logiphys/lgp-mcp
+MODULE      := github.com/Logiphys/lgp-mcp-servers
 VERSION     := $(shell git describe --tags --always --dirty)
 LDFLAGS     := -s -w -X main.version=$(VERSION)
 SERVERS     := autotask-mcp itglue-mcp datto-rmm-mcp rocketcyber-mcp
@@ -756,14 +756,14 @@ jobs:
 # logiphys/homebrew-tap/Formula/lgp-mcp.rb
 class LgpMcp < Formula
   desc "Logiphys MCP Servers for Claude"
-  homepage "https://github.com/Logiphys/lgp-mcp"
+  homepage "https://github.com/Logiphys/lgp-mcp-servers"
   # platform-specific URLs for binaries
 end
 ```
 
 #### Option 4: Installer Script (Cross-Platform)
 ```bash
-# curl -fsSL https://raw.githubusercontent.com/Logiphys/lgp-mcp/main/scripts/install.sh | bash
+# curl -fsSL https://raw.githubusercontent.com/Logiphys/lgp-mcp-servers/main/scripts/install.sh | bash
 # Detects OS/Arch, downloads binaries, creates config template
 ```
 
@@ -848,7 +848,7 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 6
 **Goal:** All shared libraries built and tested, ready for server implementations.
 
 **1.1 — Repo Bootstrap**
-- `go mod init github.com/Logiphys/lgp-mcp`
+- `go mod init github.com/Logiphys/lgp-mcp-servers`
 - Directory structure, Makefile, CI workflow
 - `CLAUDE.md` with Go conventions
 - `.gitignore`

@@ -530,8 +530,8 @@ import (
     "os/signal"
     "syscall"
 
-    "github.com/Logiphys/lgp-mcp/internal/autotask"
-    "github.com/Logiphys/lgp-mcp/pkg/config"
+    "github.com/Logiphys/lgp-mcp-servers/internal/autotask"
+    "github.com/Logiphys/lgp-mcp-servers/pkg/config"
     "github.com/mark3labs/mcp-go/server"
 )
 

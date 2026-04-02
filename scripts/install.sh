@@ -3,9 +3,9 @@ set -euo pipefail
 
 # LGP MCP Servers — Install Script
 # Downloads and installs pre-built binaries from GitHub Releases.
-# Usage: curl -sSL https://raw.githubusercontent.com/Logiphys/lgp-mcp/main/scripts/install.sh | bash
+# Usage: curl -sSL https://raw.githubusercontent.com/Logiphys/lgp-mcp-servers/main/scripts/install.sh | bash
 
-REPO="Logiphys/lgp-mcp"
+REPO="Logiphys/lgp-mcp-servers"
 SERVERS="autotask-mcp itglue-mcp datto-rmm-mcp rocketcyber-mcp"
 VERSION="${LGP_VERSION:-latest}"
 INSTALL_DIR="${LGP_INSTALL_DIR:-/usr/local/bin}"

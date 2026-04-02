@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/sync/singleflight"
 
-	"github.com/Logiphys/lgp-mcp/pkg/resilience"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/resilience"
 )
 
 // platformURLs maps Datto RMM platform names to their API base URLs.

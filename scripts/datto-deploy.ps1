@@ -21,7 +21,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$repo = "Logiphys/lgp-mcp"
+$repo = "Logiphys/lgp-mcp-servers"
 
 # Detect platform
 if ($IsWindows -or $env:OS -eq "Windows_NT") {
