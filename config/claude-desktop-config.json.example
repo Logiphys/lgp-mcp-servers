@@ -1,22 +1,22 @@
 {
   "mcpServers": {
     "autotask-mcp": {
-      "command": "/usr/local/bin/lgp-autotask-mcp",
+      "command": "/usr/local/bin/autotask-mcp",
       "env": {
-        "AUTOTASK_USERNAME": "your-api-username@company.com",
+        "AUTOTASK_USERNAME": "api-user@company.com",
         "AUTOTASK_SECRET": "your-api-secret",
         "AUTOTASK_INTEGRATION_CODE": "your-integration-code"
       }
     },
     "itglue-mcp": {
-      "command": "/usr/local/bin/lgp-itglue-mcp",
+      "command": "/usr/local/bin/itglue-mcp",
       "env": {
         "ITGLUE_API_KEY": "ITG.your-api-key",
         "ITGLUE_REGION": "eu"
       }
     },
     "datto-rmm-mcp": {
-      "command": "/usr/local/bin/lgp-datto-rmm-mcp",
+      "command": "/usr/local/bin/datto-rmm-mcp",
       "env": {
         "DATTO_API_KEY": "your-api-key",
         "DATTO_API_SECRET": "your-api-secret",
@@ -24,10 +24,44 @@
       }
     },
     "rocketcyber-mcp": {
-      "command": "/usr/local/bin/lgp-rocketcyber-mcp",
+      "command": "/usr/local/bin/rocketcyber-mcp",
       "env": {
         "ROCKETCYBER_API_KEY": "your-api-key",
-        "ROCKETCYBER_REGION": "us"
+        "ROCKETCYBER_REGION": "eu"
+      }
+    },
+    "datto-uc-mcp": {
+      "command": "/usr/local/bin/datto-uc-mcp",
+      "env": {
+        "DATTO_UC_PUBLIC_KEY": "your-public-key",
+        "DATTO_UC_SECRET_KEY": "your-secret-key"
+      }
+    },
+    "datto-edr-mcp": {
+      "command": "/usr/local/bin/datto-edr-mcp",
+      "env": {
+        "DATTO_EDR_API_KEY": "your-access-token",
+        "DATTO_EDR_BASE_URL": "https://yourorg.infocyte.com"
+      }
+    },
+    "datto-backup-mcp": {
+      "command": "/usr/local/bin/datto-backup-mcp",
+      "env": {
+        "DATTO_BACKUP_CLIENT_ID": "your-client-id",
+        "DATTO_BACKUP_CLIENT_SECRET": "your-client-secret"
+      }
+    },
+    "datto-network-mcp": {
+      "command": "/usr/local/bin/datto-network-mcp",
+      "env": {
+        "DATTO_NETWORK_PUBLIC_KEY": "your-public-key",
+        "DATTO_NETWORK_SECRET_KEY": "your-secret-key"
+      }
+    },
+    "myitprocess-mcp": {
+      "command": "/usr/local/bin/myitprocess-mcp",
+      "env": {
+        "MYITPROCESS_API_KEY": "your-api-key"
       }
     }
   }

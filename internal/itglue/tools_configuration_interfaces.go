@@ -2,6 +2,7 @@ package itglue
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
 	"github.com/Logiphys/lgp-mcp/pkg/mcputil"
@@ -12,14 +13,12 @@ import (
 func registerConfigurationInterfaceTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
 		mcp.NewTool("itglue_search_configuration_interfaces",
-			mcp.WithDescription("Search IT Glue configuration interfaces with optional filters. Returns a paginated list of configuration interfaces."),
+			mcp.WithDescription("Search IT Glue configuration interfaces (network adapters, IPs, MACs) for a specific configuration. Requires configuration_id."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
 			mcp.WithString("configuration_id",
-				mcp.Description("Filter by configuration ID."),
-			),
-			mcp.WithString("ip_address",
-				mcp.Description("Filter by IP address."),
+				mcp.Description("The configuration ID to list interfaces for (required)."),
+				mcp.Required(),
 			),
 			mcp.WithNumber("page_number",
 				mcp.Description("Page number to retrieve (default: 1)."),
@@ -29,23 +28,23 @@ func registerConfigurationInterfaceTools(srv *server.MCPServer, client *Client, 
 			),
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+			configID := req.GetString("configuration_id", "")
+			if configID == "" {
+				return mcputil.ErrorResult(fmt.Errorf("configuration_id is required")), nil
+			}
+
 			filters := make(map[string]string)
-			if v := req.GetString("configuration_id", ""); v != "" {
-				filters["configuration_id"] = v
-			}
-			if v := req.GetString("ip_address", ""); v != "" {
-				filters["ip_address"] = v
-			}
 			page := req.GetInt("page_number", 1)
 			pageSize := req.GetInt("page_size", 50)
 
-			items, meta, err := client.List(ctx, "/configuration_interfaces", filters, page, pageSize)
+			path := fmt.Sprintf("/configurations/%s/relationships/configuration_interfaces", configID)
+			items, meta, err := client.List(ctx, path, filters, page, pageSize)
 			if err != nil {
 				logger.Error("itglue_search_configuration_interfaces failed", "error", err)
 				return mcputil.ErrorResult(err), nil
 			}
 			if len(items) == 0 {
-				return mcputil.TextResult("No results found."), nil
+				return mcputil.TextResult("No configuration interfaces found."), nil
 			}
 			result := map[string]any{
 				"items": items,
