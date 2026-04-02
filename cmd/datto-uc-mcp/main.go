@@ -6,7 +6,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/Logiphys/lgp-mcp-servers/internal/dattouc"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/dattouc"
 	"github.com/Logiphys/lgp-mcp-servers/pkg/config"
 	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 )

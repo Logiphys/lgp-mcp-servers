@@ -6,7 +6,7 @@ import (
 
 	"github.com/mark3labs/mcp-go/server"
 
-	"github.com/Logiphys/lgp-mcp-servers/internal/dattoedr"
+	"github.com/Logiphys/lgp-mcp-servers/pkg/dattoedr"
 	"github.com/Logiphys/lgp-mcp-servers/pkg/config"
 	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 )
