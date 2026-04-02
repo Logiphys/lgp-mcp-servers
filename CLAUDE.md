@@ -2,7 +2,7 @@
 
 ## Project Context
 
-Go monorepo consolidating all Logiphys MCP servers (Autotask, IT Glue, Datto RMM, RocketCyber) into single-binary deployments.
+Go monorepo consolidating all Logiphys MCP servers into single-binary deployments.
 
 - **Design Document**: `docs/design.md` — full architecture, API details, implementation phases
 - **MCP Library**: `github.com/mark3labs/mcp-go`
@@ -11,7 +11,7 @@ Go monorepo consolidating all Logiphys MCP servers (Autotask, IT Glue, Datto RMM
 ## Repository Layout
 
 - `pkg/` — shared libraries (resilience, apihelper, mcputil, config) — importable by all servers
-- `internal/` — server-specific logic (autotask, itglue, dattormm, rocketcyber) — not importable externally
+- `internal/` — server-specific logic (one package per server) — not importable externally
 - `cmd/` — binary entry points (one `main.go` per server)
 - `config/` — example configuration files
 - `scripts/` — build and deployment scripts
@@ -36,13 +36,10 @@ make test        # all tests with -race
 make lint        # golangci-lint
 ```
 
-## TypeScript Sources (Migration Reference)
+## References
 
-- Autotask: `/Users/zeisler/lgp-autotask-mcp/src/`
-- IT Glue: `/Users/zeisler/lgp-itglue-mcp/src/`
-- Datto RMM: `/Users/zeisler/datto-rmm/`
-- RocketCyber: `github.com/wyre-technology/rocketcyber-mcp`
 - Autotask Go Reference: `github.com/tphakala/autotask-mcp`
+- RocketCyber Reference: `github.com/wyre-technology/rocketcyber-mcp`
 
 ## Important
 

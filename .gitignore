@@ -1,10 +1,17 @@
 # Build output
 dist/
 *.exe
+
+# Server binaries (if built in repo root)
 autotask-mcp
 itglue-mcp
 datto-rmm-mcp
 rocketcyber-mcp
+datto-uc-mcp
+datto-edr-mcp
+datto-backup-mcp
+datto-network-mcp
+myitprocess-mcp
 
 # Go
 *.test
@@ -21,6 +28,9 @@ coverage.html
 .DS_Store
 Thumbs.db
 
-# Environment
+# Environment / secrets
 .env
-.env.local
+.env.*
+*.pem
+*.key
+*.p12

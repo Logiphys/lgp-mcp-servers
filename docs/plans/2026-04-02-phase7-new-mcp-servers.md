@@ -77,7 +77,7 @@ Add 5 new MCP servers to the monorepo, following the same patterns as existing s
   - `list_meetings` — meetings
 
 ### 5. Datto EDR (Infocyte) — `datto-edr-mcp`
-- **Base URL:** `https://rmm7d670002.eu.infocyte.com/api`
+- **Base URL:** `https://yourorg.infocyte.com/api`
 - **Auth:** Bearer token
 - **Env vars:** `DATTO_EDR_API_KEY`, `DATTO_EDR_BASE_URL` (instance-specific)
 - **Filtering:** LoopBack where-filter syntax

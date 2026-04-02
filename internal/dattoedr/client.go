@@ -14,7 +14,7 @@ import (
 // Config holds Datto EDR API credentials and settings.
 type Config struct {
 	APIKey  string
-	BaseURL string // required, instance-specific (e.g. https://rmm7d670002.eu.infocyte.com)
+	BaseURL string // required, instance-specific (e.g. https://yourorg.infocyte.com)
 }
 
 // Client is the Datto EDR (Infocyte) REST API client.

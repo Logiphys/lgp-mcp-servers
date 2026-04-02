@@ -122,7 +122,7 @@ Connects to the [Datto Unified Continuity API](https://api.datto.com/v1/). Cover
 
 ### datto-edr-mcp
 
-Connects to the [Datto EDR (Infocyte) API](https://logiphys.infocyte.com/api/docs/). Endpoint detection & response: agents, alerts, detection rules, suppression rules, extensions, quarantined files, and host isolation.
+Connects to the [Datto EDR (Infocyte) LoopBack API](https://docs.infocyte.com). Endpoint detection & response: agents, alerts, detection rules, suppression rules, extensions, quarantined files, and host isolation.
 
 | Environment Variable | Required | Description |
 |---------------------|----------|-------------|

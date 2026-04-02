@@ -11,10 +11,10 @@
 **Design Reference:** `docs/design.md` sections 2.1-2.4 for exact API signatures.
 
 **TypeScript References (for porting logic):**
-- Rate Limiter: `/Users/zeisler/lgp-autotask-mcp/src/utils/rateLimiter.ts`
-- Circuit Breaker: `/Users/zeisler/lgp-autotask-mcp/src/utils/circuitBreaker.ts`
-- Response Compactor: `/Users/zeisler/lgp-autotask-mcp/src/utils/responseCompactor.ts`
-- Response Formatter: `/Users/zeisler/lgp-autotask-mcp/src/utils/response.formatter.ts`
+- Rate Limiter: `previous-ts-impl/src/utils/rateLimiter.ts`
+- Circuit Breaker: `previous-ts-impl/src/utils/circuitBreaker.ts`
+- Response Compactor: `previous-ts-impl/src/utils/responseCompactor.ts`
+- Response Formatter: `previous-ts-impl/src/utils/response.formatter.ts`
 
 ---
 
@@ -27,7 +27,7 @@
 **Step 1: Initialize Go module**
 
 ```bash
-cd /Users/zeisler/lgp-mcp
+cd lgp-mcp
 go mod init github.com/Logiphys/lgp-mcp
 ```
 
@@ -236,7 +236,7 @@ git commit -m "feat: add pkg/config with MustEnv, OptEnv, LogLevel"
 
 **Step 1: Write the failing tests**
 
-Port logic from `/Users/zeisler/lgp-autotask-mcp/src/utils/rateLimiter.ts`.
+Port logic from `previous-ts-impl/src/utils/rateLimiter.ts`.
 
 ```go
 // pkg/resilience/ratelimiter_test.go
@@ -472,7 +472,7 @@ git commit -m "feat: add token bucket rate limiter in pkg/resilience"
 
 **Step 1: Write the failing tests**
 
-Port from `/Users/zeisler/lgp-autotask-mcp/src/utils/circuitBreaker.ts`.
+Port from `previous-ts-impl/src/utils/circuitBreaker.ts`.
 
 ```go
 // pkg/resilience/circuitbreaker_test.go
@@ -805,7 +805,7 @@ git commit -m "feat: add circuit breaker pattern in pkg/resilience"
 
 **Step 1: Write the failing tests**
 
-Port from `/Users/zeisler/lgp-autotask-mcp/src/utils/responseCompactor.ts`.
+Port from `previous-ts-impl/src/utils/responseCompactor.ts`.
 
 ```go
 // pkg/resilience/compactor_test.go
@@ -3390,7 +3390,7 @@ git commit -m "feat: add pagination iterator with Go 1.23 iter.Seq in pkg/apihel
 **Step 1: Run all tests with race detection**
 
 ```bash
-cd /Users/zeisler/lgp-mcp
+cd lgp-mcp
 make test
 ```
 

@@ -2,18 +2,18 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** Build a complete Autotask MCP server with all 83 tools (79 direct + 4 meta-tools), porting from the TypeScript implementation at `/Users/zeisler/lgp-autotask-mcp/src/`.
+**Goal:** Build a complete Autotask MCP server with all 83 tools (79 direct + 4 meta-tools), porting from the TypeScript implementation at `previous-ts-impl/src/`.
 
 **Architecture:** The server uses `internal/autotask/` for all Autotask-specific logic, built on the `pkg/*` foundation from Phase 1. The API client wraps `pkg/apihelper.Client` with Autotask-specific auth headers, query filter builder, and child entity URL routing. Tools are registered via `mcp-go` with a dispatch-table pattern — each tool maps to a handler function that calls the client and formats the response.
 
 **Tech Stack:** Go 1.23+, `github.com/mark3labs/mcp-go` (MCP protocol), `pkg/resilience` (rate limiting, circuit breaker), `pkg/mcputil` (response formatting), `pkg/apihelper` (HTTP client, mapping cache), `pkg/config` (env vars).
 
 **TypeScript References:**
-- Tool definitions: `/Users/zeisler/lgp-autotask-mcp/src/handlers/tool.definitions.ts`
-- Tool handlers: `/Users/zeisler/lgp-autotask-mcp/src/handlers/tool.handler.ts`
-- API service: `/Users/zeisler/lgp-autotask-mcp/src/services/autotask.service.ts`
-- Picklist cache: `/Users/zeisler/lgp-autotask-mcp/src/services/picklist.cache.ts`
-- Response formatter: `/Users/zeisler/lgp-autotask-mcp/src/utils/response.formatter.ts`
+- Tool definitions: `previous-ts-impl/src/handlers/tool.definitions.ts`
+- Tool handlers: `previous-ts-impl/src/handlers/tool.handler.ts`
+- API service: `previous-ts-impl/src/services/autotask.service.ts`
+- Picklist cache: `previous-ts-impl/src/services/picklist.cache.ts`
+- Response formatter: `previous-ts-impl/src/utils/response.formatter.ts`
 
 **Autotask REST API:**
 - Base URL: `https://webservices24.autotask.net/ATServicesRest` (configurable via `AUTOTASK_API_URL`)

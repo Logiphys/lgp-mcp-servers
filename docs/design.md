@@ -461,7 +461,7 @@ Signal handling (SIGINT/SIGTERM) for graceful shutdown in all 4 binaries.
 
 **References:**
 - `tphakala/autotask-mcp` (Go) — API client pattern, entity definitions
-- `/Users/zeisler/lgp-autotask-mcp/src/` — LGP extensions, tool definitions
+- Previous TypeScript implementation — LGP extensions, tool definitions
 
 #### `client.go` — Autotask REST API Client
 - Base URL: `https://webservices24.autotask.net/ATServicesRest`
@@ -511,7 +511,7 @@ Signal handling (SIGINT/SIGTERM) for graceful shutdown in all 4 binaries.
 ### 3.3 `internal/itglue/` — IT Glue (20 Tools)
 
 **References:**
-- `/Users/zeisler/lgp-itglue-mcp/src/` — existing tools
+- Previous TypeScript implementation — existing tools
 - `Junto-Platforms/itglue-mcp-server` — response optimizations
 
 #### `client.go` — IT Glue API Client
@@ -542,7 +542,7 @@ Signal handling (SIGINT/SIGTERM) for graceful shutdown in all 4 binaries.
 ### 3.4 `internal/dattormm/` — Datto RMM (64 Tools)
 
 **References:**
-- `/Users/zeisler/datto-rmm/` — existing code
+- Previous TypeScript implementation — existing code
 - OpenAPI spec in upstream repo
 
 #### `client.go` — Datto RMM API Client
@@ -945,65 +945,7 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 6
 
 ---
 
-## Appendix A: Logiphys-Specific Autotask IDs
-
-### Queues
-
-| ID | Name |
-|----|------|
-| 29682833 | Helpdesk |
-| 29682969 | Level II-Support |
-| 29683354 | Ticketserien |
-| 29683355 | Einkauf |
-| 29683356 | Updates |
-| 29683358 | Projekt |
-| 29683359 | Migration & Auslieferung |
-| 29683360 | Level III-Support |
-| 29683361 | Changes & Projekte (intern) |
-| 29683362 | QS |
-| 29683363 | Projekte (geplant) |
-| 29683372 | Offline Geraete |
-| 29683373 | Zyklische Arbeiten |
-| 29683375 | Quality Call |
-| 29683376 | Sales |
-| 29683377 | Versand |
-| 29683379 | Ueberwachungswarnungen Kritisch |
-| 29683380 | Sales-Outbox |
-| 29683381 | HR |
-| 29683382 | Win 11 Upgrades/Update |
-| 29683383 | Werkstatt QS |
-| 29683384 | Rechnung / Vertrag |
-
-### Ticket Statuses
-
-| ID | Name |
-|----|------|
-| 1 | Neu |
-| 5 | Abgeschlossen |
-| 7 | Warten auf Kundenreaktion |
-| 8 | In Bearbeitung |
-| 9 | Warten auf Materialien |
-| 10 | Servicetermin geplant |
-| 11 | Eskaliert |
-| 12 | Warten auf Lieferanten |
-| 13 | Warten auf Genehmigung |
-| 14 | Geloest warten auf Kunden |
-| 15 | Kundennotiz hinzugefuegt |
-| 16 | Zugewiesen |
-| 17 | Abgeschlossen (QS) |
-| 18 | Quality Call |
-| 19 | Warten auf Zuteilung |
-| 20 | In Klaerung |
-
-### Known API Quirks
-
-- `search_resources` → HTTP 500 (persistent, not retryable)
-- `search_invoices` with companyID → inconsistent results → use `search_billing_items` instead
-- Pagination on large result sets → use `postedAfter` date filter
-
----
-
-## Appendix B: Gateway Mode (Optional)
+## Appendix A: Gateway Mode (Optional)
 
 For cloud deployment scenarios (e.g., central instance for multiple technicians):
 
