@@ -2,6 +2,7 @@ package rocketcyber
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"strconv"
 
@@ -23,6 +24,8 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerListApps(srv, client, logger)
 	registerGetDefender(srv, client, logger)
 	registerGetOffice(srv, client, logger)
+	registerListSuppressionRules(srv, client, logger)
+	registerGetSuppressionRule(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -99,9 +102,7 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 	tool := mcp.NewTool("rocketcyber_list_agents",
 		mcp.WithDescription("List RocketCyber agents with optional filters. Supports pagination and date range filtering."),
 		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
-		mcp.WithString("status", mcp.Description("Filter by agent status")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
-		mcp.WithString("platform", mcp.Description("Filter by platform (e.g. windows, mac, linux)")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithString("startDate", mcp.Description("Start date filter (ISO 8601 format)")),
@@ -115,14 +116,8 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		if id := req.GetInt("accountId", 0); id > 0 {
 			params["accountId"] = strconv.Itoa(id)
 		}
-		if v := req.GetString("status", ""); v != "" {
-			params["status"] = v
-		}
 		if v := req.GetString("hostname", ""); v != "" {
 			params["hostname"] = v
-		}
-		if v := req.GetString("platform", ""); v != "" {
-			params["platform"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/agents", params)
@@ -137,7 +132,7 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	tool := mcp.NewTool("rocketcyber_list_incidents",
 		mcp.WithDescription("List RocketCyber incidents with optional filters. Supports pagination and date range filtering."),
-		mcp.WithString("status", mcp.Description("Filter by status: active, resolved, or all")),
+		mcp.WithString("status", mcp.Description("Filter by status: open, resolved, draft, or suppressed")),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
 		mcp.WithString("title", mcp.Description("Filter by incident title (partial match)")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -171,7 +166,8 @@ func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.L
 
 func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	tool := mcp.NewTool("rocketcyber_list_events",
-		mcp.WithDescription("List RocketCyber security events with optional filters. Supports pagination and date range filtering."),
+		mcp.WithDescription("List RocketCyber security events with optional filters. Supports pagination and date range filtering. The appId is required — use rocketcyber_list_apps to find valid app IDs."),
+		mcp.WithNumber("appId", mcp.Description("Required: App ID to retrieve events for (use rocketcyber_list_apps to find IDs)"), mcp.Required()),
 		mcp.WithString("eventType", mcp.Description("Filter by event type")),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
@@ -185,6 +181,9 @@ func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logg
 		params := make(map[string]string)
 		addPaginationParams(params, req)
 		addDateRangeParams(params, req)
+		if id := req.GetInt("appId", 0); id > 0 {
+			params["appId"] = strconv.Itoa(id)
+		}
 		if v := req.GetString("eventType", ""); v != "" {
 			params["eventType"] = v
 		}
@@ -231,9 +230,7 @@ func registerGetEventSummary(srv *server.MCPServer, client *Client, logger *slog
 func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	tool := mcp.NewTool("rocketcyber_list_firewalls",
 		mcp.WithDescription("List RocketCyber-monitored firewalls with optional filters. Supports pagination."),
-		mcp.WithString("connectivity", mcp.Description("Filter by connectivity status")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
-		mcp.WithString("vendor", mcp.Description("Filter by firewall vendor")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -241,14 +238,8 @@ func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.L
 	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 		params := make(map[string]string)
 		addPaginationParams(params, req)
-		if v := req.GetString("connectivity", ""); v != "" {
-			params["connectivity"] = v
-		}
 		if v := req.GetString("hostname", ""); v != "" {
 			params["hostname"] = v
-		}
-		if v := req.GetString("vendor", ""); v != "" {
-			params["vendor"] = v
 		}
 
 		items, pageInfo, err := client.GetList(ctx, "/firewalls", params)
@@ -308,7 +299,7 @@ func registerGetDefender(srv *server.MCPServer, client *Client, logger *slog.Log
 
 func registerGetOffice(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	tool := mcp.NewTool("rocketcyber_get_office",
-		mcp.WithDescription("Get Microsoft 365 / Office 365 status and details from RocketCyber. Optionally filter by account ID."),
+		mcp.WithDescription("Get Microsoft 365 / Office 365 monitoring data from RocketCyber. Optionally filter by account ID."),
 		mcp.WithNumber("accountId", mcp.Description("Optional account ID to filter results")),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -318,11 +309,49 @@ func registerGetOffice(srv *server.MCPServer, client *Client, logger *slog.Logge
 			params["accountId"] = strconv.Itoa(id)
 		}
 
-		result, err := client.Get(ctx, "/office365", params)
+		result, err := client.Get(ctx, "/office", params)
 		if err != nil {
-			logger.ErrorContext(ctx, "get office365 failed", "err", err)
+			logger.ErrorContext(ctx, "get office failed", "err", err)
 			return mcputil.ErrorResult(err), nil
 		}
 		return mcputil.JSONResult(result), nil
 	})
 }
+
+func registerListSuppressionRules(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("rocketcyber_list_suppression_rules",
+		mcp.WithDescription("List RocketCyber incident suppression rules."),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		items, pageInfo, err := client.GetList(ctx, "/suppression/rules", nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "list suppression rules failed", "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return buildListResult(items, pageInfo), nil
+	})
+}
+
+func registerGetSuppressionRule(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+	tool := mcp.NewTool("rocketcyber_get_suppression_rule",
+		mcp.WithDescription("Get details of a specific RocketCyber suppression rule by ID."),
+		mcp.WithNumber("ruleId", mcp.Description("The suppression rule ID"), mcp.Required()),
+		mcp.WithReadOnlyHintAnnotation(true),
+	)
+	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
+		id := req.GetInt("ruleId", 0)
+		if id == 0 {
+			return mcputil.ErrorResult(fmt.Errorf("ruleId is required")), nil
+		}
+
+		path := fmt.Sprintf("/suppression/rule/%d", id)
+		result, err := client.Get(ctx, path, nil)
+		if err != nil {
+			logger.ErrorContext(ctx, "get suppression rule failed", "ruleId", id, "err", err)
+			return mcputil.ErrorResult(err), nil
+		}
+		return mcputil.JSONResult(result), nil
+	})
+}
+

@@ -1,0 +1,2925 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Public API",
+    "description": "Description of Public API for Unitrends MSP.",
+    "version": "public_api-v1"
+  },
+  "servers": [
+    {
+      "url": "https://public-api.backup.net"
+    }
+  ],
+  "paths": {
+    "/v1/agents/latest": {
+      "get": {
+        "tags": [
+          "Agents"
+        ],
+        "summary": "Returns the version of the latest agent and the link to download it.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Agents.GetLatestAgent.GetLatestAgentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/appliances": {
+      "get": {
+        "tags": [
+          "Appliances"
+        ],
+        "summary": "Returns a list of appliance details based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "description": "The id of the customer in UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asset_tag",
+            "in": "query",
+            "description": "The id of the appliance.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the appliance. All of the appliances that at least contain part of the passed parameter will be filtered.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_online",
+            "in": "query",
+            "description": "Flag that indicates whether appliance is online. True means online.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "total_mb_size_from",
+            "in": "query",
+            "description": "Minimum size of storage attached to the appliance in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "total_mb_size_to",
+            "in": "query",
+            "description": "Maximum size of storage attached to the appliance in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "total_mb_free_from",
+            "in": "query",
+            "description": "Minimum amount of free space on storage attached to the appliance in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "total_mb_free_to",
+            "in": "query",
+            "description": "Maximum amount of free space on storage attached to the appliance in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "description": "The version of the appliance. All of the appliances that at least contain part of the passed parameter will be filtered.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "helix_status",
+            "in": "query",
+            "description": "The status of helix for the appliances.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.HelixStatus"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.GetAppliancesRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.GetAppliancesResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/assets": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Returns a list of asset details based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "description": "The id of the customer in UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asset_tag",
+            "in": "query",
+            "description": "The id of the appliance.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the asset. All of the asset that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of the asset.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ip",
+            "in": "query",
+            "description": "The ip of the asset.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mac",
+            "in": "query",
+            "description": "The MAC address of the asset.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "key",
+            "in": "query",
+            "description": "The unique identifier of the asset.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetAssetsRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "description": "This parameter allows to include additional data to the response. To use it please add to the query parameters one or multiple of the following: \"?include[backups]=last&include[links]=all\"",
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetAssetsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/backupiq/alerts": {
+      "get": {
+        "tags": [
+          "BackupIqAlerts"
+        ],
+        "summary": "Returns a list of BackupIQ alerts based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of the alert.",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertTypeModel"
+            }
+          },
+          {
+            "name": "severity",
+            "in": "query",
+            "description": "The severity of the alert.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertSeverityModel"
+            }
+          },
+          {
+            "name": "is_muted",
+            "in": "query",
+            "description": "Indicates that alert is muted on UI by settings of alerts specified on the portal.\r\nMuted alerts are not displayed on the portal UI.\r\nAPI returns not muted alerts by default.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.MutedFilterModel"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "description": "The id of the customer in UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "customer_name",
+            "in": "query",
+            "description": "The name of the customer. All of the customers that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset_tag",
+            "in": "query",
+            "description": "The id of the appliance.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "appliance_name",
+            "in": "query",
+            "description": "The name of the appliance. All of the appliances that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset_name",
+            "in": "query",
+            "description": "The name of the asset. All of the asset that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asset_key",
+            "in": "query",
+            "description": "The unique identifier of the asset.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "job_name",
+            "in": "query",
+            "description": "The name of the job. All of the jobs that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "job_type",
+            "in": "query",
+            "description": "The type of the job. All of the jobs that contain passed parameter will be in filtered result.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "is_dismissed",
+            "in": "query",
+            "description": "Flag that indicates dismiss status of an alert. It means whether a user dismissed an alert in BackupIQ interface.\r\nThe absence of the parameter leads to both dismissed and not dismissed alerts in the filtered result.",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.OrderColumnModel"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\", \"desc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "created_time_direction",
+            "in": "query",
+            "description": "Direction of ordering by created_time field, which always the second ordering field. E.g. \"asc\", \"desc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.AlertModel"
+                      },
+                      {
+                        "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.JobAlertModel"
+                      },
+                      {
+                        "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.ConditionalAlertModel"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/backups": {
+      "get": {
+        "tags": [
+          "Backups"
+        ],
+        "summary": "Returns a list of backup details based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "customer_id",
+            "in": "query",
+            "description": "The id of the customer in UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asset_tag",
+            "in": "query",
+            "description": "The id of the appliance.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "start_time_from",
+            "in": "query",
+            "description": "Minimum backup start time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "start_time_to",
+            "in": "query",
+            "description": "Maximum backup start time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "complete_time_from",
+            "in": "query",
+            "description": "Minimum backup completion time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "complete_time_to",
+            "in": "query",
+            "description": "Maximum backup completion time.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "size_from",
+            "in": "query",
+            "description": "Minimum backup size in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "size_to",
+            "in": "query",
+            "description": "Maximum backup size in MB.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "The type of the backup.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "The status of the backup.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.BackupStatus"
+            }
+          },
+          {
+            "name": "replication_status",
+            "in": "query",
+            "description": "The status of the replication.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.ReplicationBackupStatus"
+            }
+          },
+          {
+            "name": "asset_key",
+            "in": "query",
+            "description": "The unique identifier of the asset.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.GetBackups.GetBackupsRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.GetBackups.GetBackupsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/customers": {
+      "get": {
+        "tags": [
+          "Customers"
+        ],
+        "summary": "Returns a list of customer details based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id of the customer in the UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the customer.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Customers.GetCustomers.GetCustomersRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Customers.GetCustomers.GetCustomersResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/spanning/domains/{domainId}/users": {
+      "get": {
+        "tags": [
+          "DomainUsers"
+        ],
+        "summary": "Returns a list of spanning domain/tenant users",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "domainId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/spanning/domains/{domainId}/users": {
+      "get": {
+        "tags": [
+          "DomainUsersV2"
+        ],
+        "summary": "Returns a list of spanning domain/tenant users",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "domainId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.GetReturnUserModelV2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/spanning/domains": {
+      "get": {
+        "tags": [
+          "Domains"
+        ],
+        "summary": "Returns a list of spanning domains/tenants",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.GetDomainsRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "description": "This parameter allows to exclude the data from the response. To use it please add to the query parameters one or multiple of the following: \"?include[users]=false\"",
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/entra/domains": {
+      "get": {
+        "tags": [
+          "DomainsEntra"
+        ],
+        "summary": "Returns a list of Microsoft Entra ID domains/tenants",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.GetEntraDomainsForPublicApiRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.GetEntraDomainsForPublicApiModel"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/spanning/domains": {
+      "get": {
+        "tags": [
+          "DomainsV2"
+        ],
+        "summary": "Returns a list of spanning domains/tenants",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.GetDomainsRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "include",
+            "in": "query",
+            "description": "This parameter allows to exclude the data from the response. To use it please add to the query parameters one or multiple of the following: \"?include[users]=false\"",
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainModelV2"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/epb/v1/assets": {
+      "get": {
+        "tags": [
+          "Assets"
+        ],
+        "summary": "Returns a list of asset details based on filtering, ordering and paging criteria.",
+        "description": "Visibility is restricted by tenant which issued credentials for access.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "The id of the asset.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "The name of the asset.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customer_id",
+            "in": "query",
+            "description": "The id of the customer in UUID format.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "order_by",
+            "in": "query",
+            "description": "The ordering field.",
+            "schema": {
+              "$ref": "#/components/schemas/MSP.Portal.Eir.Api.PublicApi.Api.Controllers.Assets.Models.GetAssetsRequestOrderColumn"
+            }
+          },
+          {
+            "name": "order_direction",
+            "in": "query",
+            "description": "Direction of the order. E.g. \"asc\".",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page_number",
+            "in": "query",
+            "description": "The page number. Default is 1.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "description": "The page size. Default is 50.",
+            "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "headers": {
+              "Paging-Total-Records": {
+                "description": "Total amount of records.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Size": {
+                "description": "Current page size.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Page-Number": {
+                "description": "Current page number.",
+                "schema": {
+                  "type": "integer"
+                }
+              },
+              "Paging-Total-Pages": {
+                "description": "Total count of pages.",
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MSP.Portal.Eir.Api.PublicApi.Api.Controllers.Assets.Models.GetAssetsResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "MSP.Portal.Eir.Api.PublicApi.Api.Controllers.Assets.Models.GetAssetsRequestOrderColumn": {
+        "enum": [
+          "name",
+          "licenseType",
+          "storageUsedBytes",
+          "status",
+          "customerName",
+          "oS",
+          "id"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.Eir.Api.PublicApi.Api.Controllers.Assets.Models.GetAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the asset.",
+            "nullable": true,
+            "example": "APPLONE"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of asset.",
+            "nullable": true,
+            "example": "Laptop One"
+          },
+          "licenseType": {
+            "type": "string",
+            "description": "Type of license",
+            "nullable": true
+          },
+          "customerName": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "description": "The id of the customer in the UUID format.",
+            "format": "uuid"
+          },
+          "policyId": {
+            "type": "string",
+            "description": "Id of backup policy",
+            "format": "uuid"
+          },
+          "storageUsedBytes": {
+            "type": "integer",
+            "description": "Storage used bytes",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the asset",
+            "nullable": true
+          },
+          "os": {
+            "type": "string",
+            "description": "Operating system of the asset",
+            "nullable": true
+          },
+          "backupEnabled": {
+            "type": "boolean",
+            "description": "Is Backup functionality ON",
+            "nullable": true
+          },
+          "hasCustomerManagedKey": {
+            "type": "boolean",
+            "description": "Are backups encrypted"
+          },
+          "mac": {
+            "type": "string",
+            "description": "Mac address of the asset",
+            "nullable": true
+          },
+          "timeZoneOffsetMinutes": {
+            "type": "integer",
+            "description": "Asset time zone offset from UTC",
+            "format": "int32"
+          },
+          "createdTimestamp": {
+            "type": "string",
+            "description": "Asset creation date in uniview",
+            "format": "date-time"
+          },
+          "lastSuccessfulBackupTimestamp": {
+            "type": "string",
+            "description": "Asset last successful backup date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastOnlineTimestamp": {
+            "type": "string",
+            "description": "Asset last online date",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Agents.GetLatestAgent.AgentChecksumAlgorithm": {
+        "enum": [
+          "SHA256"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Agents.GetLatestAgent.GetLatestAgentResponse": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "The version of the latest agent.",
+            "nullable": true,
+            "example": "3.0.19"
+          },
+          "downloadLocation": {
+            "type": "string",
+            "description": "The link to download the latest agent package.",
+            "nullable": true,
+            "example": "https://download.backup.net/3.0.19/appliance-agent.tar.gz"
+          },
+          "checksum": {
+            "type": "string",
+            "description": "The hash code for agent file.",
+            "nullable": true,
+            "example": "61c7bb1f1d41f2445061f2b3889e15d32fb3062126073104389db5a07be8a4e9"
+          },
+          "checksumAlgorithm": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Agents.GetLatestAgent.AgentChecksumAlgorithm"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.GetAppliancesRequestOrderColumn": {
+        "enum": [
+          "asset_tag",
+          "customer_id",
+          "is_online",
+          "name",
+          "total_mb_free",
+          "total_mb_size",
+          "version"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.GetAppliancesResponse": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "The id of the customer in UUID format.",
+            "format": "uuid",
+            "example": "d28a556c-d8de-48f9-8a64-90fdf03ec4d0"
+          },
+          "asset_tag": {
+            "type": "string",
+            "description": "The id of the appliance.",
+            "nullable": true,
+            "example": "8008-100-70130"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the appliance.",
+            "nullable": true,
+            "example": "Appliance 1"
+          },
+          "is_online": {
+            "type": "boolean",
+            "description": "Flag that indicates whether appliance is online. True means online.",
+            "example": true
+          },
+          "total_mb_size": {
+            "type": "integer",
+            "description": "The size of storage attached to the appliance in MB.",
+            "format": "int64",
+            "example": 86203240
+          },
+          "total_mb_free": {
+            "type": "integer",
+            "description": "The amount of free space on storage attached to the appliance in MB.",
+            "format": "int64",
+            "example": 862032
+          },
+          "version": {
+            "type": "string",
+            "description": "The version of the appliance.",
+            "nullable": true,
+            "example": "10.4.7-1.202007131947.CentOS6"
+          },
+          "helix_status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.HelixStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Appliances.GetAppliances.HelixStatus": {
+        "enum": [
+          "None",
+          "Agent",
+          "AutoUpdate",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.ApiLinkTypeResponse": {
+        "enum": [
+          "WebInterface"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetApiLinkResponse": {
+        "type": "object",
+        "properties": {
+          "rel": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.ApiLinkTypeResponse"
+          },
+          "href": {
+            "type": "string",
+            "description": "Specifies the URL the link goes to.",
+            "format": "uri",
+            "nullable": true,
+            "example": "https://unitrends.backup.net/links/asset/9c07464f-482c-4296-b5f9-fb232016db90"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetAssetsRequestOrderColumn": {
+        "enum": [
+          "customer_id",
+          "asset_tag",
+          "name",
+          "type",
+          "ip",
+          "mac",
+          "key"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetAssetsResponse": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "The id of the customer in UUID format.",
+            "format": "uuid",
+            "example": "d28a556c-d8de-48f9-8a64-90fdf03ec4d0"
+          },
+          "asset_tag": {
+            "type": "string",
+            "description": "The id of the appliance.",
+            "nullable": true,
+            "example": "8008-100-70130"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the asset.",
+            "nullable": true,
+            "example": "Asset 1"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the asset.",
+            "nullable": true,
+            "example": "Image Level Instance"
+          },
+          "ip": {
+            "type": "string",
+            "description": "The ip of the asset.",
+            "nullable": true,
+            "example": "192.168.127.4"
+          },
+          "mac": {
+            "type": "string",
+            "description": "The MAC address of the asset.",
+            "nullable": true,
+            "example": "00:00:00:00:00:16"
+          },
+          "key": {
+            "type": "string",
+            "description": "The unique identifier of the asset.",
+            "format": "uuid",
+            "example": "9c07464f-482c-4296-b5f9-fb232016db90"
+          },
+          "last_backup": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetLastBackupsResponse"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetApiLinkResponse"
+            },
+            "description": "Links to other resources in API or web application user interface.\r\nThis field is not present by default.\r\nIf application should return this additional links payload, request should contain query parameter \"?include[links]=all\"",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Assets.GetAssets.GetLastBackupsResponse": {
+        "type": "object",
+        "properties": {
+          "start_time": {
+            "type": "string",
+            "description": "The backup start time.",
+            "format": "date-time",
+            "example": "2020-02-28T13:27:15.200Z"
+          },
+          "complete_time": {
+            "type": "string",
+            "description": "The backup completion time.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2020-02-28T13:28:32.200Z"
+          },
+          "size": {
+            "type": "integer",
+            "description": "The size of the backup in MB.",
+            "format": "int64",
+            "example": 8060
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the backup.",
+            "nullable": true,
+            "example": "Full"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.BackupStatus"
+          },
+          "replication_status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.ReplicationBackupStatus"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.AlertModel": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertTypeModel"
+          },
+          "appliance_name": {
+            "type": "string",
+            "description": "The name of the appliance.",
+            "nullable": true,
+            "example": "Appliance 1"
+          },
+          "asset_tag": {
+            "type": "string",
+            "description": "The id of the appliance.",
+            "nullable": true,
+            "example": "8008-100-70130"
+          },
+          "customer_id": {
+            "type": "string",
+            "description": "The id of the customer in UUID format.",
+            "format": "uuid",
+            "example": "d28a556c-d8de-48f9-8a64-90fdf03ec4d0"
+          },
+          "customer_name": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "nullable": true,
+            "example": "John Doe"
+          },
+          "message": {
+            "type": "string",
+            "description": "The alert message.",
+            "nullable": true,
+            "example": "The asset backup was not created for the last 1 hour(s)."
+          },
+          "severity": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertSeverityModel"
+          },
+          "created_time": {
+            "type": "string",
+            "description": "The alert creation time.",
+            "format": "date-time",
+            "example": "2021-06-07T13:28:32.200Z"
+          },
+          "is_dismissed": {
+            "type": "boolean",
+            "description": "Flag that indicates dismiss status of an alert. It means whether a user dismissed an alert in BackupIQ interface.",
+            "example": true
+          },
+          "is_muted": {
+            "type": "boolean",
+            "description": "Flag indicates that alert is muted on UI by settings of alerts specified on the portal.",
+            "example": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertSeverityModel": {
+        "enum": [
+          "alarm",
+          "critical",
+          "warning"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.BackupIqAlertTypeModel": {
+        "enum": [
+          "alert",
+          "job",
+          "conditional",
+          "helix"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.ConditionalAlertModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.AlertModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "interrogation_message": {
+                "type": "string",
+                "description": "The result of interrogation for alert underlying reason.",
+                "nullable": true,
+                "example": "Appliance is offline. Backups have not been running as a result. Open appliance details page and check that the appliance is powered on and connected to the network. If the problem persists, please open a support case."
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.JobAlertModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.AlertModel"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "job_name": {
+                "type": "string",
+                "description": "The name of the job",
+                "nullable": true,
+                "example": "Full Backup Job 1"
+              },
+              "job_type": {
+                "type": "string",
+                "description": "The type of the job",
+                "nullable": true,
+                "example": "Backup"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.MutedFilterModel": {
+        "enum": [
+          "false",
+          "true",
+          "all"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.BackupIqAlerts.Models.OrderColumnModel": {
+        "enum": [
+          "type",
+          "severity",
+          "customer_id",
+          "customer_name",
+          "asset_tag",
+          "appliance_name",
+          "asset_name",
+          "asset_key",
+          "job_name",
+          "job_type",
+          "is_dismissed"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.BackupStatus": {
+        "enum": [
+          "Successful",
+          "Warning",
+          "Failed",
+          "InProgress",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.ReplicationBackupStatus": {
+        "enum": [
+          "Successful",
+          "Failed",
+          "Unknown"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Backups.GetBackups.GetBackupsRequestOrderColumn": {
+        "enum": [
+          "asset_tag",
+          "customer_id",
+          "start_time",
+          "complete_time",
+          "size",
+          "type",
+          "status",
+          "replication_status",
+          "asset_key"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Backups.GetBackups.GetBackupsResponse": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "description": "The id of the customer in UUID format.",
+            "format": "uuid",
+            "example": "d28a556c-d8de-48f9-8a64-90fdf03ec4d0"
+          },
+          "asset_tag": {
+            "type": "string",
+            "description": "The id of the appliance.",
+            "nullable": true,
+            "example": "8008-100-70130"
+          },
+          "start_time": {
+            "type": "string",
+            "description": "The backup start time.",
+            "format": "date-time",
+            "example": "2020-02-28T13:27:15.200Z"
+          },
+          "complete_time": {
+            "type": "string",
+            "description": "The backup completion time.",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2020-02-28T13:28:32.200Z"
+          },
+          "size": {
+            "type": "integer",
+            "description": "The size of the backup in MB.",
+            "format": "int64",
+            "example": 8060
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of the backup.",
+            "nullable": true,
+            "example": "Full"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.BackupStatus"
+          },
+          "replication_status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Backups.BackupStatusMapping.ReplicationBackupStatus"
+          },
+          "asset_key": {
+            "type": "string",
+            "description": "The unique identifier of the asset.",
+            "format": "uuid",
+            "example": "9c07464f-482c-4296-b5f9-fb232016db90"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Customers.GetCustomers.GetCustomersRequestOrderColumn": {
+        "enum": [
+          "id",
+          "name"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Customers.GetCustomers.GetCustomersResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The id of the customer in the UUID format.",
+            "format": "uuid",
+            "example": "d28a556c-d8de-48f9-8a64-90fdf03ec4d0"
+          },
+          "name": {
+            "type": "string",
+            "description": "The name of the customer.",
+            "nullable": true,
+            "example": "John Doe"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel": {
+        "enum": [
+          "success",
+          "partial",
+          "failed",
+          "successfulNoChanges"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainBackupStatusLastSevenDaysModel": {
+        "type": "object",
+        "properties": {
+          "totalForMail": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForContact": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForCalendar": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForDrive": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForSharePoint": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForTeams": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier of mapped customer",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Tenant/Domain name",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Region",
+            "nullable": true
+          },
+          "numberOfUsers": {
+            "type": "integer",
+            "description": "Number of users",
+            "format": "int32"
+          },
+          "numberOfLicensesTotal": {
+            "type": "integer",
+            "description": "Number of licenses total",
+            "format": "int32"
+          },
+          "numberOfLicensesInUse": {
+            "type": "integer",
+            "description": "Number of licenses in use",
+            "format": "int32"
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Expiration date (timestamp UTC)",
+            "format": "date-time",
+            "nullable": true
+          },
+          "storageInformation": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainStorageInformationModel"
+          },
+          "lastBackupStatus": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastBackupTimestamp": {
+            "type": "string",
+            "description": "Last backup timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "backupStatusLastSevenDaysTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "backupStatusLastSevenDays": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainBackupStatusLastSevenDaysModel"
+          },
+          "loginWithItComplete": {
+            "type": "boolean",
+            "description": "Login with IT complete",
+            "example": true
+          },
+          "errorOnlyEmail": {
+            "type": "boolean",
+            "description": "Error only email",
+            "example": true
+          },
+          "numberOfProtectedUsers": {
+            "type": "integer",
+            "description": "Number of protected users in the org",
+            "format": "int32",
+            "example": 123
+          },
+          "numberOfUnprotectedUsers": {
+            "type": "integer",
+            "description": "Number of unprotected users in the org",
+            "format": "int32",
+            "example": 123
+          },
+          "numberOfProtectedSharePointSites": {
+            "type": "integer",
+            "description": "Number of protected SharePoint sites in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 123
+          },
+          "numberOfUnprotectedSharePointSites": {
+            "type": "integer",
+            "description": "Number of unprotected SharePoint sites in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 45
+          },
+          "numberOfProtectedTeamChannels": {
+            "type": "integer",
+            "description": "Number of protected Team channels in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 4
+          },
+          "numberOfUnprotectedTeamChannels": {
+            "type": "integer",
+            "description": "Number of unprotected Team channels in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainStorageInformationModel": {
+        "type": "object",
+        "properties": {
+          "protectedBytes": {
+            "type": "integer",
+            "description": "Protected (number in bytes)",
+            "format": "int64",
+            "example": 121323231
+          },
+          "usedBytes": {
+            "type": "integer",
+            "description": "Used (number in bytes)",
+            "format": "int64",
+            "example": 232323231
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.BackupStatusWithDateAndProblemCountModel": {
+        "type": "object",
+        "properties": {
+          "backupStatus": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "backupTimestamp": {
+            "type": "string",
+            "description": "Backup date UTC",
+            "format": "date-time"
+          },
+          "problemsCount": {
+            "type": "integer",
+            "description": "Problem count",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.GetEntraDomainsForPublicApiModel": {
+        "type": "object",
+        "properties": {
+          "msId": {
+            "type": "string",
+            "description": "Microsoft Entra ID domain id",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the domain",
+            "nullable": true
+          },
+          "internalId": {
+            "type": "string",
+            "description": "UniView Domain id",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Region of the domain",
+            "nullable": true
+          },
+          "licenseSubtype": {
+            "type": "string",
+            "description": "License type",
+            "nullable": true
+          },
+          "mappedCustomerId": {
+            "type": "string",
+            "description": "Mapped customer UniView id",
+            "format": "uuid",
+            "nullable": true
+          },
+          "mappedCustomerName": {
+            "type": "string",
+            "description": "Mapped customer UniView name",
+            "nullable": true
+          },
+          "numberOfSeats": {
+            "type": "integer",
+            "description": "Number of seats used",
+            "format": "int32",
+            "nullable": true
+          },
+          "numberOfUsedLicenses": {
+            "type": "integer",
+            "description": "Number of licenses used",
+            "format": "int32",
+            "nullable": true
+          },
+          "assignedLicenses": {
+            "type": "integer",
+            "description": "Number of licenses assigned to the domain",
+            "format": "int32",
+            "nullable": true
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Domain expiration date",
+            "format": "date-time",
+            "nullable": true
+          },
+          "backupStatusForLast7Days": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "last30Backups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.BackupStatusWithDateAndProblemCountModel"
+            },
+            "description": "List of last 30 backups",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.Entra.GetEntraDomainsForPublicApiRequestOrderColumn": {
+        "enum": [
+          "name",
+          "mapped_customer_name"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.GetDomainsRequestOrderColumn": {
+        "enum": [
+          "number_of_users",
+          "name"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusLastSevenDaysModel": {
+        "type": "object",
+        "properties": {
+          "totalForMail": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForContact": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForCalendar": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForDrive": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusModel": {
+        "type": "object",
+        "properties": {
+          "lastForMail": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastForContact": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastForCalendar": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastForDrive": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupTimestampModel": {
+        "type": "object",
+        "properties": {
+          "lastMailBackupTimestamp": {
+            "type": "string",
+            "description": "Timestamp of last backup for mail",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-07-26T09:21:40Z"
+          },
+          "lastContactBackupTimestamp": {
+            "type": "string",
+            "description": "Timestamp of last backup for contact",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-07-26T09:21:40Z"
+          },
+          "lastCalendarBackupTimestamp": {
+            "type": "string",
+            "description": "Timestamp of last backup for calendar",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-07-26T09:21:40Z"
+          },
+          "lastDriveBackupTimestamp": {
+            "type": "string",
+            "description": "Timestamp of last backup for drive",
+            "format": "date-time",
+            "nullable": true,
+            "example": "2022-07-26T09:21:40Z"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User unique identifier",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "nullable": true
+          },
+          "lastBackupStatusTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastBackupTimestampTotal": {
+            "type": "string",
+            "description": "Total last backup timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastBackupStatus": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusModel"
+          },
+          "lastBackupTimestamp": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupTimestampModel"
+          },
+          "backupStatusLastSevenDaysTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "backupStatusLastSevenDays": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusLastSevenDaysModel"
+          },
+          "storageInformation": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserStorageInformationModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserStorageInformationModel": {
+        "type": "object",
+        "properties": {
+          "protectedBytes": {
+            "type": "integer",
+            "description": "Total protected  (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 121323231
+          },
+          "usedBytes": {
+            "type": "integer",
+            "description": "Total stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 242424244
+          },
+          "protectedMailBytes": {
+            "type": "integer",
+            "description": "Mail protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 435353535
+          },
+          "usedMailBytes": {
+            "type": "integer",
+            "description": "Mail stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 23423535
+          },
+          "protectedOneDriveBytes": {
+            "type": "integer",
+            "description": "OneDrive protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 325235235
+          },
+          "usedOneDriveBytes": {
+            "type": "integer",
+            "description": "OneDrive stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 234234234
+          },
+          "protectedContactBytes": {
+            "type": "integer",
+            "description": "Contact protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 535325235
+          },
+          "usedContactBytes": {
+            "type": "integer",
+            "description": "Contact stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 2352352352
+          },
+          "protectedCalendarBytes": {
+            "type": "integer",
+            "description": "Calendar protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 235235235
+          },
+          "usedCalendarBytes": {
+            "type": "integer",
+            "description": "Calendar stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 662326326
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainBackupStatusLastSevenDaysModelV2": {
+        "type": "object",
+        "properties": {
+          "totalForMail": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForContact": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForCalendar": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForDrive": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForSites": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForSharePoint": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "totalForTeams": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainLastBackupModelV2": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "Last backup timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "sites": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.LastBackupModelV2"
+          },
+          "teams": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.LastBackupModelV2"
+          },
+          "sharePoint": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.LastBackupModelV2"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainModelV2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier",
+            "nullable": true
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Unique identifier of mapped customer",
+            "format": "uuid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Tenant/Domain name",
+            "nullable": true
+          },
+          "region": {
+            "type": "string",
+            "description": "Region",
+            "nullable": true
+          },
+          "origin": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.GetDomainOriginV2"
+          },
+          "numberOfUsers": {
+            "type": "integer",
+            "description": "Number of users",
+            "format": "int32"
+          },
+          "numberOfStandardLicensesTotal": {
+            "type": "integer",
+            "description": "Number of standard licenses total",
+            "format": "int32"
+          },
+          "numberOfProtectedStandardUsers": {
+            "type": "integer",
+            "description": "Number of standard licenses in use",
+            "format": "int32",
+            "nullable": true
+          },
+          "expirationDate": {
+            "type": "string",
+            "description": "Expiration date (timestamp UTC)",
+            "format": "date-time",
+            "nullable": true
+          },
+          "storageInformation": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.DomainStorageInformationModel"
+          },
+          "lastBackup": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainLastBackupModelV2"
+          },
+          "backupStatusLastSevenDaysTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "backupStatusLastSevenDays": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.DomainBackupStatusLastSevenDaysModelV2"
+          },
+          "loginWithItComplete": {
+            "type": "boolean",
+            "description": "Login with IT complete",
+            "example": true
+          },
+          "errorOnlyEmail": {
+            "type": "boolean",
+            "description": "Error only email",
+            "example": true
+          },
+          "numberOfProtectedUsers": {
+            "type": "integer",
+            "description": "Number of protected users in the org",
+            "format": "int32",
+            "example": 123
+          },
+          "numberOfUnprotectedUsers": {
+            "type": "integer",
+            "description": "Number of unprotected users in the org",
+            "format": "int32",
+            "example": 123
+          },
+          "numberOfProtectedSharePointSites": {
+            "type": "integer",
+            "description": "Number of protected SharePoint sites in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 123
+          },
+          "numberOfUnprotectedSharePointSites": {
+            "type": "integer",
+            "description": "Number of unprotected SharePoint sites in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 45
+          },
+          "numberOfProtectedTeamChannels": {
+            "type": "integer",
+            "description": "Number of protected Team channels in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 4
+          },
+          "numberOfUnprotectedTeamChannels": {
+            "type": "integer",
+            "description": "Number of unprotected Team channels in the org",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfArchivedLicensesTotal": {
+            "type": "integer",
+            "description": "Number of archived users",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfSharedMailboxesTotal": {
+            "type": "integer",
+            "description": "Number of shared mailboxes in total",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of protected shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfUnprotectedSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of unprotected shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedStandardSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of unprotected standard shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedArchivedSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of protected archived shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedStandardDeletedSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of protected standard deleted shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedArchivedDeletedSharedMailboxes": {
+            "type": "integer",
+            "description": "Number of protected archived deleted shared mailboxes",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "numberOfProtectedArchivedUsers": {
+            "type": "integer",
+            "description": "Number of archived protected users",
+            "format": "int32",
+            "nullable": true,
+            "example": 12
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserModelV2"
+            },
+            "nullable": true
+          },
+          "archivedUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserModelV2"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.GetDomainOriginV2": {
+        "enum": [
+          "M365",
+          "GOOGLEWORKSPACE"
+        ],
+        "type": "string"
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.GetReturnUserModelV2": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserModelV2"
+            },
+            "nullable": true
+          },
+          "archivedUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserModelV2"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.LastBackupModelV2": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserModelV2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User unique identifier",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "nullable": true
+          },
+          "lastBackupStatusTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "lastBackupTimestampTotal": {
+            "type": "string",
+            "description": "Total last backup timestamp",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastBackupStatus": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusModel"
+          },
+          "lastBackupTimestamp": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupTimestampModel"
+          },
+          "backupStatusLastSevenDaysTotal": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.BackupStatusModel"
+          },
+          "backupStatusLastSevenDays": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.UserBackupStatusLastSevenDaysModel"
+          },
+          "storageInformation": {
+            "$ref": "#/components/schemas/MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserStorageInformationModelV2"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MSP.Portal.PublicApi.Api.Controllers.Spanning.GetDomains.V2.UserStorageInformationModelV2": {
+        "type": "object",
+        "properties": {
+          "protectedBytes": {
+            "type": "integer",
+            "description": "Total protected  (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 121323231
+          },
+          "usedBytes": {
+            "type": "integer",
+            "description": "Total stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 242424244
+          },
+          "protectedMailBytes": {
+            "type": "integer",
+            "description": "Mail protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 435353535
+          },
+          "usedMailBytes": {
+            "type": "integer",
+            "description": "Mail stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 23423535
+          },
+          "protectedDriveBytes": {
+            "type": "integer",
+            "description": "Drive protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 325235235
+          },
+          "usedDriveBytes": {
+            "type": "integer",
+            "description": "Drive stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 234234234
+          },
+          "protectedContactBytes": {
+            "type": "integer",
+            "description": "Contact protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 535325235
+          },
+          "usedContactBytes": {
+            "type": "integer",
+            "description": "Contact stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 2352352352
+          },
+          "protectedCalendarBytes": {
+            "type": "integer",
+            "description": "Calendar protected (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 235235235
+          },
+          "usedCalendarBytes": {
+            "type": "integer",
+            "description": "Calendar stored (number in bytes)",
+            "format": "int64",
+            "nullable": true,
+            "example": 662326326
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. Example value: \"Bearer {token}\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}
