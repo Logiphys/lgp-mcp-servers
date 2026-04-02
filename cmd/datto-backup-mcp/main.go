@@ -26,11 +26,12 @@ func main() {
 	}
 
 	client := dattobackup.NewClient(cfg, logger)
+	tier := config.AccessTier("DATTO_BACKUP_ACCESS_TIER")
 
 	srv := server.NewMCPServer("datto-backup-mcp", version)
 
-	dattobackup.RegisterTools(srv, client, logger)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-backup-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_backup"})
+	dattobackup.RegisterTools(srv, client, logger, tier)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-backup-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_backup", AccessTier: tier})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

@@ -13,18 +13,23 @@ import (
 )
 
 // RegisterTools registers all Datto Backup MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+	// Tier 1 — Safe Read-Only
 	registerTestConnection(srv, client, logger)
-	registerListCustomers(srv, client, logger)
 	registerListAppliances(srv, client, logger)
 	registerListAssets(srv, client, logger)
 	registerListBackups(srv, client, logger)
 	registerListAlerts(srv, client, logger)
 	registerGetAgentVersion(srv, client, logger)
-	registerListEndpointAssets(srv, client, logger)
 	registerListSpanningDomains(srv, client, logger)
-	registerListSpanningDomainUsers(srv, client, logger)
 	registerListEntraDomains(srv, client, logger)
+
+	// Tier 2 — Sensitive (customer/user data)
+	if tier >= 2 {
+		registerListCustomers(srv, client, logger)
+		registerListEndpointAssets(srv, client, logger)
+		registerListSpanningDomainUsers(srv, client, logger)
+	}
 }
 
 // --- helpers ----------------------------------------------------------------
