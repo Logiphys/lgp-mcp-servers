@@ -66,48 +66,9 @@ Each server is configured via environment variables. Add them to your Claude Cod
 
 See `config/` for full configuration examples with all 9 servers.
 
-## Access Tiers (GDPR/Privacy)
+## Access Control
 
-Each server supports three access tiers controlled via environment variables. **Default is Tier 1** (safe read-only).
-
-| Tier | Name | Description |
-|------|------|-------------|
-| 1 | Safe Read-Only | No personal data, no credentials, no write operations |
-| 2 | Read + Sensitive Data | Adds passwords, contacts, user data, audit logs |
-| 3 | Full Access | Adds create, update, delete operations |
-
-### Environment Variables
-
-| Server | Env Var | Tier 2 adds | Tier 3 adds |
-|--------|---------|-------------|-------------|
-| Autotask | `AUTOTASK_ACCESS_TIER` | Contacts, resources, time entries, expenses | All create/update/delete |
-| IT Glue | `ITGLUE_ACCESS_TIER` | Passwords, contacts | Document CRUD |
-| Datto RMM | `DATTO_RMM_ACCESS_TIER` | Device audits, activity logs, users, jobs | Site/device/variable management |
-| Datto EDR | `DATTO_EDR_ACCESS_TIER` | Alert archive, quarantine files | Scan, isolate, restore |
-| Datto UC | `DATTO_UC_ACCESS_TIER` | Activity log, SaaS data | — |
-| RocketCyber | `ROCKETCYBER_ACCESS_TIER` | Account, defender, office details | — |
-| Datto Networking | `DATTO_NETWORK_ACCESS_TIER` | Client usage data | — |
-| Datto Backup | `DATTO_BACKUP_ACCESS_TIER` | Customer/user data | — |
-| MyITProcess | `MYITPROCESS_ACCESS_TIER` | Clients, users, meetings | — |
-
-### Example
-
-To enable sensitive data reading for IT Glue but keep everything else at default:
-
-```json
-{
-  "itglue-mcp": {
-    "command": "itglue-mcp",
-    "env": {
-      "ITGLUE_API_KEY": "your-key",
-      "ITGLUE_REGION": "eu",
-      "ITGLUE_ACCESS_TIER": "2"
-    }
-  }
-}
-```
-
-> **Migration from v0.7.x:** All tools were previously available by default. If you rely on contacts, passwords, write operations, or other sensitive tools, add the appropriate `*_ACCESS_TIER=2` or `*_ACCESS_TIER=3` to your configuration.
+Access control (role-based tool filtering, GDPR/privacy tiers) is handled by the [LGP MCP Gateway](https://github.com/Logiphys/lgp-mcp-gateway). The standalone servers expose all tools — the gateway enforces which tools are available per user based on Entra ID roles.
 
 ## Server Details
 
@@ -208,15 +169,15 @@ pkg/apihelper/         HTTP client, JSON:API parser, OAuth2, pagination
 pkg/mcputil/           MCP response helpers, annotations, formatters
 pkg/config/            Environment variable loading
 
-internal/autotask/     Autotask PSA logic (tickets, billing, projects)
-internal/itglue/       IT Glue logic (documentation, passwords, configs)
-internal/dattormm/     Datto RMM logic (devices, sites, alerts, jobs)
-internal/rocketcyber/  RocketCyber logic (SOC events, incidents, agents)
-internal/dattouc/      Datto Unified Continuity logic (BCDR, SaaS, DTC)
-internal/dattoedr/     Datto EDR logic (detection, response, quarantine)
-internal/dattobackup/  Datto Backup logic (appliances, assets, alerts)
-internal/dattonetwork/ Datto Networking logic (devices, clients, WAN)
-internal/myitprocess/  MyITProcess logic (reviews, findings, initiatives)
+pkg/autotask/          Autotask PSA logic (tickets, billing, projects)
+pkg/itglue/            IT Glue logic (documentation, passwords, configs)
+pkg/dattormm/          Datto RMM logic (devices, sites, alerts, jobs)
+pkg/rocketcyber/       RocketCyber logic (SOC events, incidents, agents)
+pkg/dattouc/           Datto Unified Continuity logic (BCDR, SaaS, DTC)
+pkg/dattoedr/          Datto EDR logic (detection, response, quarantine)
+pkg/dattobackup/       Datto Backup logic (appliances, assets, alerts)
+pkg/dattonetwork/      Datto Networking logic (devices, clients, WAN)
+pkg/myitprocess/       MyITProcess logic (reviews, findings, initiatives)
 
 cmd/autotask-mcp/      Binary entry points (one per server)
 cmd/itglue-mcp/

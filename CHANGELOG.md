@@ -2,32 +2,49 @@
 
 All notable changes to this project will be documented in this file.
 
-## [v0.8.0] - 2026-04-02
+## [v1.2.1] - 2026-04-09
 
-### Breaking Changes
+### Fixed
 
-- **Tiered access control** — All servers now default to Tier 1 (safe read-only). Tools accessing sensitive data (passwords, contacts, audit logs) require `*_ACCESS_TIER=2`. Write operations (create, update, delete) require `*_ACCESS_TIER=3`. See [Access Tiers](#access-tiers-gdprprivacy) in README.
+- Upgrade golangci-lint action v6 → v7 (Go 1.26 compatibility)
+- Add all 9 servers to CI build matrix (was only 4)
+- Resolve all errcheck lint violations across production and test code
+- Remove unused `addSortingRule` function
 
-### Added
-
-- `config.AccessTier()` helper for reading tier environment variables
-- `server_info` now shows `access_tier` and `tier_description`
-- Per-server `*_ACCESS_TIER` environment variables (9 servers)
+## [v1.2.0] - 2026-04-09
 
 ### Changed
 
-- `RegisterTools()` signature on all 9 servers now accepts `tier int` parameter
-- IT Glue document tools split into read/write registration functions
+- **Remove access tier logic from standalone servers** — Access control (GDPR tiers, role-based tool filtering) is now handled entirely by the [MCP Gateway](https://github.com/Logiphys/lgp-mcp-gateway). All `*_ACCESS_TIER` environment variables and `config.AccessTier()` have been removed.
+- Simplified `RegisterTools()` signatures across all 9 servers (no longer accept `tier` parameter)
+- Removed `AccessTier` from `ServerInfo`
+- Removed `autotask_` prefix from internal tool name mappings
 
-## [Unreleased]
+## [v1.1.0] - 2026-04-02
+
+### Changed
+
+- Move backend packages from `internal/` to `pkg/` for external import by the gateway
+
+## [v1.0.0] - 2026-04-02
+
+### Changed
+
+- Rename module `github.com/Logiphys/lgp-mcp` → `github.com/Logiphys/lgp-mcp-servers`
+
+## [v0.8.0] - 2026-04-02
 
 ### Added
-- Remove non-existent EDR endpoints (Scans, Jobs, ActivityTraces, ScanHosts, RunExtension)
-- Fix IT Glue configuration_interfaces to use nested API path
+
 - Comprehensive README with all 9 servers and environment variable documentation
 - CHANGELOG.md
 - Updated config examples for Claude Code and Claude Desktop with all 9 servers
 - Updated API quirks documentation covering all 9 servers
+
+### Fixed
+
+- Remove non-existent EDR endpoints (Scans, Jobs, ActivityTraces, ScanHosts, RunExtension)
+- Fix IT Glue configuration_interfaces to use nested API path
 
 ## [v0.7.2] - 2026-04-02
 
