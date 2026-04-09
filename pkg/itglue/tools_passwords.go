@@ -12,7 +12,7 @@ import (
 
 func registerPasswordTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_passwords",
+		mcp.NewTool("search_passwords",
 			mcp.WithDescription("Search IT Glue passwords with optional filters. Returns metadata only — actual password values are not included in results."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -79,7 +79,7 @@ func registerPasswordTools(srv *server.MCPServer, client *Client, logger *slog.L
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_password",
+		mcp.NewTool("get_password",
 			mcp.WithDescription("Get a single IT Glue password entry by ID. Use show_password=true to include the actual password value in the response."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("id",

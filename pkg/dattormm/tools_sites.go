@@ -10,10 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	// datto_get_site
 	srv.AddTool(
-		mcp.NewTool("datto_get_site",
+		mcp.NewTool("get_site",
 			mcp.WithDescription("Get details for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -33,7 +33,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_list_site_devices
 	srv.AddTool(
-		mcp.NewTool("datto_list_site_devices",
+		mcp.NewTool("list_site_devices",
 			mcp.WithDescription("List devices belonging to a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -68,7 +68,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_list_site_open_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_site_open_alerts",
+		mcp.NewTool("list_site_open_alerts",
 			mcp.WithDescription("List open alerts for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -110,7 +110,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_list_site_resolved_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_site_resolved_alerts",
+		mcp.NewTool("list_site_resolved_alerts",
 			mcp.WithDescription("List resolved alerts for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -150,12 +150,9 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 		},
 	)
 
-	// Tier 2
-	if tier >= 2 {
-
 	// datto_list_site_variables
 	srv.AddTool(
-		mcp.NewTool("datto_list_site_variables",
+		mcp.NewTool("list_site_variables",
 			mcp.WithDescription("List variables configured for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -182,11 +179,9 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 		},
 	)
 
-	} // end tier 2
-
 	// datto_get_site_settings
 	srv.AddTool(
-		mcp.NewTool("datto_get_site_settings",
+		mcp.NewTool("get_site_settings",
 			mcp.WithDescription("Get settings for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -206,7 +201,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_list_site_filters
 	srv.AddTool(
-		mcp.NewTool("datto_list_site_filters",
+		mcp.NewTool("list_site_filters",
 			mcp.WithDescription("List filters configured for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -235,7 +230,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_get_site_network_interfaces
 	srv.AddTool(
-		mcp.NewTool("datto_get_site_network_interfaces",
+		mcp.NewTool("get_site_network_interfaces",
 			mcp.WithDescription("Fetch shortened device records with network interface info (IPs, MACs, subnet) for a specific Datto RMM site."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteUid",
@@ -262,12 +257,9 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 		},
 	)
 
-	// Tier 3
-	if tier >= 3 {
-
 	// datto_create_site
 	srv.AddTool(
-		mcp.NewTool("datto_create_site",
+		mcp.NewTool("create_site",
 			mcp.WithDescription("Create a new site in Datto RMM."),
 			mcp.WithString("name",
 				mcp.Description("Name of the new site."),
@@ -312,7 +304,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 
 	// datto_update_site
 	srv.AddTool(
-		mcp.NewTool("datto_update_site",
+		mcp.NewTool("update_site",
 			mcp.WithDescription("Update an existing site in Datto RMM."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site to update."),
@@ -360,8 +352,6 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 			return mcputil.JSONResult(result), nil
 		},
 	)
-
-	} // end tier 3
 
 	_ = logger
 }

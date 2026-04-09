@@ -12,7 +12,7 @@ import (
 
 func registerOrganizationTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_organizations",
+		mcp.NewTool("search_organizations",
 			mcp.WithDescription("Search IT Glue organizations with optional filters. Returns a paginated list of organizations."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -73,7 +73,7 @@ func registerOrganizationTools(srv *server.MCPServer, client *Client, logger *sl
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_organization",
+		mcp.NewTool("get_organization",
 			mcp.WithDescription("Get a single IT Glue organization by ID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("id",

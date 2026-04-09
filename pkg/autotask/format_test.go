@@ -11,7 +11,7 @@ func TestFormatSearchResult_Compact(t *testing.T) {
 		{"id": 1, "ticketNumber": "T001", "title": "Bug", "extra": "hidden", "status": 1},
 		{"id": 2, "ticketNumber": "T002", "title": "Feature", "extra": "hidden", "status": 2},
 	}
-	result := FormatSearchResult("autotask_search_tickets", items, 1, 25)
+	result := FormatSearchResult("search_tickets", items, 1, 25)
 	if strings.Contains(result, "hidden") {
 		t.Error("compact format should not include non-essential fields")
 	}
@@ -27,7 +27,7 @@ func TestFormatSearchResult_NonCompact(t *testing.T) {
 	items := []map[string]any{
 		{"id": 1, "name": "test", "extra": "included"},
 	}
-	result := FormatSearchResult("autotask_search_unknown", items, 1, 25)
+	result := FormatSearchResult("search_unknown", items, 1, 25)
 	if !strings.Contains(result, "included") {
 		t.Error("non-compact format should include all fields")
 	}
@@ -38,7 +38,7 @@ func TestFormatSearchResult_HasMore(t *testing.T) {
 	for i := range items {
 		items[i] = map[string]any{"id": i}
 	}
-	result := FormatSearchResult("autotask_search_tickets", items, 1, 25)
+	result := FormatSearchResult("search_tickets", items, 1, 25)
 	if !strings.Contains(result, "hint") {
 		t.Error("should include pagination hint when hasMore is true")
 	}

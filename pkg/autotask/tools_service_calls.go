@@ -10,12 +10,12 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// === SERVICE CALLS ===
 
 	// autotask_search_service_calls
 	addTool(srv,
-		mcp.NewTool("autotask_search_service_calls",
+		mcp.NewTool("search_service_calls",
 			mcp.WithDescription("Search for service calls in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
 			mcp.WithNumber("status", mcp.Description("Filter by status")),
@@ -53,13 +53,13 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 				return mcputil.TextResult(FormatNotFound("service calls", map[string]any{})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_service_calls", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_service_calls", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
 	// autotask_get_service_call
 	addTool(srv,
-		mcp.NewTool("autotask_get_service_call",
+		mcp.NewTool("get_service_call",
 			mcp.WithDescription("Get a specific service call by ID"),
 			mcp.WithNumber("id", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -81,11 +81,9 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_service_call
 	addTool(srv,
-		mcp.NewTool("autotask_create_service_call",
+		mcp.NewTool("create_service_call",
 			mcp.WithDescription("Create a new service call in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithNumber("status", mcp.Description("Status"), mcp.Required()),
@@ -120,7 +118,7 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_update_service_call
 	addTool(srv,
-		mcp.NewTool("autotask_update_service_call",
+		mcp.NewTool("update_service_call",
 			mcp.WithDescription("Update an existing service call"),
 			mcp.WithNumber("id", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithNumber("companyID", mcp.Description("Company ID")),
@@ -164,7 +162,7 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_delete_service_call
 	addTool(srv,
-		mcp.NewTool("autotask_delete_service_call",
+		mcp.NewTool("delete_service_call",
 			mcp.WithDescription("Delete a service call by ID"),
 			mcp.WithNumber("id", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithDestructiveHintAnnotation(true),
@@ -181,13 +179,11 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
-	} // end tier >= 3
-
 	// === SERVICE CALL TICKETS ===
 
 	// autotask_search_service_call_tickets
 	addTool(srv,
-		mcp.NewTool("autotask_search_service_call_tickets",
+		mcp.NewTool("search_service_call_tickets",
 			mcp.WithDescription("Search for tickets associated with a service call"),
 			mcp.WithNumber("serviceCallID", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -210,15 +206,13 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("service call tickets", map[string]any{"serviceCallID": serviceCallID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_service_call_tickets", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_service_call_tickets", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_service_call_ticket
 	addTool(srv,
-		mcp.NewTool("autotask_create_service_call_ticket",
+		mcp.NewTool("create_service_call_ticket",
 			mcp.WithDescription("Associate a ticket with a service call"),
 			mcp.WithNumber("serviceCallID", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithNumber("ticketID", mcp.Description("Ticket ID to associate"), mcp.Required()),
@@ -243,7 +237,7 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_delete_service_call_ticket
 	addTool(srv,
-		mcp.NewTool("autotask_delete_service_call_ticket",
+		mcp.NewTool("delete_service_call_ticket",
 			mcp.WithDescription("Remove a ticket association from a service call"),
 			mcp.WithNumber("serviceCallID", mcp.Description("Service call ID"), mcp.Required()),
 			mcp.WithNumber("ticketId", mcp.Description("Service call ticket association ID to delete"), mcp.Required()),
@@ -262,13 +256,11 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
-	} // end tier >= 3
-
 	// === SERVICE CALL TICKET RESOURCES ===
 
 	// autotask_search_service_call_ticket_resources
 	addTool(srv,
-		mcp.NewTool("autotask_search_service_call_ticket_resources",
+		mcp.NewTool("search_service_call_ticket_resources",
 			mcp.WithDescription("Search for resources associated with a service call ticket"),
 			mcp.WithNumber("serviceCallTicketID", mcp.Description("Service call ticket association ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -291,15 +283,13 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("service call ticket resources", map[string]any{"serviceCallTicketID": scTicketID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_service_call_ticket_resources", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_service_call_ticket_resources", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_service_call_ticket_resource
 	addTool(srv,
-		mcp.NewTool("autotask_create_service_call_ticket_resource",
+		mcp.NewTool("create_service_call_ticket_resource",
 			mcp.WithDescription("Associate a resource with a service call ticket"),
 			mcp.WithNumber("serviceCallTicketID", mcp.Description("Service call ticket association ID"), mcp.Required()),
 			mcp.WithNumber("resourceID", mcp.Description("Resource ID to associate"), mcp.Required()),
@@ -324,7 +314,7 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_delete_service_call_ticket_resource
 	addTool(srv,
-		mcp.NewTool("autotask_delete_service_call_ticket_resource",
+		mcp.NewTool("delete_service_call_ticket_resource",
 			mcp.WithDescription("Remove a resource association from a service call ticket"),
 			mcp.WithNumber("serviceCallTicketID", mcp.Description("Service call ticket association ID"), mcp.Required()),
 			mcp.WithNumber("resourceId", mcp.Description("Resource association ID to delete"), mcp.Required()),
@@ -342,8 +332,6 @@ func registerServiceCallTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			return mcputil.TextResult(FormatDeleteResult("ServiceCallTicketResource", resourceID)), nil
 		},
 	)
-
-	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

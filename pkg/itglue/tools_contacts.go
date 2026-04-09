@@ -12,7 +12,7 @@ import (
 
 func registerContactTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_contacts",
+		mcp.NewTool("search_contacts",
 			mcp.WithDescription("Search IT Glue contacts with optional filters. Returns a paginated list of contacts."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -85,7 +85,7 @@ func registerContactTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_contact",
+		mcp.NewTool("get_contact",
 			mcp.WithDescription("Get a single IT Glue contact by ID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("id",

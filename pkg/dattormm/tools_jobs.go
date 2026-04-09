@@ -10,12 +10,9 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
-	if tier < 2 {
-		return
-	}
+func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("datto_get_job",
+		mcp.NewTool("get_job",
 			mcp.WithDescription("Retrieve a single Datto RMM job by its UID."),
 			mcp.WithString("jobUid",
 				mcp.Description("The UID of the job to retrieve."),
@@ -37,7 +34,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_job_components",
+		mcp.NewTool("get_job_components",
 			mcp.WithDescription("List the components of a Datto RMM job, with pagination."),
 			mcp.WithString("jobUid",
 				mcp.Description("The UID of the job."),
@@ -60,7 +57,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_job_results",
+		mcp.NewTool("get_job_results",
 			mcp.WithDescription("Retrieve the results of a Datto RMM job for a specific device."),
 			mcp.WithString("jobUid",
 				mcp.Description("The UID of the job."),
@@ -90,7 +87,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_job_stdout",
+		mcp.NewTool("get_job_stdout",
 			mcp.WithDescription("Retrieve the standard output of a Datto RMM job for a specific device."),
 			mcp.WithString("jobUid",
 				mcp.Description("The UID of the job."),
@@ -120,7 +117,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_job_stderr",
+		mcp.NewTool("get_job_stderr",
 			mcp.WithDescription("Retrieve the standard error output of a Datto RMM job for a specific device."),
 			mcp.WithString("jobUid",
 				mcp.Description("The UID of the job."),

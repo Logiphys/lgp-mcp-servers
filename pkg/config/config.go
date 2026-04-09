@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -34,20 +33,4 @@ func LogLevel() slog.Level {
 	default:
 		return slog.LevelInfo
 	}
-}
-
-// AccessTier reads an access-tier env var, returning 1–3 (default 1).
-func AccessTier(envKey string) int {
-	v := os.Getenv(envKey)
-	if v == "" {
-		return 1
-	}
-	n, err := strconv.Atoi(v)
-	if err != nil || n < 1 {
-		return 1
-	}
-	if n > 3 {
-		return 3
-	}
-	return n
 }

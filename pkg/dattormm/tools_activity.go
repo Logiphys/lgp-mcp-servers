@@ -10,12 +10,9 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerActivityTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
-	if tier < 2 {
-		return
-	}
+func registerActivityTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("datto_get_activity_logs",
+		mcp.NewTool("get_activity_logs",
 			mcp.WithDescription("Retrieve activity logs from the Datto RMM account."),
 			mcp.WithNumber("size",
 				mcp.Description("Number of log entries to return."),

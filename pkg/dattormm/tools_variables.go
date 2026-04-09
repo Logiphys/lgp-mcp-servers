@@ -10,14 +10,11 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
-	if tier < 3 {
-		return
-	}
+func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	// Account variables
 
 	srv.AddTool(
-		mcp.NewTool("datto_create_account_variable",
+		mcp.NewTool("create_account_variable",
 			mcp.WithDescription("Create a new account-level variable in Datto RMM."),
 			mcp.WithString("name",
 				mcp.Description("The name of the variable."),
@@ -55,7 +52,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_update_account_variable",
+		mcp.NewTool("update_account_variable",
 			mcp.WithDescription("Update an existing account-level variable in Datto RMM."),
 			mcp.WithString("variableId",
 				mcp.Description("The ID of the variable to update."),
@@ -96,7 +93,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_delete_account_variable",
+		mcp.NewTool("delete_account_variable",
 			mcp.WithDescription("Delete an account-level variable in Datto RMM."),
 			mcp.WithString("variableId",
 				mcp.Description("The ID of the variable to delete."),
@@ -119,7 +116,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	// Site variables
 
 	srv.AddTool(
-		mcp.NewTool("datto_create_site_variable",
+		mcp.NewTool("create_site_variable",
 			mcp.WithDescription("Create a new site-level variable in Datto RMM."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site."),
@@ -165,7 +162,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_update_site_variable",
+		mcp.NewTool("update_site_variable",
 			mcp.WithDescription("Update an existing site-level variable in Datto RMM."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site."),
@@ -214,7 +211,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_delete_site_variable",
+		mcp.NewTool("delete_site_variable",
 			mcp.WithDescription("Delete a site-level variable in Datto RMM."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site."),
@@ -245,7 +242,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	// Site proxy
 
 	srv.AddTool(
-		mcp.NewTool("datto_update_site_proxy",
+		mcp.NewTool("update_site_proxy",
 			mcp.WithDescription("Set or update the proxy configuration for a Datto RMM site."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site."),
@@ -307,7 +304,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tie
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_delete_site_proxy",
+		mcp.NewTool("delete_site_proxy",
 			mcp.WithDescription("Remove the proxy configuration for a Datto RMM site."),
 			mcp.WithString("siteUid",
 				mcp.Description("The UID of the site."),

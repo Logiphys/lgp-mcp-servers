@@ -10,12 +10,12 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// === QUOTES ===
 
 	// autotask_get_quote
 	addTool(srv,
-		mcp.NewTool("autotask_get_quote",
+		mcp.NewTool("get_quote",
 			mcp.WithDescription("Get a specific quote by ID"),
 			mcp.WithNumber("quoteId", mcp.Description("Quote ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -38,7 +38,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 
 	// autotask_search_quotes
 	addTool(srv,
-		mcp.NewTool("autotask_search_quotes",
+		mcp.NewTool("search_quotes",
 			mcp.WithDescription("Search for quotes in Autotask"),
 			mcp.WithNumber("companyId", mcp.Description("Filter by company ID")),
 			mcp.WithNumber("contactId", mcp.Description("Filter by contact ID")),
@@ -75,15 +75,13 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("quotes", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_quotes", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_quotes", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_quote
 	addTool(srv,
-		mcp.NewTool("autotask_create_quote",
+		mcp.NewTool("create_quote",
 			mcp.WithDescription("Create a new quote in Autotask"),
 			mcp.WithNumber("companyId", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("name", mcp.Description("Quote name")),
@@ -124,13 +122,11 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
-	} // end tier >= 3
-
 	// === QUOTE ITEMS ===
 
 	// autotask_get_quote_item
 	addTool(srv,
-		mcp.NewTool("autotask_get_quote_item",
+		mcp.NewTool("get_quote_item",
 			mcp.WithDescription("Get a specific quote item by ID"),
 			mcp.WithNumber("quoteItemId", mcp.Description("Quote item ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -153,7 +149,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 
 	// autotask_search_quote_items
 	addTool(srv,
-		mcp.NewTool("autotask_search_quote_items",
+		mcp.NewTool("search_quote_items",
 			mcp.WithDescription("Search for quote items"),
 			mcp.WithNumber("quoteId", mcp.Description("Filter by quote ID")),
 			mcp.WithString("searchTerm", mcp.Description("Search by item name")),
@@ -182,15 +178,13 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("quote items", map[string]any{"quoteId": req.GetInt("quoteId", 0)})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_quote_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 50))), nil
+			return mcputil.TextResult(FormatSearchResult("search_quote_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 50))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_quote_item
 	addTool(srv,
-		mcp.NewTool("autotask_create_quote_item",
+		mcp.NewTool("create_quote_item",
 			mcp.WithDescription("Create a new quote item"),
 			mcp.WithNumber("quoteId", mcp.Description("Quote ID"), mcp.Required()),
 			mcp.WithNumber("quantity", mcp.Description("Quantity"), mcp.Required()),
@@ -267,7 +261,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 
 	// autotask_update_quote_item
 	addTool(srv,
-		mcp.NewTool("autotask_update_quote_item",
+		mcp.NewTool("update_quote_item",
 			mcp.WithDescription("Update a quote item"),
 			mcp.WithNumber("quoteItemId", mcp.Description("Quote item ID"), mcp.Required()),
 			mcp.WithNumber("quantity", mcp.Description("Quantity")),
@@ -315,7 +309,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 
 	// autotask_delete_quote_item
 	addTool(srv,
-		mcp.NewTool("autotask_delete_quote_item",
+		mcp.NewTool("delete_quote_item",
 			mcp.WithDescription("Delete a quote item"),
 			mcp.WithNumber("quoteId", mcp.Description("Parent quote ID"), mcp.Required()),
 			mcp.WithNumber("quoteItemId", mcp.Description("Quote item ID to delete"), mcp.Required()),
@@ -334,13 +328,11 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
-	} // end tier >= 3
-
 	// === OPPORTUNITIES ===
 
 	// autotask_get_opportunity
 	addTool(srv,
-		mcp.NewTool("autotask_get_opportunity",
+		mcp.NewTool("get_opportunity",
 			mcp.WithDescription("Get a specific opportunity by ID"),
 			mcp.WithNumber("opportunityId", mcp.Description("Opportunity ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -364,7 +356,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 
 	// autotask_search_opportunities
 	addTool(srv,
-		mcp.NewTool("autotask_search_opportunities",
+		mcp.NewTool("search_opportunities",
 			mcp.WithDescription("Search for opportunities in Autotask"),
 			mcp.WithNumber("companyId", mcp.Description("Filter by company ID")),
 			mcp.WithString("searchTerm", mcp.Description("Search by opportunity title")),
@@ -398,15 +390,13 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 				return mcputil.TextResult(FormatNotFound("opportunities", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_opportunities", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_opportunities", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_opportunity
 	addTool(srv,
-		mcp.NewTool("autotask_create_opportunity",
+		mcp.NewTool("create_opportunity",
 			mcp.WithDescription("Create a new opportunity in Autotask"),
 			mcp.WithString("title", mcp.Description("Opportunity title"), mcp.Required()),
 			mcp.WithNumber("companyId", mcp.Description("Company ID"), mcp.Required()),
@@ -471,13 +461,11 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 		},
 	)
 
-	} // end tier >= 3
-
 	// === INVOICES & CONTRACTS ===
 
 	// autotask_search_invoices
 	addTool(srv,
-		mcp.NewTool("autotask_search_invoices",
+		mcp.NewTool("search_invoices",
 			mcp.WithDescription("Search for invoices in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
 			mcp.WithString("invoiceNumber", mcp.Description("Filter by exact invoice number")),
@@ -507,13 +495,13 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 				return mcputil.TextResult(FormatNotFound("invoices", map[string]any{})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_invoices", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_invoices", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
 	// autotask_search_contracts
 	addTool(srv,
-		mcp.NewTool("autotask_search_contracts",
+		mcp.NewTool("search_contracts",
 			mcp.WithDescription("Search for contracts in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by contract name")),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
@@ -547,7 +535,7 @@ func registerFinancialTools(srv *server.MCPServer, client *Client, _ *slog.Logge
 				return mcputil.TextResult(FormatNotFound("contracts", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_contracts", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_contracts", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 

@@ -11,7 +11,7 @@ import (
 
 func registerExpirationTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_list_expirations",
+		mcp.NewTool("list_expirations",
 			mcp.WithDescription("List expiring items in IT Glue with optional filters. Returns a paginated list of expirations."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),

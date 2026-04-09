@@ -26,12 +26,11 @@ func main() {
 	}
 
 	client := dattonetwork.NewClient(cfg, logger)
-	tier := config.AccessTier("DATTO_NETWORK_ACCESS_TIER")
 
 	srv := server.NewMCPServer("datto-network-mcp", version)
 
-	dattonetwork.RegisterTools(srv, client, logger, tier)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-network-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_network", AccessTier: tier})
+	dattonetwork.RegisterTools(srv, client, logger)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-network-mcp", Version: version, BuildDate: buildDate})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

@@ -12,7 +12,7 @@ import (
 
 func registerConfigurationInterfaceTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_configuration_interfaces",
+		mcp.NewTool("search_configuration_interfaces",
 			mcp.WithDescription("Search IT Glue configuration interfaces (network adapters, IPs, MACs) for a specific configuration. Requires configuration_id."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),

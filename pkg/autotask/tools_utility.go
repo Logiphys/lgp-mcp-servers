@@ -15,7 +15,7 @@ import (
 func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *PicklistCache, _ *slog.Logger) {
 	// autotask_test_connection
 	addTool(srv,
-		mcp.NewTool("autotask_test_connection",
+		mcp.NewTool("test_connection",
 			mcp.WithDescription("Test the connection to Autotask API"),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -29,7 +29,7 @@ func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *Pickl
 
 	// autotask_list_queues
 	addTool(srv,
-		mcp.NewTool("autotask_list_queues",
+		mcp.NewTool("list_queues",
 			mcp.WithDescription("List all available ticket queues"),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -44,7 +44,7 @@ func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *Pickl
 
 	// autotask_list_ticket_statuses
 	addTool(srv,
-		mcp.NewTool("autotask_list_ticket_statuses",
+		mcp.NewTool("list_ticket_statuses",
 			mcp.WithDescription("List all available ticket statuses"),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -59,7 +59,7 @@ func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *Pickl
 
 	// autotask_list_ticket_priorities
 	addTool(srv,
-		mcp.NewTool("autotask_list_ticket_priorities",
+		mcp.NewTool("list_ticket_priorities",
 			mcp.WithDescription("List all available ticket priorities"),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -74,7 +74,7 @@ func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *Pickl
 
 	// autotask_get_field_info
 	addTool(srv,
-		mcp.NewTool("autotask_get_field_info",
+		mcp.NewTool("get_field_info",
 			mcp.WithDescription("Get field definitions for an Autotask entity type"),
 			mcp.WithString("entityType", mcp.Description("Entity type (e.g. Tickets, Companies, Contacts)"), mcp.Required()),
 			mcp.WithString("fieldName", mcp.Description("Optional: filter to a specific field name")),

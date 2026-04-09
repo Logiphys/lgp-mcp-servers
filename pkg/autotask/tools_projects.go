@@ -10,12 +10,12 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// === PROJECTS ===
 
 	// autotask_search_projects
 	addTool(srv,
-		mcp.NewTool("autotask_search_projects",
+		mcp.NewTool("search_projects",
 			mcp.WithDescription("Search for projects in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by project name")),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
@@ -53,15 +53,13 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 				return mcputil.TextResult(FormatNotFound("projects", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_projects", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_projects", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_project
 	addTool(srv,
-		mcp.NewTool("autotask_create_project",
+		mcp.NewTool("create_project",
 			mcp.WithDescription("Create a new project in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("projectName", mcp.Description("Project name"), mcp.Required()),
@@ -104,13 +102,11 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 		},
 	)
 
-	} // end tier >= 3
-
 	// === TASKS ===
 
 	// autotask_search_tasks
 	addTool(srv,
-		mcp.NewTool("autotask_search_tasks",
+		mcp.NewTool("search_tasks",
 			mcp.WithDescription("Search for tasks in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by task title")),
 			mcp.WithNumber("projectID", mcp.Description("Filter by project ID")),
@@ -148,15 +144,13 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 				return mcputil.TextResult(FormatNotFound("tasks", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_tasks", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_tasks", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_task
 	addTool(srv,
-		mcp.NewTool("autotask_create_task",
+		mcp.NewTool("create_task",
 			mcp.WithDescription("Create a new task in Autotask"),
 			mcp.WithNumber("projectID", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithString("title", mcp.Description("Task title"), mcp.Required()),
@@ -203,13 +197,11 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 		},
 	)
 
-	} // end tier >= 3
-
 	// === PHASES ===
 
 	// autotask_list_phases
 	addTool(srv,
-		mcp.NewTool("autotask_list_phases",
+		mcp.NewTool("list_phases",
 			mcp.WithDescription("List phases for a specific project"),
 			mcp.WithNumber("projectID", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -231,15 +223,13 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("phases", map[string]any{"projectID": projectID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_list_phases", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("list_phases", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_phase
 	addTool(srv,
-		mcp.NewTool("autotask_create_phase",
+		mcp.NewTool("create_phase",
 			mcp.WithDescription("Create a new phase for a project"),
 			mcp.WithNumber("projectID", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithString("title", mcp.Description("Phase title"), mcp.Required()),
@@ -278,13 +268,11 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 		},
 	)
 
-	} // end tier >= 3
-
 	// === PROJECT NOTES ===
 
 	// autotask_get_project_note
 	addTool(srv,
-		mcp.NewTool("autotask_get_project_note",
+		mcp.NewTool("get_project_note",
 			mcp.WithDescription("Get a specific project note by project ID and note ID"),
 			mcp.WithNumber("projectId", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithNumber("noteId", mcp.Description("Note ID"), mcp.Required()),
@@ -313,7 +301,7 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 
 	// autotask_search_project_notes
 	addTool(srv,
-		mcp.NewTool("autotask_search_project_notes",
+		mcp.NewTool("search_project_notes",
 			mcp.WithDescription("Search notes for a specific project"),
 			mcp.WithNumber("projectId", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -335,15 +323,13 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("project notes", map[string]any{"projectId": projectID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_project_notes", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_project_notes", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_project_note
 	addTool(srv,
-		mcp.NewTool("autotask_create_project_note",
+		mcp.NewTool("create_project_note",
 			mcp.WithDescription("Create a new note for a project"),
 			mcp.WithNumber("projectId", mcp.Description("Project ID"), mcp.Required()),
 			mcp.WithString("description", mcp.Description("Note description"), mcp.Required()),
@@ -385,8 +371,6 @@ func registerProjectTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			return mcputil.TextResult(FormatCreateResult("ProjectNote", id)), nil
 		},
 	)
-
-	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

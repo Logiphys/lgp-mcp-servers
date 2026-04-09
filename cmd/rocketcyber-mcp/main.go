@@ -26,12 +26,11 @@ func main() {
 	}
 
 	client := rocketcyber.NewClient(cfg, logger)
-	tier := config.AccessTier("ROCKETCYBER_ACCESS_TIER")
 
 	srv := server.NewMCPServer("rocketcyber-mcp", version)
 
-	rocketcyber.RegisterTools(srv, client, logger, tier)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "rocketcyber-mcp", Version: version, BuildDate: buildDate, Prefix: "rocketcyber", AccessTier: tier})
+	rocketcyber.RegisterTools(srv, client, logger)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "rocketcyber-mcp", Version: version, BuildDate: buildDate})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

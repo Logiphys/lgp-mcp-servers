@@ -13,9 +13,7 @@ import (
 )
 
 // RegisterTools registers all RocketCyber MCP tools on the given server.
-// The tier parameter controls access levels: 1 = safe read-only, 2+ = sensitive.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerListAgents(srv, client, logger)
 	registerListEvents(srv, client, logger)
@@ -25,13 +23,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerListFirewalls(srv, client, logger)
 	registerListSuppressionRules(srv, client, logger)
 	registerGetSuppressionRule(srv, client, logger)
-
-	// Tier 2 — Sensitive
-	if tier >= 2 {
-		registerGetAccount(srv, client, logger)
-		registerGetDefender(srv, client, logger)
-		registerGetOffice(srv, client, logger)
-	}
+	registerGetAccount(srv, client, logger)
+	registerGetDefender(srv, client, logger)
+	registerGetOffice(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -69,7 +63,7 @@ func buildListResult(items []any, pageInfo *PageInfo) *mcp.CallToolResult {
 // --- tool registrations -----------------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the RocketCyber API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -83,7 +77,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerGetAccount(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_get_account",
+	tool := mcp.NewTool("get_account",
 		mcp.WithDescription("Get RocketCyber account details. If accountId is provided, returns that specific account; otherwise returns the current account."),
 		mcp.WithNumber("accountId", mcp.Description("Optional account ID to retrieve a specific account")),
 		mcp.WithString("details", mcp.Description("Set to 'true' to include sub-account details")),
@@ -109,7 +103,7 @@ func registerGetAccount(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_agents",
+	tool := mcp.NewTool("list_agents",
 		mcp.WithDescription("List RocketCyber agents with optional filters. Supports pagination and date range filtering."),
 		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
@@ -152,7 +146,7 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_incidents",
+	tool := mcp.NewTool("list_incidents",
 		mcp.WithDescription("List RocketCyber incidents with optional filters. Supports pagination and date range filtering."),
 		mcp.WithString("status", mcp.Description("Filter by status: open, resolved, draft, or suppressed")),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
@@ -191,9 +185,9 @@ func registerListIncidents(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_events",
-		mcp.WithDescription("List RocketCyber security events with optional filters. Supports pagination and date range filtering. The appId is required — use rocketcyber_list_apps to find valid app IDs."),
-		mcp.WithNumber("appId", mcp.Description("Required: App ID to retrieve events for (use rocketcyber_list_apps to find IDs)"), mcp.Required()),
+	tool := mcp.NewTool("list_events",
+		mcp.WithDescription("List RocketCyber security events with optional filters. Supports pagination and date range filtering. The appId is required — use list_apps to find valid app IDs."),
+		mcp.WithNumber("appId", mcp.Description("Required: App ID to retrieve events for (use list_apps to find IDs)"), mcp.Required()),
 		mcp.WithString("eventType", mcp.Description("Filter by event type")),
 		mcp.WithString("verdict", mcp.Description("Filter by verdict: informational|suspicious|malicious")),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
@@ -234,7 +228,7 @@ func registerListEvents(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerGetEventSummary(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_get_event_summary",
+	tool := mcp.NewTool("get_event_summary",
 		mcp.WithDescription("Get a summary of RocketCyber security events, optionally filtered by account and date range."),
 		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
 		mcp.WithString("startDate", mcp.Description("Start date filter (ISO 8601 format)")),
@@ -258,7 +252,7 @@ func registerGetEventSummary(srv *server.MCPServer, client *Client, logger *slog
 }
 
 func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_firewalls",
+	tool := mcp.NewTool("list_firewalls",
 		mcp.WithDescription("List RocketCyber-monitored firewalls with optional filters. Supports pagination."),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
 		mcp.WithNumber("accountId", mcp.Description("Filter by account ID")),
@@ -294,7 +288,7 @@ func registerListFirewalls(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerListApps(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_apps",
+	tool := mcp.NewTool("list_apps",
 		mcp.WithDescription("List RocketCyber security apps with optional filters."),
 		mcp.WithString("status", mcp.Description("Filter by app status")),
 		mcp.WithString("name", mcp.Description("Filter by app name")),
@@ -319,7 +313,7 @@ func registerListApps(srv *server.MCPServer, client *Client, logger *slog.Logger
 }
 
 func registerGetDefender(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_get_defender",
+	tool := mcp.NewTool("get_defender",
 		mcp.WithDescription("Get Windows Defender status and details from RocketCyber. Optionally filter by account ID."),
 		mcp.WithNumber("accountId", mcp.Description("Optional account ID to filter results")),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -340,7 +334,7 @@ func registerGetDefender(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerGetOffice(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_get_office",
+	tool := mcp.NewTool("get_office",
 		mcp.WithDescription("Get Microsoft 365 / Office 365 monitoring data from RocketCyber. Optionally filter by account ID."),
 		mcp.WithNumber("accountId", mcp.Description("Optional account ID to filter results")),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -361,7 +355,7 @@ func registerGetOffice(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerListSuppressionRules(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_list_suppression_rules",
+	tool := mcp.NewTool("list_suppression_rules",
 		mcp.WithDescription("List RocketCyber incident suppression rules."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -376,7 +370,7 @@ func registerListSuppressionRules(srv *server.MCPServer, client *Client, logger 
 }
 
 func registerGetSuppressionRule(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("rocketcyber_get_suppression_rule",
+	tool := mcp.NewTool("get_suppression_rule",
 		mcp.WithDescription("Get details of a specific RocketCyber suppression rule by ID."),
 		mcp.WithNumber("ruleId", mcp.Description("The suppression rule ID"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),

@@ -9,12 +9,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
-	// Tier 2 — Sensitive (personal data)
-	if tier >= 2 {
+func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// autotask_search_contacts
 	addTool(srv,
-		mcp.NewTool("autotask_search_contacts",
+		mcp.NewTool("search_contacts",
 			mcp.WithDescription("Search for contacts in Autotask (25 results per page default)"),
 			mcp.WithString("searchTerm", mcp.Description("Search term for first name, last name, or email")),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
@@ -55,17 +53,13 @@ func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 				return mcputil.TextResult(FormatNotFound("contacts", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_contacts", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_contacts", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	} // end tier >= 2
-
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_contact
 	addTool(srv,
-		mcp.NewTool("autotask_create_contact",
+		mcp.NewTool("create_contact",
 			mcp.WithDescription("Create a new contact in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("firstName", mcp.Description("First name"), mcp.Required()),
@@ -97,8 +91,6 @@ func registerContactTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			return mcputil.TextResult(FormatCreateResult("Contact", id)), nil
 		},
 	)
-
-	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

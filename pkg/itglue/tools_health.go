@@ -11,7 +11,7 @@ import (
 
 func registerHealthTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_health_check",
+		mcp.NewTool("health_check",
 			mcp.WithDescription("Test the connection to the IT Glue API. Returns a success message or an error if the connection fails."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),

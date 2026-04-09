@@ -10,14 +10,12 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// === TIME ENTRIES ===
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_time_entry
 	addTool(srv,
-		mcp.NewTool("autotask_create_time_entry",
+		mcp.NewTool("create_time_entry",
 			mcp.WithDescription("Create a new time entry in Autotask"),
 			mcp.WithNumber("ticketID", mcp.Description("Ticket ID to log time against"), mcp.Required()),
 			mcp.WithNumber("resourceID", mcp.Description("Resource (technician) ID"), mcp.Required()),
@@ -64,13 +62,9 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 		},
 	)
 
-	} // end tier >= 3
-
-	// Tier 2 — Sensitive
-	if tier >= 2 {
 	// autotask_search_time_entries
 	addTool(srv,
-		mcp.NewTool("autotask_search_time_entries",
+		mcp.NewTool("search_time_entries",
 			mcp.WithDescription("Search for time entries in Autotask"),
 			mcp.WithNumber("ticketID", mcp.Description("Filter by ticket ID")),
 			mcp.WithNumber("resourceID", mcp.Description("Filter by resource ID")),
@@ -108,17 +102,15 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 				return mcputil.TextResult(FormatNotFound("time entries", map[string]any{})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_time_entries", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_time_entries", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
-
-	} // end tier >= 2
 
 	// === BILLING ITEMS ===
 
 	// autotask_search_billing_items
 	addTool(srv,
-		mcp.NewTool("autotask_search_billing_items",
+		mcp.NewTool("search_billing_items",
 			mcp.WithDescription("Search for billing items in Autotask"),
 			mcp.WithNumber("ticketID", mcp.Description("Filter by ticket ID")),
 			mcp.WithNumber("invoiceID", mcp.Description("Filter by invoice ID")),
@@ -160,13 +152,13 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 				return mcputil.TextResult(FormatNotFound("billing items", map[string]any{})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_billing_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_billing_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
 	// autotask_get_billing_item
 	addTool(srv,
-		mcp.NewTool("autotask_get_billing_item",
+		mcp.NewTool("get_billing_item",
 			mcp.WithDescription("Get a specific billing item by ID"),
 			mcp.WithNumber("id", mcp.Description("Billing item ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -190,7 +182,7 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_search_billing_item_approval_levels
 	addTool(srv,
-		mcp.NewTool("autotask_search_billing_item_approval_levels",
+		mcp.NewTool("search_billing_item_approval_levels",
 			mcp.WithDescription("Search for billing item approval levels in Autotask"),
 			mcp.WithNumber("billingItemID", mcp.Description("Filter by billing item ID")),
 			mcp.WithNumber("timeEntryID", mcp.Description("Filter by time entry ID")),
@@ -231,17 +223,15 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("billing item approval levels", map[string]any{})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_billing_item_approval_levels", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_billing_item_approval_levels", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
 	// === EXPENSE REPORTS ===
 
-	// Tier 2 — Sensitive
-	if tier >= 2 {
 	// autotask_get_expense_report
 	addTool(srv,
-		mcp.NewTool("autotask_get_expense_report",
+		mcp.NewTool("get_expense_report",
 			mcp.WithDescription("Get a specific expense report by ID"),
 			mcp.WithNumber("id", mcp.Description("Expense report ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -265,7 +255,7 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_search_expense_reports
 	addTool(srv,
-		mcp.NewTool("autotask_search_expense_reports",
+		mcp.NewTool("search_expense_reports",
 			mcp.WithDescription("Search for expense reports in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by expense report name")),
 			mcp.WithNumber("submitterID", mcp.Description("Filter by submitter resource ID")),
@@ -299,17 +289,13 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 				return mcputil.TextResult(FormatNotFound("expense reports", map[string]any{})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_expense_reports", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_expense_reports", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	} // end tier >= 2
-
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_expense_report
 	addTool(srv,
-		mcp.NewTool("autotask_create_expense_report",
+		mcp.NewTool("create_expense_report",
 			mcp.WithDescription("Create a new expense report in Autotask"),
 			mcp.WithString("name", mcp.Description("Expense report name"), mcp.Required()),
 			mcp.WithNumber("submitterID", mcp.Description("Submitter resource ID"), mcp.Required()),
@@ -334,7 +320,7 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 
 	// autotask_create_expense_item
 	addTool(srv,
-		mcp.NewTool("autotask_create_expense_item",
+		mcp.NewTool("create_expense_item",
 			mcp.WithDescription("Create a new expense item under an expense report"),
 			mcp.WithNumber("expenseReportID", mcp.Description("Parent expense report ID"), mcp.Required()),
 			mcp.WithString("description", mcp.Description("Description of the expense"), mcp.Required()),
@@ -364,8 +350,6 @@ func registerTimeBillingTools(srv *server.MCPServer, client *Client, _ *slog.Log
 			return mcputil.TextResult(FormatCreateResult("ExpenseItem", id)), nil
 		},
 	)
-
-	} // end tier >= 3
 
 	_ = server.ToolHandlerFunc(nil)
 }

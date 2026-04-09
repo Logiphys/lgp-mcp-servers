@@ -12,8 +12,7 @@ import (
 )
 
 // RegisterTools registers all Datto EDR MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerGetDashboard(srv, client, logger)
 	registerListAgents(srv, client, logger)
@@ -29,19 +28,11 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerListRules(srv, client, logger)
 	registerListSuppressionRules(srv, client, logger)
 	registerListExtensions(srv, client, logger)
-
-	// Tier 2 — Sensitive
-	if tier >= 2 {
-		registerListAlertsArchive(srv, client, logger)
-		registerListQuarantinedFiles(srv, client, logger)
-	}
-
-	// Tier 3 — Actions
-	if tier >= 3 {
-		registerScanAgent(srv, client, logger)
-		registerIsolateHost(srv, client, logger)
-		registerRestoreHost(srv, client, logger)
-	}
+	registerListAlertsArchive(srv, client, logger)
+	registerListQuarantinedFiles(srv, client, logger)
+	registerScanAgent(srv, client, logger)
+	registerIsolateHost(srv, client, logger)
+	registerRestoreHost(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -67,7 +58,7 @@ func buildListResult(items []any) *mcp.CallToolResult {
 // --- read-only tool registrations -------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the Datto EDR (Infocyte) API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -81,7 +72,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_agents",
+	tool := mcp.NewTool("list_agents",
 		mcp.WithDescription("List Datto EDR agents with optional filters. Supports LoopBack pagination."),
 		mcp.WithString("hostname", mcp.Description("Filter by hostname")),
 		mcp.WithString("customerId", mcp.Description("Filter by customer/organization ID")),
@@ -108,7 +99,7 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerGetAgent(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_get_agent",
+	tool := mcp.NewTool("get_agent",
 		mcp.WithDescription("Get details of a specific Datto EDR agent by ID."),
 		mcp.WithString("id", mcp.Description("The agent ID"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -130,7 +121,7 @@ func registerGetAgent(srv *server.MCPServer, client *Client, logger *slog.Logger
 }
 
 func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_alerts",
+	tool := mcp.NewTool("list_alerts",
 		mcp.WithDescription("List Datto EDR alerts with optional filters. Supports LoopBack pagination."),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
 		mcp.WithString("agentId", mcp.Description("Filter by agent ID")),
@@ -155,7 +146,7 @@ func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerGetAlert(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_get_alert",
+	tool := mcp.NewTool("get_alert",
 		mcp.WithDescription("Get details of a specific Datto EDR alert by ID."),
 		mcp.WithString("id", mcp.Description("The alert ID"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -177,7 +168,7 @@ func registerGetAlert(srv *server.MCPServer, client *Client, logger *slog.Logger
 }
 
 func registerListAlertsArchive(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_alerts_archive",
+	tool := mcp.NewTool("list_alerts_archive",
 		mcp.WithDescription("List archived Datto EDR alerts with optional filters. Supports LoopBack pagination."),
 		mcp.WithString("severity", mcp.Description("Filter by severity level")),
 		mcp.WithString("agentId", mcp.Description("Filter by agent ID")),
@@ -202,7 +193,7 @@ func registerListAlertsArchive(srv *server.MCPServer, client *Client, logger *sl
 }
 
 func registerListOrganizations(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_organizations",
+	tool := mcp.NewTool("list_organizations",
 		mcp.WithDescription("List Datto EDR organizations. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -223,7 +214,7 @@ func registerListOrganizations(srv *server.MCPServer, client *Client, logger *sl
 }
 
 func registerListLocations(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_locations",
+	tool := mcp.NewTool("list_locations",
 		mcp.WithDescription("List Datto EDR locations. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -244,7 +235,7 @@ func registerListLocations(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerListDeviceGroups(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_device_groups",
+	tool := mcp.NewTool("list_device_groups",
 		mcp.WithDescription("List Datto EDR device groups. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -265,7 +256,7 @@ func registerListDeviceGroups(srv *server.MCPServer, client *Client, logger *slo
 }
 
 func registerListPolicies(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_policies",
+	tool := mcp.NewTool("list_policies",
 		mcp.WithDescription("List Datto EDR policies. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -286,7 +277,7 @@ func registerListPolicies(srv *server.MCPServer, client *Client, logger *slog.Lo
 }
 
 func registerListRules(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_rules",
+	tool := mcp.NewTool("list_rules",
 		mcp.WithDescription("List Datto EDR detection rules. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -310,7 +301,7 @@ func registerListRules(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerListSuppressionRules(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_suppression_rules",
+	tool := mcp.NewTool("list_suppression_rules",
 		mcp.WithDescription("List Datto EDR alert suppression rules. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -334,7 +325,7 @@ func registerListSuppressionRules(srv *server.MCPServer, client *Client, logger 
 }
 
 func registerListExtensions(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_extensions",
+	tool := mcp.NewTool("list_extensions",
 		mcp.WithDescription("List Datto EDR extensions (response actions, collection modules). Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -358,7 +349,7 @@ func registerListExtensions(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListQuarantinedFiles(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_list_quarantined_files",
+	tool := mcp.NewTool("list_quarantined_files",
 		mcp.WithDescription("List Datto EDR quarantined files. Supports LoopBack pagination."),
 		mcp.WithNumber("limit", mcp.Description("Maximum number of results (default 100, max 1000)"), mcp.Min(1), mcp.Max(1000)),
 		mcp.WithNumber("skip", mcp.Description("Number of results to skip for pagination"), mcp.Min(0)),
@@ -379,7 +370,7 @@ func registerListQuarantinedFiles(srv *server.MCPServer, client *Client, logger 
 }
 
 func registerGetDashboard(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_get_dashboard",
+	tool := mcp.NewTool("get_dashboard",
 		mcp.WithDescription("Get Datto EDR dashboard data with summary statistics."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -394,7 +385,7 @@ func registerGetDashboard(srv *server.MCPServer, client *Client, logger *slog.Lo
 }
 
 func registerGetAlertCount(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_get_alert_count",
+	tool := mcp.NewTool("get_alert_count",
 		mcp.WithDescription("Get the total count of Datto EDR alerts."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -409,7 +400,7 @@ func registerGetAlertCount(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerGetAgentCount(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_get_agent_count",
+	tool := mcp.NewTool("get_agent_count",
 		mcp.WithDescription("Get the total count of Datto EDR agents."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -426,7 +417,7 @@ func registerGetAgentCount(srv *server.MCPServer, client *Client, logger *slog.L
 // --- action tool registrations ----------------------------------------------
 
 func registerScanAgent(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_scan_agent",
+	tool := mcp.NewTool("scan_agent",
 		mcp.WithDescription("Initiate a scan on a Datto EDR agent. This triggers a full endpoint scan."),
 		mcp.WithString("agentId", mcp.Description("The agent ID to scan"), mcp.Required()),
 	)
@@ -447,8 +438,8 @@ func registerScanAgent(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerIsolateHost(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_isolate_host",
-		mcp.WithDescription("Isolate a host from the network via Datto EDR. The agent will only communicate with the EDR platform. Use datto_edr_restore_host to undo."),
+	tool := mcp.NewTool("isolate_host",
+		mcp.WithDescription("Isolate a host from the network via Datto EDR. The agent will only communicate with the EDR platform. Use restore_host to undo."),
 		mcp.WithString("agentId", mcp.Description("The agent ID to isolate"), mcp.Required()),
 	)
 	srv.AddTool(tool, func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
@@ -468,7 +459,7 @@ func registerIsolateHost(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerRestoreHost(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_edr_restore_host",
+	tool := mcp.NewTool("restore_host",
 		mcp.WithDescription("Restore a previously isolated host back to normal network connectivity via Datto EDR."),
 		mcp.WithString("agentId", mcp.Description("The agent ID to restore"), mcp.Required()),
 	)

@@ -11,7 +11,7 @@ import (
 
 func registerMetadataTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_list_configuration_types",
+		mcp.NewTool("list_configuration_types",
 			mcp.WithDescription("List all IT Glue configuration types."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -47,7 +47,7 @@ func registerMetadataTools(srv *server.MCPServer, client *Client, logger *slog.L
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_list_configuration_statuses",
+		mcp.NewTool("list_configuration_statuses",
 			mcp.WithDescription("List all IT Glue configuration statuses."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -83,7 +83,7 @@ func registerMetadataTools(srv *server.MCPServer, client *Client, logger *slog.L
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_list_password_categories",
+		mcp.NewTool("list_password_categories",
 			mcp.WithDescription("List all IT Glue password categories."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),

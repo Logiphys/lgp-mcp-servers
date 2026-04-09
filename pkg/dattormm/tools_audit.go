@@ -10,10 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier int) {
+func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	// Tier 1
 	srv.AddTool(
-		mcp.NewTool("datto_get_esxi_audit",
+		mcp.NewTool("get_esxi_audit",
 			mcp.WithDescription("Retrieve the ESXi audit data for a Datto RMM device."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the device."),
@@ -35,7 +35,7 @@ func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier i
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_printer_audit",
+		mcp.NewTool("get_printer_audit",
 			mcp.WithDescription("Retrieve the printer audit data for a Datto RMM device."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the device."),
@@ -56,11 +56,8 @@ func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier i
 		},
 	)
 
-	// Tier 2
-	if tier >= 2 {
-
 	srv.AddTool(
-		mcp.NewTool("datto_get_device_software",
+		mcp.NewTool("get_device_software",
 			mcp.WithDescription("List the installed software on a Datto RMM device, with pagination."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the device."),
@@ -83,7 +80,7 @@ func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier i
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_device_audit_by_mac",
+		mcp.NewTool("get_device_audit_by_mac",
 			mcp.WithDescription("Retrieve the audit data for a Datto RMM device identified by its MAC address."),
 			mcp.WithString("macAddress",
 				mcp.Description("The MAC address of the device (e.g. 00:11:22:33:44:55)."),
@@ -104,5 +101,4 @@ func registerAuditTools(srv *server.MCPServer, c *Client, _ *slog.Logger, tier i
 		},
 	)
 
-	} // end tier 2
 }

@@ -47,23 +47,23 @@ func ExecuteTool(ctx context.Context, toolName string, arguments map[string]any)
 
 // ToolCategories maps category names to tool names.
 var ToolCategories = map[string][]string{
-	"utility":            {"autotask_test_connection", "autotask_list_queues", "autotask_list_ticket_statuses", "autotask_list_ticket_priorities", "autotask_get_field_info"},
-	"companies":          {"autotask_search_companies", "autotask_create_company", "autotask_update_company"},
-	"contacts":           {"autotask_search_contacts", "autotask_create_contact"},
-	"tickets":            {"autotask_search_tickets", "autotask_get_ticket_details", "autotask_create_ticket", "autotask_update_ticket"},
-	"ticket_charges":     {"autotask_get_ticket_charge", "autotask_search_ticket_charges", "autotask_create_ticket_charge", "autotask_update_ticket_charge", "autotask_delete_ticket_charge"},
-	"ticket_notes":       {"autotask_get_ticket_note", "autotask_search_ticket_notes", "autotask_create_ticket_note"},
-	"ticket_attachments": {"autotask_get_ticket_attachment", "autotask_search_ticket_attachments"},
-	"projects":           {"autotask_search_projects", "autotask_create_project", "autotask_search_tasks", "autotask_create_task", "autotask_list_phases", "autotask_create_phase"},
-	"project_notes":      {"autotask_get_project_note", "autotask_search_project_notes", "autotask_create_project_note"},
-	"company_notes":      {"autotask_get_company_note", "autotask_search_company_notes", "autotask_create_company_note"},
-	"time_billing":       {"autotask_create_time_entry", "autotask_search_time_entries", "autotask_search_billing_items", "autotask_get_billing_item", "autotask_search_billing_item_approval_levels"},
-	"expenses":           {"autotask_get_expense_report", "autotask_search_expense_reports", "autotask_create_expense_report", "autotask_create_expense_item"},
-	"financial":          {"autotask_get_quote", "autotask_search_quotes", "autotask_create_quote", "autotask_get_quote_item", "autotask_search_quote_items", "autotask_create_quote_item", "autotask_update_quote_item", "autotask_delete_quote_item", "autotask_get_opportunity", "autotask_search_opportunities", "autotask_create_opportunity", "autotask_search_invoices", "autotask_search_contracts"},
-	"resources":          {"autotask_search_resources"},
-	"configuration":      {"autotask_search_configuration_items"},
-	"service_calls":      {"autotask_search_service_calls", "autotask_get_service_call", "autotask_create_service_call", "autotask_update_service_call", "autotask_delete_service_call", "autotask_search_service_call_tickets", "autotask_create_service_call_ticket", "autotask_delete_service_call_ticket", "autotask_search_service_call_ticket_resources", "autotask_create_service_call_ticket_resource", "autotask_delete_service_call_ticket_resource"},
-	"products":           {"autotask_get_product", "autotask_search_products", "autotask_get_service", "autotask_search_services", "autotask_get_service_bundle", "autotask_search_service_bundles"},
+	"utility":            {"test_connection", "list_queues", "list_ticket_statuses", "list_ticket_priorities", "get_field_info"},
+	"companies":          {"search_companies", "create_company", "update_company"},
+	"contacts":           {"search_contacts", "create_contact"},
+	"tickets":            {"search_tickets", "get_ticket_details", "create_ticket", "update_ticket"},
+	"ticket_charges":     {"get_ticket_charge", "search_ticket_charges", "create_ticket_charge", "update_ticket_charge", "delete_ticket_charge"},
+	"ticket_notes":       {"get_ticket_note", "search_ticket_notes", "create_ticket_note"},
+	"ticket_attachments": {"get_ticket_attachment", "search_ticket_attachments"},
+	"projects":           {"search_projects", "create_project", "search_tasks", "create_task", "list_phases", "create_phase"},
+	"project_notes":      {"get_project_note", "search_project_notes", "create_project_note"},
+	"company_notes":      {"get_company_note", "search_company_notes", "create_company_note"},
+	"time_billing":       {"create_time_entry", "search_time_entries", "search_billing_items", "get_billing_item", "search_billing_item_approval_levels"},
+	"expenses":           {"get_expense_report", "search_expense_reports", "create_expense_report", "create_expense_item"},
+	"financial":          {"get_quote", "search_quotes", "create_quote", "get_quote_item", "search_quote_items", "create_quote_item", "update_quote_item", "delete_quote_item", "get_opportunity", "search_opportunities", "create_opportunity", "search_invoices", "search_contracts"},
+	"resources":          {"search_resources"},
+	"configuration":      {"search_configuration_items"},
+	"service_calls":      {"search_service_calls", "get_service_call", "create_service_call", "update_service_call", "delete_service_call", "search_service_call_tickets", "create_service_call_ticket", "delete_service_call_ticket", "search_service_call_ticket_resources", "create_service_call_ticket_resource", "delete_service_call_ticket_resource"},
+	"products":           {"get_product", "search_products", "get_service", "search_services", "get_service_bundle", "search_service_bundles"},
 }
 
 // RouteIntent suggests a tool based on natural language intent.
@@ -78,66 +78,66 @@ func RouteIntent(intent string) map[string]any {
 	}
 
 	routes := []route{
-		{[]string{"ticket", "create"}, "create", "autotask_create_ticket", "Create a new ticket"},
-		{[]string{"ticket", "new"}, "create", "autotask_create_ticket", "Create a new ticket"},
-		{[]string{"ticket", "update"}, "update", "autotask_update_ticket", "Update an existing ticket"},
-		{[]string{"ticket", "note"}, "note", "autotask_create_ticket_note", "Create a ticket note"},
-		{[]string{"ticket", "charge"}, "charge", "autotask_search_ticket_charges", "Search ticket charges"},
-		{[]string{"ticket", "time"}, "time", "autotask_create_time_entry", "Create a time entry for a ticket"},
-		{[]string{"ticket"}, "search", "autotask_search_tickets", "Search tickets"},
+		{[]string{"ticket", "create"}, "create", "create_ticket", "Create a new ticket"},
+		{[]string{"ticket", "new"}, "create", "create_ticket", "Create a new ticket"},
+		{[]string{"ticket", "update"}, "update", "update_ticket", "Update an existing ticket"},
+		{[]string{"ticket", "note"}, "note", "create_ticket_note", "Create a ticket note"},
+		{[]string{"ticket", "charge"}, "charge", "search_ticket_charges", "Search ticket charges"},
+		{[]string{"ticket", "time"}, "time", "create_time_entry", "Create a time entry for a ticket"},
+		{[]string{"ticket"}, "search", "search_tickets", "Search tickets"},
 
-		{[]string{"company", "create"}, "create", "autotask_create_company", "Create a new company"},
-		{[]string{"company", "new"}, "create", "autotask_create_company", "Create a new company"},
-		{[]string{"company", "note"}, "note", "autotask_create_company_note", "Create a company note"},
-		{[]string{"company"}, "search", "autotask_search_companies", "Search companies"},
+		{[]string{"company", "create"}, "create", "create_company", "Create a new company"},
+		{[]string{"company", "new"}, "create", "create_company", "Create a new company"},
+		{[]string{"company", "note"}, "note", "create_company_note", "Create a company note"},
+		{[]string{"company"}, "search", "search_companies", "Search companies"},
 
-		{[]string{"contact", "create"}, "create", "autotask_create_contact", "Create a new contact"},
-		{[]string{"contact", "new"}, "create", "autotask_create_contact", "Create a new contact"},
-		{[]string{"contact"}, "search", "autotask_search_contacts", "Search contacts"},
+		{[]string{"contact", "create"}, "create", "create_contact", "Create a new contact"},
+		{[]string{"contact", "new"}, "create", "create_contact", "Create a new contact"},
+		{[]string{"contact"}, "search", "search_contacts", "Search contacts"},
 
-		{[]string{"project", "create"}, "create", "autotask_create_project", "Create a new project"},
-		{[]string{"project", "new"}, "create", "autotask_create_project", "Create a new project"},
-		{[]string{"project", "note"}, "note", "autotask_create_project_note", "Create a project note"},
-		{[]string{"project"}, "search", "autotask_search_projects", "Search projects"},
+		{[]string{"project", "create"}, "create", "create_project", "Create a new project"},
+		{[]string{"project", "new"}, "create", "create_project", "Create a new project"},
+		{[]string{"project", "note"}, "note", "create_project_note", "Create a project note"},
+		{[]string{"project"}, "search", "search_projects", "Search projects"},
 
-		{[]string{"task", "create"}, "create", "autotask_create_task", "Create a new task"},
-		{[]string{"task", "new"}, "create", "autotask_create_task", "Create a new task"},
-		{[]string{"task"}, "search", "autotask_search_tasks", "Search tasks"},
+		{[]string{"task", "create"}, "create", "create_task", "Create a new task"},
+		{[]string{"task", "new"}, "create", "create_task", "Create a new task"},
+		{[]string{"task"}, "search", "search_tasks", "Search tasks"},
 
-		{[]string{"time", "entry"}, "time", "autotask_create_time_entry", "Create a time entry"},
-		{[]string{"time"}, "search", "autotask_search_time_entries", "Search time entries"},
+		{[]string{"time", "entry"}, "time", "create_time_entry", "Create a time entry"},
+		{[]string{"time"}, "search", "search_time_entries", "Search time entries"},
 
-		{[]string{"billing"}, "search", "autotask_search_billing_items", "Search billing items"},
+		{[]string{"billing"}, "search", "search_billing_items", "Search billing items"},
 
-		{[]string{"quote", "create"}, "create", "autotask_create_quote", "Create a new quote"},
-		{[]string{"quote", "item"}, "item", "autotask_search_quote_items", "Search quote items"},
-		{[]string{"quote"}, "search", "autotask_search_quotes", "Search quotes"},
+		{[]string{"quote", "create"}, "create", "create_quote", "Create a new quote"},
+		{[]string{"quote", "item"}, "item", "search_quote_items", "Search quote items"},
+		{[]string{"quote"}, "search", "search_quotes", "Search quotes"},
 
-		{[]string{"opportunity", "create"}, "create", "autotask_create_opportunity", "Create a new opportunity"},
-		{[]string{"opportunity"}, "search", "autotask_search_opportunities", "Search opportunities"},
+		{[]string{"opportunity", "create"}, "create", "create_opportunity", "Create a new opportunity"},
+		{[]string{"opportunity"}, "search", "search_opportunities", "Search opportunities"},
 
-		{[]string{"invoice"}, "search", "autotask_search_invoices", "Search invoices"},
-		{[]string{"contract"}, "search", "autotask_search_contracts", "Search contracts"},
+		{[]string{"invoice"}, "search", "search_invoices", "Search invoices"},
+		{[]string{"contract"}, "search", "search_contracts", "Search contracts"},
 
-		{[]string{"resource"}, "search", "autotask_search_resources", "Search resources"},
+		{[]string{"resource"}, "search", "search_resources", "Search resources"},
 
-		{[]string{"expense"}, "search", "autotask_search_expense_reports", "Search expense reports"},
+		{[]string{"expense"}, "search", "search_expense_reports", "Search expense reports"},
 
-		{[]string{"service call", "create"}, "create", "autotask_create_service_call", "Create a service call"},
-		{[]string{"service call"}, "search", "autotask_search_service_calls", "Search service calls"},
+		{[]string{"service call", "create"}, "create", "create_service_call", "Create a service call"},
+		{[]string{"service call"}, "search", "search_service_calls", "Search service calls"},
 
-		{[]string{"configuration", "item"}, "search", "autotask_search_configuration_items", "Search configuration items"},
-		{[]string{"config"}, "search", "autotask_search_configuration_items", "Search configuration items"},
+		{[]string{"configuration", "item"}, "search", "search_configuration_items", "Search configuration items"},
+		{[]string{"config"}, "search", "search_configuration_items", "Search configuration items"},
 
-		{[]string{"product"}, "search", "autotask_search_products", "Search products"},
-		{[]string{"service bundle"}, "search", "autotask_search_service_bundles", "Search service bundles"},
-		{[]string{"service"}, "search", "autotask_search_services", "Search services"},
+		{[]string{"product"}, "search", "search_products", "Search products"},
+		{[]string{"service bundle"}, "search", "search_service_bundles", "Search service bundles"},
+		{[]string{"service"}, "search", "search_services", "Search services"},
 
-		{[]string{"phase"}, "list", "autotask_list_phases", "List project phases"},
-		{[]string{"queue"}, "list", "autotask_list_queues", "List queues"},
-		{[]string{"status"}, "list", "autotask_list_ticket_statuses", "List ticket statuses"},
-		{[]string{"priority"}, "list", "autotask_list_ticket_priorities", "List ticket priorities"},
-		{[]string{"field"}, "info", "autotask_get_field_info", "Get field info for an entity"},
+		{[]string{"phase"}, "list", "list_phases", "List project phases"},
+		{[]string{"queue"}, "list", "list_queues", "List queues"},
+		{[]string{"status"}, "list", "list_ticket_statuses", "List ticket statuses"},
+		{[]string{"priority"}, "list", "list_ticket_priorities", "List ticket priorities"},
+		{[]string{"field"}, "info", "get_field_info", "Get field info for an entity"},
 	}
 
 	for _, r := range routes {
@@ -157,7 +157,7 @@ func RouteIntent(intent string) map[string]any {
 	}
 
 	return map[string]any{
-		"suggested_tool": "autotask_list_categories",
+		"suggested_tool": "list_categories",
 		"description":    "List available tool categories to explore",
 	}
 }
@@ -166,7 +166,7 @@ func RouteIntent(intent string) map[string]any {
 func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 	// autotask_list_categories
 	addTool(srv,
-		mcp.NewTool("autotask_list_categories",
+		mcp.NewTool("list_categories",
 			mcp.WithDescription("List all available Autotask tool categories with tool counts"),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -183,7 +183,7 @@ func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 
 	// autotask_list_category_tools
 	addTool(srv,
-		mcp.NewTool("autotask_list_category_tools",
+		mcp.NewTool("list_category_tools",
 			mcp.WithDescription("List all tools in a specific category"),
 			mcp.WithString("category", mcp.Description("Category name (e.g. tickets, companies, financial)"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -210,7 +210,7 @@ func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 
 	// autotask_execute_tool
 	addTool(srv,
-		mcp.NewTool("autotask_execute_tool",
+		mcp.NewTool("execute_tool",
 			mcp.WithDescription("Execute another Autotask tool by name with given arguments"),
 			mcp.WithString("toolName", mcp.Description("Name of the tool to execute"), mcp.Required()),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -234,7 +234,7 @@ func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 
 	// autotask_router
 	addTool(srv,
-		mcp.NewTool("autotask_router",
+		mcp.NewTool("router",
 			mcp.WithDescription("Route a natural language intent to the most appropriate Autotask tool"),
 			mcp.WithString("intent", mcp.Description("Natural language description of what you want to do"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),

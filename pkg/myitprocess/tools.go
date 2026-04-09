@@ -14,8 +14,7 @@ import (
 )
 
 // RegisterTools registers all MyITProcess MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerListReviews(srv, client, logger)
 	registerListOverdueReviews(srv, client, logger)
@@ -23,13 +22,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerListRecommendations(srv, client, logger)
 	registerGetRecommendationConfigurations(srv, client, logger)
 	registerListInitiatives(srv, client, logger)
-
-	// Tier 2 — Sensitive (client/user data)
-	if tier >= 2 {
-		registerListClients(srv, client, logger)
-		registerListUsers(srv, client, logger)
-		registerListMeetings(srv, client, logger)
-	}
+	registerListClients(srv, client, logger)
+	registerListUsers(srv, client, logger)
+	registerListMeetings(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -86,7 +81,7 @@ func buildListResult(items []any, pageInfo *PageInfo) *mcp.CallToolResult {
 // --- tool registrations -----------------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the MyITProcess API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -100,7 +95,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListClients(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_clients",
+	tool := mcp.NewTool("list_clients",
 		mcp.WithDescription("List MyITProcess clients with optional filters."),
 		mcp.WithString("name", mcp.Description("Filter by client name (contains match)")),
 		mcp.WithString("isActive", mcp.Description("Filter by active status: true or false")),
@@ -133,7 +128,7 @@ func registerListClients(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerListUsers(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_users",
+	tool := mcp.NewTool("list_users",
 		mcp.WithDescription("List MyITProcess users with optional filters."),
 		mcp.WithString("firstName", mcp.Description("Filter by first name (contains match)")),
 		mcp.WithString("lastName", mcp.Description("Filter by last name (contains match)")),
@@ -170,7 +165,7 @@ func registerListUsers(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerListReviews(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_reviews",
+	tool := mcp.NewTool("list_reviews",
 		mcp.WithDescription("List MyITProcess reviews with optional filters."),
 		mcp.WithString("status", mcp.Description("Filter by review status")),
 		mcp.WithString("clientName", mcp.Description("Filter by client name (contains match)")),
@@ -203,7 +198,7 @@ func registerListReviews(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerListOverdueReviews(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_overdue_reviews",
+	tool := mcp.NewTool("list_overdue_reviews",
 		mcp.WithDescription("List MyITProcess overdue reviews."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page"), mcp.Min(1), mcp.Max(100)),
@@ -223,7 +218,7 @@ func registerListOverdueReviews(srv *server.MCPServer, client *Client, logger *s
 }
 
 func registerListFindings(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_findings",
+	tool := mcp.NewTool("list_findings",
 		mcp.WithDescription("List MyITProcess findings with optional filters."),
 		mcp.WithNumber("reviewId", mcp.Description("Filter by review ID")),
 		mcp.WithString("isArchived", mcp.Description("Filter by archived status: true or false")),
@@ -256,7 +251,7 @@ func registerListFindings(srv *server.MCPServer, client *Client, logger *slog.Lo
 }
 
 func registerListRecommendations(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_recommendations",
+	tool := mcp.NewTool("list_recommendations",
 		mcp.WithDescription("List MyITProcess recommendations with optional filters."),
 		mcp.WithNumber("clientId", mcp.Description("Filter by client ID")),
 		mcp.WithString("status", mcp.Description("Filter by recommendation status")),
@@ -297,7 +292,7 @@ func registerListRecommendations(srv *server.MCPServer, client *Client, logger *
 }
 
 func registerGetRecommendationConfigurations(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_get_recommendation_configurations",
+	tool := mcp.NewTool("get_recommendation_configurations",
 		mcp.WithDescription("Get configurations for a specific MyITProcess recommendation by ID."),
 		mcp.WithNumber("id", mcp.Description("The recommendation ID"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -324,7 +319,7 @@ func registerGetRecommendationConfigurations(srv *server.MCPServer, client *Clie
 }
 
 func registerListInitiatives(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_initiatives",
+	tool := mcp.NewTool("list_initiatives",
 		mcp.WithDescription("List MyITProcess initiatives with optional filters."),
 		mcp.WithNumber("clientId", mcp.Description("Filter by client ID")),
 		mcp.WithString("isArchived", mcp.Description("Filter by archived status: true or false")),
@@ -357,7 +352,7 @@ func registerListInitiatives(srv *server.MCPServer, client *Client, logger *slog
 }
 
 func registerListMeetings(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("myitprocess_list_meetings",
+	tool := mcp.NewTool("list_meetings",
 		mcp.WithDescription("List MyITProcess meetings with optional filters."),
 		mcp.WithNumber("clientId", mcp.Description("Filter by client ID")),
 		mcp.WithString("status", mcp.Description("Filter by meeting status")),

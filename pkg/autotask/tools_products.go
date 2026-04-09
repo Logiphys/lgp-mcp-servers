@@ -15,7 +15,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_get_product
 	addTool(srv,
-		mcp.NewTool("autotask_get_product",
+		mcp.NewTool("get_product",
 			mcp.WithDescription("Get a specific product by ID"),
 			mcp.WithNumber("id", mcp.Description("Product ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -38,7 +38,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_search_products
 	addTool(srv,
-		mcp.NewTool("autotask_search_products",
+		mcp.NewTool("search_products",
 			mcp.WithDescription("Search for products in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by product name")),
 			mcp.WithNumber("productCategory", mcp.Description("Filter by product category ID")),
@@ -71,7 +71,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("products", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_products", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_products", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
@@ -79,7 +79,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_get_service
 	addTool(srv,
-		mcp.NewTool("autotask_get_service",
+		mcp.NewTool("get_service",
 			mcp.WithDescription("Get a specific service by ID"),
 			mcp.WithNumber("id", mcp.Description("Service ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -102,7 +102,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_search_services
 	addTool(srv,
-		mcp.NewTool("autotask_search_services",
+		mcp.NewTool("search_services",
 			mcp.WithDescription("Search for services in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by service name")),
 			mcp.WithBoolean("isActive", mcp.Description("Filter by active status")),
@@ -131,7 +131,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("services", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_services", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_services", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
@@ -139,7 +139,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_get_service_bundle
 	addTool(srv,
-		mcp.NewTool("autotask_get_service_bundle",
+		mcp.NewTool("get_service_bundle",
 			mcp.WithDescription("Get a specific service bundle by ID"),
 			mcp.WithNumber("id", mcp.Description("Service bundle ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -162,7 +162,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 
 	// autotask_search_service_bundles
 	addTool(srv,
-		mcp.NewTool("autotask_search_service_bundles",
+		mcp.NewTool("search_service_bundles",
 			mcp.WithDescription("Search for service bundles in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by service bundle name")),
 			mcp.WithBoolean("isActive", mcp.Description("Filter by active status")),
@@ -191,7 +191,7 @@ func registerProductTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("service bundles", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_service_bundles", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_service_bundles", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 

@@ -10,10 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger, tier int) {
+func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger) {
 	// autotask_search_companies
 	addTool(srv,
-		mcp.NewTool("autotask_search_companies",
+		mcp.NewTool("search_companies",
 			mcp.WithDescription("Search for companies in Autotask (25 results per page default)"),
 			mcp.WithString("searchTerm", mcp.Description("Search term for company name")),
 			mcp.WithBoolean("isActive", mcp.Description("Filter by active status")),
@@ -43,16 +43,13 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 				return mcputil.TextResult(FormatNotFound("companies", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_companies", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_companies", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
-
 	// autotask_create_company
 	addTool(srv,
-		mcp.NewTool("autotask_create_company",
+		mcp.NewTool("create_company",
 			mcp.WithDescription("Create a new company in Autotask"),
 			mcp.WithString("companyName", mcp.Description("Company name"), mcp.Required()),
 			mcp.WithNumber("companyType", mcp.Description("Company type ID"), mcp.Required()),
@@ -101,7 +98,7 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 
 	// autotask_update_company
 	addTool(srv,
-		mcp.NewTool("autotask_update_company",
+		mcp.NewTool("update_company",
 			mcp.WithDescription("Update an existing company in Autotask"),
 			mcp.WithNumber("id", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("companyName", mcp.Description("Company name")),
@@ -147,12 +144,10 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 		},
 	)
 
-	} // end tier >= 3
-
 	// Company Notes
 	// autotask_get_company_note
 	addTool(srv,
-		mcp.NewTool("autotask_get_company_note",
+		mcp.NewTool("get_company_note",
 			mcp.WithDescription("Get a specific company note by company ID and note ID"),
 			mcp.WithNumber("companyId", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithNumber("noteId", mcp.Description("Note ID"), mcp.Required()),
@@ -181,7 +176,7 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 
 	// autotask_search_company_notes
 	addTool(srv,
-		mcp.NewTool("autotask_search_company_notes",
+		mcp.NewTool("search_company_notes",
 			mcp.WithDescription("Search notes for a specific company"),
 			mcp.WithNumber("companyId", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -203,15 +198,13 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("company notes", map[string]any{"companyId": companyID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_company_notes", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_company_notes", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_company_note
 	addTool(srv,
-		mcp.NewTool("autotask_create_company_note",
+		mcp.NewTool("create_company_note",
 			mcp.WithDescription("Create a new note for a company"),
 			mcp.WithNumber("companyId", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("description", mcp.Description("Note description"), mcp.Required()),
@@ -241,7 +234,5 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger,
 			return mcputil.TextResult(FormatCreateResult("CompanyNote", id)), nil
 		},
 	)
-	} // end tier >= 3
-
 	_ = server.ToolHandlerFunc(nil)
 }

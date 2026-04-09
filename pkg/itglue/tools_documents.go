@@ -14,7 +14,7 @@ func registerDocumentReadTools(srv *server.MCPServer, client *Client, logger *sl
 	// ── Documents (Read) ───────────────────────────────────────────────────────
 
 	srv.AddTool(
-		mcp.NewTool("itglue_search_documents",
+		mcp.NewTool("search_documents",
 			mcp.WithDescription("Search IT Glue documents within an organization. organization_id is required."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -67,7 +67,7 @@ func registerDocumentReadTools(srv *server.MCPServer, client *Client, logger *sl
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_document",
+		mcp.NewTool("get_document",
 			mcp.WithDescription("Get a single IT Glue document by ID within an organization. Both organization_id and id are required."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("organization_id",
@@ -102,7 +102,7 @@ func registerDocumentReadTools(srv *server.MCPServer, client *Client, logger *sl
 	// ── Document Sections (Read) ──────────────────────────────────────────────
 
 	srv.AddTool(
-		mcp.NewTool("itglue_list_document_sections",
+		mcp.NewTool("list_document_sections",
 			mcp.WithDescription("List all sections within an IT Glue document."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("document_id",
@@ -138,7 +138,7 @@ func registerDocumentReadTools(srv *server.MCPServer, client *Client, logger *sl
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_document_section",
+		mcp.NewTool("get_document_section",
 			mcp.WithDescription("Get a single IT Glue document section by section ID. HTML content is stripped to plain text."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("section_id",
@@ -176,7 +176,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	// ── Documents (Write) ──────────────────────────────────────────────────────
 
 	srv.AddTool(
-		mcp.NewTool("itglue_create_document",
+		mcp.NewTool("create_document",
 			mcp.WithDescription("Create a new IT Glue document within an organization."),
 			mcp.WithNumber("organization_id",
 				mcp.Description("The organization ID to create the document in."),
@@ -218,7 +218,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_update_document",
+		mcp.NewTool("update_document",
 			mcp.WithDescription("Update an existing IT Glue document by ID."),
 			mcp.WithNumber("id",
 				mcp.Description("The document ID to update."),
@@ -253,7 +253,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_delete_document",
+		mcp.NewTool("delete_document",
 			mcp.WithDescription("Delete an IT Glue document by ID. This action is irreversible."),
 			mcp.WithDestructiveHintAnnotation(true),
 			mcp.WithNumber("id",
@@ -279,7 +279,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	// ── Document Sections (Write) ─────────────────────────────────────────────
 
 	srv.AddTool(
-		mcp.NewTool("itglue_create_document_section",
+		mcp.NewTool("create_document_section",
 			mcp.WithDescription("Create a new section within an IT Glue document. section_type must be 'heading' or 'text'."),
 			mcp.WithNumber("document_id",
 				mcp.Description("The document ID to add the section to."),
@@ -328,7 +328,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_update_document_section",
+		mcp.NewTool("update_document_section",
 			mcp.WithDescription("Update the content of an IT Glue document section."),
 			mcp.WithNumber("section_id",
 				mcp.Description("The document section ID to update."),
@@ -360,7 +360,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_delete_document_section",
+		mcp.NewTool("delete_document_section",
 			mcp.WithDescription("Delete an IT Glue document section by section ID. This action is irreversible."),
 			mcp.WithDestructiveHintAnnotation(true),
 			mcp.WithNumber("section_id",
@@ -384,7 +384,7 @@ func registerDocumentWriteTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_publish_document",
+		mcp.NewTool("publish_document",
 			mcp.WithDescription("Publish an IT Glue document, making it visible to all users with access."),
 			mcp.WithNumber("document_id",
 				mcp.Description("The document ID to publish."),

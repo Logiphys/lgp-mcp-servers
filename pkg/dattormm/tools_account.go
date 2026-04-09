@@ -9,10 +9,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	// datto_get_account
 	srv.AddTool(
-		mcp.NewTool("datto_get_account",
+		mcp.NewTool("get_account",
 			mcp.WithDescription("Get Datto RMM account information."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -27,7 +27,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_list_sites
 	srv.AddTool(
-		mcp.NewTool("datto_list_sites",
+		mcp.NewTool("list_sites",
 			mcp.WithDescription("List all sites in the Datto RMM account."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("siteName",
@@ -57,7 +57,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_list_devices
 	srv.AddTool(
-		mcp.NewTool("datto_list_devices",
+		mcp.NewTool("list_devices",
 			mcp.WithDescription("List all devices in the Datto RMM account with optional filters."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("hostname",
@@ -109,12 +109,9 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 		},
 	)
 
-	// Tier 2
-	if tier >= 2 {
-
 	// datto_list_users
 	srv.AddTool(
-		mcp.NewTool("datto_list_users",
+		mcp.NewTool("list_users",
 			mcp.WithDescription("List all users in the Datto RMM account."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("page",
@@ -138,7 +135,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_list_account_variables
 	srv.AddTool(
-		mcp.NewTool("datto_list_account_variables",
+		mcp.NewTool("list_account_variables",
 			mcp.WithDescription("List all account-level variables in Datto RMM."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("page",
@@ -160,11 +157,9 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 		},
 	)
 
-	} // end tier 2
-
 	// datto_list_components
 	srv.AddTool(
-		mcp.NewTool("datto_list_components",
+		mcp.NewTool("list_components",
 			mcp.WithDescription("List all components available in the Datto RMM account."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("page",
@@ -188,7 +183,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_list_open_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_open_alerts",
+		mcp.NewTool("list_open_alerts",
 			mcp.WithDescription("List all open alerts across the Datto RMM account."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithBoolean("muted",
@@ -225,7 +220,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_list_resolved_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_resolved_alerts",
+		mcp.NewTool("list_resolved_alerts",
 			mcp.WithDescription("List all resolved alerts across the Datto RMM account."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithBoolean("muted",
@@ -262,7 +257,7 @@ func registerAccountTools(srv *server.MCPServer, client *Client, logger *slog.Lo
 
 	// datto_get_dnet_site_mappings
 	srv.AddTool(
-		mcp.NewTool("datto_get_dnet_site_mappings",
+		mcp.NewTool("get_dnet_site_mappings",
 			mcp.WithDescription("Fetch sites with their mapped Datto Networking network IDs."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("page",

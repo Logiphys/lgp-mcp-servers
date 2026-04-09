@@ -10,12 +10,12 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache, _ *slog.Logger, tier int) {
+func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache, _ *slog.Logger) {
 	// === TICKETS ===
 
 	// autotask_search_tickets
 	addTool(srv,
-		mcp.NewTool("autotask_search_tickets",
+		mcp.NewTool("search_tickets",
 			mcp.WithDescription("Search for tickets in Autotask (25 results per page default)"),
 			mcp.WithString("searchTerm", mcp.Description("Search by ticket number (begins with)")),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
@@ -65,13 +65,13 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 				return mcputil.TextResult(FormatNotFound("tickets", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_tickets", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_tickets", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
 	// autotask_get_ticket_details
 	addTool(srv,
-		mcp.NewTool("autotask_get_ticket_details",
+		mcp.NewTool("get_ticket_details",
 			mcp.WithDescription("Get detailed information for a specific ticket by ID"),
 			mcp.WithNumber("ticketID", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -93,11 +93,9 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_ticket
 	addTool(srv,
-		mcp.NewTool("autotask_create_ticket",
+		mcp.NewTool("create_ticket",
 			mcp.WithDescription("Create a new ticket in Autotask"),
 			mcp.WithNumber("companyID", mcp.Description("Company ID"), mcp.Required()),
 			mcp.WithString("title", mcp.Description("Ticket title"), mcp.Required()),
@@ -140,7 +138,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_update_ticket
 	addTool(srv,
-		mcp.NewTool("autotask_update_ticket",
+		mcp.NewTool("update_ticket",
 			mcp.WithDescription("Update an existing ticket in Autotask"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithString("title", mcp.Description("Ticket title")),
@@ -190,13 +188,11 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
-	} // end tier >= 3
-
 	// === TICKET CHARGES ===
 
 	// autotask_get_ticket_charge
 	addTool(srv,
-		mcp.NewTool("autotask_get_ticket_charge",
+		mcp.NewTool("get_ticket_charge",
 			mcp.WithDescription("Get a specific ticket charge by ID"),
 			mcp.WithNumber("chargeId", mcp.Description("Charge ID"), mcp.Required()),
 			mcp.WithReadOnlyHintAnnotation(true),
@@ -219,7 +215,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_search_ticket_charges
 	addTool(srv,
-		mcp.NewTool("autotask_search_ticket_charges",
+		mcp.NewTool("search_ticket_charges",
 			mcp.WithDescription("Search charges for a ticket"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID")),
 			mcp.WithNumber("page", mcp.Description("Page number"), mcp.Min(1)),
@@ -246,15 +242,13 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("ticket charges", map[string]any{"ticketId": req.GetInt("ticketId", 0)})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_ticket_charges", items, req.GetInt("page", 1), pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_ticket_charges", items, req.GetInt("page", 1), pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_ticket_charge
 	addTool(srv,
-		mcp.NewTool("autotask_create_ticket_charge",
+		mcp.NewTool("create_ticket_charge",
 			mcp.WithDescription("Create a new charge for a ticket"),
 			mcp.WithNumber("ticketID", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithString("name", mcp.Description("Charge name"), mcp.Required()),
@@ -318,7 +312,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_update_ticket_charge
 	addTool(srv,
-		mcp.NewTool("autotask_update_ticket_charge",
+		mcp.NewTool("update_ticket_charge",
 			mcp.WithDescription("Update a ticket charge"),
 			mcp.WithNumber("chargeId", mcp.Description("Charge ID"), mcp.Required()),
 			mcp.WithString("name", mcp.Description("Charge name")),
@@ -366,7 +360,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_delete_ticket_charge
 	addTool(srv,
-		mcp.NewTool("autotask_delete_ticket_charge",
+		mcp.NewTool("delete_ticket_charge",
 			mcp.WithDescription("Delete a ticket charge by ID"),
 			mcp.WithNumber("ticketId", mcp.Description("Parent ticket ID"), mcp.Required()),
 			mcp.WithNumber("chargeId", mcp.Description("Charge ID to delete"), mcp.Required()),
@@ -385,13 +379,11 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
-	} // end tier >= 3
-
 	// === TICKET NOTES ===
 
 	// autotask_get_ticket_note
 	addTool(srv,
-		mcp.NewTool("autotask_get_ticket_note",
+		mcp.NewTool("get_ticket_note",
 			mcp.WithDescription("Get a specific ticket note by ticket ID and note ID"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithNumber("noteId", mcp.Description("Note ID"), mcp.Required()),
@@ -420,7 +412,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_search_ticket_notes
 	addTool(srv,
-		mcp.NewTool("autotask_search_ticket_notes",
+		mcp.NewTool("search_ticket_notes",
 			mcp.WithDescription("Search notes for a specific ticket"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(100)),
@@ -442,15 +434,13 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("ticket notes", map[string]any{"ticketId": ticketID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_ticket_notes", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_ticket_notes", items, 1, pageSize)), nil
 		},
 	)
 
-	// Tier 3 — Write
-	if tier >= 3 {
 	// autotask_create_ticket_note
 	addTool(srv,
-		mcp.NewTool("autotask_create_ticket_note",
+		mcp.NewTool("create_ticket_note",
 			mcp.WithDescription("Create a new note for a ticket"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithString("description", mcp.Description("Note description"), mcp.Required()),
@@ -489,13 +479,11 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 		},
 	)
 
-	} // end tier >= 3
-
 	// === TICKET ATTACHMENTS ===
 
 	// autotask_get_ticket_attachment
 	addTool(srv,
-		mcp.NewTool("autotask_get_ticket_attachment",
+		mcp.NewTool("get_ticket_attachment",
 			mcp.WithDescription("Get a specific ticket attachment by ticket ID and attachment ID"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithNumber("attachmentId", mcp.Description("Attachment ID"), mcp.Required()),
@@ -524,7 +512,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_search_ticket_attachments
 	addTool(srv,
-		mcp.NewTool("autotask_search_ticket_attachments",
+		mcp.NewTool("search_ticket_attachments",
 			mcp.WithDescription("Search attachments for a specific ticket"),
 			mcp.WithNumber("ticketId", mcp.Description("Ticket ID"), mcp.Required()),
 			mcp.WithNumber("pageSize", mcp.Description("Results per page"), mcp.Min(1), mcp.Max(50)),
@@ -546,17 +534,15 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("ticket attachments", map[string]any{"ticketId": ticketID})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_ticket_attachments", items, 1, pageSize)), nil
+			return mcputil.TextResult(FormatSearchResult("search_ticket_attachments", items, 1, pageSize)), nil
 		},
 	)
 
 	// === RESOURCES ===
 
-	// Tier 2 — Sensitive
-	if tier >= 2 {
 	// autotask_search_resources
 	addTool(srv,
-		mcp.NewTool("autotask_search_resources",
+		mcp.NewTool("search_resources",
 			mcp.WithDescription("Search for resources (technicians/users) in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search term for email, first name, or last name")),
 			mcp.WithBoolean("isActive", mcp.Description("Filter by active status")),
@@ -592,7 +578,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 			if len(items) == 0 {
 				return mcputil.TextResult(FormatNotFound("resources", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
-			return mcputil.TextResult(FormatSearchResult("autotask_search_resources", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_resources", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
 
@@ -600,7 +586,7 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 
 	// autotask_search_configuration_items
 	addTool(srv,
-		mcp.NewTool("autotask_search_configuration_items",
+		mcp.NewTool("search_configuration_items",
 			mcp.WithDescription("Search for configuration items (assets) in Autotask"),
 			mcp.WithString("searchTerm", mcp.Description("Search by serial number or reference title")),
 			mcp.WithNumber("companyID", mcp.Description("Filter by company ID")),
@@ -644,10 +630,8 @@ func registerTicketTools(srv *server.MCPServer, client *Client, _ *PicklistCache
 				return mcputil.TextResult(FormatNotFound("configuration items", map[string]any{"searchTerm": req.GetString("searchTerm", "")})), nil
 			}
 			items = client.EnhanceWithNames(ctx, items)
-			return mcputil.TextResult(FormatSearchResult("autotask_search_configuration_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
+			return mcputil.TextResult(FormatSearchResult("search_configuration_items", items, req.GetInt("page", 1), req.GetInt("pageSize", 25))), nil
 		},
 	)
-	} // end tier >= 2
-
 	_ = server.ToolHandlerFunc(nil)
 }

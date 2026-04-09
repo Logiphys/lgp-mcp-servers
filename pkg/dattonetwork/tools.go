@@ -14,8 +14,7 @@ import (
 )
 
 // RegisterTools registers all Datto Networking MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerListDevices(srv, client, logger)
 	registerGetDevice(srv, client, logger)
@@ -24,14 +23,10 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerGetRouter(srv, client, logger)
 	registerGetWhoami(srv, client, logger)
 	registerGetUserDevices(srv, client, logger)
-
-	// Tier 2 — Sensitive (client usage data)
-	if tier >= 2 {
-		registerGetDeviceClientsOverview(srv, client, logger)
-		registerGetDeviceClientsUsage(srv, client, logger)
-		registerGetDeviceWanUsage(srv, client, logger)
-		registerGetDeviceApplications(srv, client, logger)
-	}
+	registerGetDeviceClientsOverview(srv, client, logger)
+	registerGetDeviceClientsUsage(srv, client, logger)
+	registerGetDeviceWanUsage(srv, client, logger)
+	registerGetDeviceApplications(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -44,7 +39,7 @@ func buildListResult(items []any) *mcp.CallToolResult {
 // --- tool registrations -----------------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the Datto Networking (DNA) API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -58,7 +53,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerGetWhoami(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_whoami",
+	tool := mcp.NewTool("get_whoami",
 		mcp.WithDescription("Get the current authenticated user information from the Datto Networking API."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -73,7 +68,7 @@ func registerGetWhoami(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerListDevices(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_list_devices",
+	tool := mcp.NewTool("list_devices",
 		mcp.WithDescription("List all Datto Networking devices. Returns an array of MAC addresses."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -88,7 +83,7 @@ func registerListDevices(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerGetDevicesOverview(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_devices_overview",
+	tool := mcp.NewTool("get_devices_overview",
 		mcp.WithDescription("Get an overview of all Datto Networking devices in the fleet."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -103,7 +98,7 @@ func registerGetDevicesOverview(srv *server.MCPServer, client *Client, logger *s
 }
 
 func registerGetDevice(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_device",
+	tool := mcp.NewTool("get_device",
 		mcp.WithDescription("Get comprehensive information about a specific Datto Networking device by MAC address. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF)."),
 		mcp.WithString("mac", mcp.Description("Device MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -125,7 +120,7 @@ func registerGetDevice(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerGetRouter(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_router",
+	tool := mcp.NewTool("get_router",
 		mcp.WithDescription("Get router information for a specific Datto Networking device by MAC address. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF)."),
 		mcp.WithString("mac", mcp.Description("Router MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -147,7 +142,7 @@ func registerGetRouter(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerGetDeviceClientsOverview(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_device_clients_overview",
+	tool := mcp.NewTool("get_device_clients_overview",
 		mcp.WithDescription("Get an overview of clients connected to a specific Datto Networking device. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF). Optional window parameter for time range (e.g., '1d', '3h', '1w')."),
 		mcp.WithString("mac", mcp.Description("Device MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithString("window", mcp.Description("Time window for data (e.g., '1d', '3h', '1w')")),
@@ -175,7 +170,7 @@ func registerGetDeviceClientsOverview(srv *server.MCPServer, client *Client, log
 }
 
 func registerGetDeviceClientsUsage(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_device_clients_usage",
+	tool := mcp.NewTool("get_device_clients_usage",
 		mcp.WithDescription("Get usage data for clients connected to a specific Datto Networking device. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF). Optional window, order, and limit parameters."),
 		mcp.WithString("mac", mcp.Description("Device MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithString("window", mcp.Description("Time window for data (e.g., '1d', '3h', '1w')")),
@@ -211,7 +206,7 @@ func registerGetDeviceClientsUsage(srv *server.MCPServer, client *Client, logger
 }
 
 func registerGetDeviceWanUsage(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_device_wan_usage",
+	tool := mcp.NewTool("get_device_wan_usage",
 		mcp.WithDescription("Get WAN usage data for a specific Datto Networking device. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF). Optional window parameter for time range."),
 		mcp.WithString("mac", mcp.Description("Device MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithString("window", mcp.Description("Time window for data (e.g., '1d', '3h', '1w')")),
@@ -239,7 +234,7 @@ func registerGetDeviceWanUsage(srv *server.MCPServer, client *Client, logger *sl
 }
 
 func registerGetDeviceApplications(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_device_applications",
+	tool := mcp.NewTool("get_device_applications",
 		mcp.WithDescription("Get application usage data for a specific Datto Networking device. MAC format: 12 uppercase hex chars, no delimiters (e.g., AABBCCDDEEFF). Optional window and limit parameters."),
 		mcp.WithString("mac", mcp.Description("Device MAC address (12 uppercase hex chars, e.g., AABBCCDDEEFF)"), mcp.Required()),
 		mcp.WithString("window", mcp.Description("Time window for data (e.g., '1d', '3h', '1w')")),
@@ -271,7 +266,7 @@ func registerGetDeviceApplications(srv *server.MCPServer, client *Client, logger
 }
 
 func registerGetUserDevices(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_user_devices",
+	tool := mcp.NewTool("get_user_devices",
 		mcp.WithDescription("List devices accessible to a specific SSO user in Datto Networking."),
 		mcp.WithString("username", mcp.Description("The SSO username to look up devices for"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -293,7 +288,7 @@ func registerGetUserDevices(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerGetResellerOverview(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_network_get_reseller_overview",
+	tool := mcp.NewTool("get_reseller_overview",
 		mcp.WithDescription("Get a network overview for all devices belonging to a reseller in Datto Networking."),
 		mcp.WithString("resellerId", mcp.Description("The reseller ID to get the network overview for"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),

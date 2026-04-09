@@ -13,8 +13,7 @@ import (
 )
 
 // RegisterTools registers all Datto Backup MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerListAppliances(srv, client, logger)
 	registerListAssets(srv, client, logger)
@@ -23,13 +22,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerGetAgentVersion(srv, client, logger)
 	registerListSpanningDomains(srv, client, logger)
 	registerListEntraDomains(srv, client, logger)
-
-	// Tier 2 — Sensitive (customer/user data)
-	if tier >= 2 {
-		registerListCustomers(srv, client, logger)
-		registerListEndpointAssets(srv, client, logger)
-		registerListSpanningDomainUsers(srv, client, logger)
-	}
+	registerListCustomers(srv, client, logger)
+	registerListEndpointAssets(srv, client, logger)
+	registerListSpanningDomainUsers(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -59,7 +54,7 @@ func buildListResult(items []any, pageInfo *PageInfo) *mcp.CallToolResult {
 // --- tool registrations -----------------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the Datto Backup (Unitrends) API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -73,7 +68,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListCustomers(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_customers",
+	tool := mcp.NewTool("list_customers",
 		mcp.WithDescription("List Datto Backup customers (tenants/organizations)."),
 		mcp.WithString("name", mcp.Description("Filter by customer name")),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -97,7 +92,7 @@ func registerListCustomers(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerListAppliances(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_appliances",
+	tool := mcp.NewTool("list_appliances",
 		mcp.WithDescription("List Datto Backup appliances (physical/virtual backup devices)."),
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID (UUID)")),
 		mcp.WithString("name", mcp.Description("Filter by appliance name")),
@@ -145,7 +140,7 @@ func registerListAppliances(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_assets",
+	tool := mcp.NewTool("list_assets",
 		mcp.WithDescription("List protected assets (servers, VMs) on Datto Backup appliances. Use include parameters to embed last backup info and links."),
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID (UUID)")),
 		mcp.WithString("assetTag", mcp.Description("Filter by appliance asset tag")),
@@ -198,7 +193,7 @@ func registerListAssets(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerListBackups(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_backups",
+	tool := mcp.NewTool("list_backups",
 		mcp.WithDescription("List backup jobs/records. Filter by customer, status, date range, etc."),
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID (UUID)")),
 		mcp.WithString("assetTag", mcp.Description("Filter by appliance asset tag")),
@@ -238,7 +233,7 @@ func registerListBackups(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_alerts",
+	tool := mcp.NewTool("list_alerts",
 		mcp.WithDescription("List BackupIQ alerts. The type parameter is required."),
 		mcp.WithString("type", mcp.Description("Required: Alert type — alert, job, conditional, or helix"), mcp.Required()),
 		mcp.WithString("severity", mcp.Description("Filter by severity: alarm, critical, or warning")),
@@ -298,7 +293,7 @@ func registerListAlerts(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerGetAgentVersion(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_get_agent_version",
+	tool := mcp.NewTool("get_agent_version",
 		mcp.WithDescription("Get the latest Datto Backup agent version and download link."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -313,7 +308,7 @@ func registerGetAgentVersion(srv *server.MCPServer, client *Client, logger *slog
 }
 
 func registerListEndpointAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_endpoint_assets",
+	tool := mcp.NewTool("list_endpoint_assets",
 		mcp.WithDescription("List endpoint backup assets (PCs, laptops)."),
 		mcp.WithString("customerId", mcp.Description("Filter by customer ID")),
 		mcp.WithString("name", mcp.Description("Filter by asset name")),
@@ -341,7 +336,7 @@ func registerListEndpointAssets(srv *server.MCPServer, client *Client, logger *s
 }
 
 func registerListSpanningDomains(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_spanning_domains",
+	tool := mcp.NewTool("list_spanning_domains",
 		mcp.WithDescription("List Spanning Backup domains (M365/Google Workspace tenants) with license and storage info."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -356,7 +351,7 @@ func registerListSpanningDomains(srv *server.MCPServer, client *Client, logger *
 }
 
 func registerListSpanningDomainUsers(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_spanning_domain_users",
+	tool := mcp.NewTool("list_spanning_domain_users",
 		mcp.WithDescription("List users within a Spanning Backup domain, including backup status per service."),
 		mcp.WithString("domainId", mcp.Description("The Spanning domain ID"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -383,7 +378,7 @@ func registerListSpanningDomainUsers(srv *server.MCPServer, client *Client, logg
 }
 
 func registerListEntraDomains(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_backup_list_entra_domains",
+	tool := mcp.NewTool("list_entra_domains",
 		mcp.WithDescription("List Microsoft Entra ID domains with backup and license info."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("pageSize", mcp.Description("Number of results per page (default 50)"), mcp.Min(1)),

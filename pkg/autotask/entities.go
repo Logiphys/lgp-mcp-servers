@@ -18,16 +18,16 @@ var CompactFields = map[string][]string{
 
 // CompactSearchTools maps tool names to their entity type for compact formatting.
 var CompactSearchTools = map[string]string{
-	"autotask_search_tickets":                      "Tickets",
-	"autotask_search_companies":                    "Companies",
-	"autotask_search_contacts":                     "Contacts",
-	"autotask_search_projects":                     "Projects",
-	"autotask_search_tasks":                        "Tasks",
-	"autotask_search_resources":                    "Resources",
-	"autotask_search_billing_items":                "BillingItems",
-	"autotask_search_billing_item_approval_levels": "BillingItemApprovalLevels",
-	"autotask_search_time_entries":                 "TimeEntries",
-	"autotask_search_ticket_charges":               "TicketCharges",
+	"search_tickets":                      "Tickets",
+	"search_companies":                    "Companies",
+	"search_contacts":                     "Contacts",
+	"search_projects":                     "Projects",
+	"search_tasks":                        "Tasks",
+	"search_resources":                    "Resources",
+	"search_billing_items":                "BillingItems",
+	"search_billing_item_approval_levels": "BillingItemApprovalLevels",
+	"search_time_entries":                 "TimeEntries",
+	"search_ticket_charges":               "TicketCharges",
 }
 
 // EntityAliases normalizes entity type names for get_field_info.

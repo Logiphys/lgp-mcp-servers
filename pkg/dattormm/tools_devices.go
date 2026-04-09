@@ -10,10 +10,10 @@ import (
 	"github.com/mark3labs/mcp-go/server"
 )
 
-func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
+func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	// datto_get_device
 	srv.AddTool(
-		mcp.NewTool("datto_get_device",
+		mcp.NewTool("get_device",
 			mcp.WithDescription("Get details for a specific Datto RMM device by UID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("deviceUid",
@@ -33,7 +33,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_get_device_by_id
 	srv.AddTool(
-		mcp.NewTool("datto_get_device_by_id",
+		mcp.NewTool("get_device_by_id",
 			mcp.WithDescription("Get details for a specific Datto RMM device by numeric ID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("deviceId",
@@ -54,7 +54,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_get_device_by_mac
 	srv.AddTool(
-		mcp.NewTool("datto_get_device_by_mac",
+		mcp.NewTool("get_device_by_mac",
 			mcp.WithDescription("Get details for a Datto RMM device by MAC address."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("macAddress",
@@ -74,7 +74,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_list_device_open_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_device_open_alerts",
+		mcp.NewTool("list_device_open_alerts",
 			mcp.WithDescription("List open alerts for a specific Datto RMM device."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("deviceUid",
@@ -116,7 +116,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_list_device_resolved_alerts
 	srv.AddTool(
-		mcp.NewTool("datto_list_device_resolved_alerts",
+		mcp.NewTool("list_device_resolved_alerts",
 			mcp.WithDescription("List resolved alerts for a specific Datto RMM device."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("deviceUid",
@@ -156,12 +156,9 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 		},
 	)
 
-	// Tier 3
-	if tier >= 3 {
-
 	// datto_move_device
 	srv.AddTool(
-		mcp.NewTool("datto_move_device",
+		mcp.NewTool("move_device",
 			mcp.WithDescription("Move a Datto RMM device to a different site."),
 			mcp.WithDestructiveHintAnnotation(true),
 			mcp.WithString("deviceUid",
@@ -185,7 +182,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_create_quick_job
 	srv.AddTool(
-		mcp.NewTool("datto_create_quick_job",
+		mcp.NewTool("create_quick_job",
 			mcp.WithDescription("Create a quick job on a Datto RMM device to run a component."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the target device."),
@@ -220,7 +217,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_set_device_udf
 	srv.AddTool(
-		mcp.NewTool("datto_set_device_udf",
+		mcp.NewTool("set_device_udf",
 			mcp.WithDescription("Set user-defined fields (UDFs) on a Datto RMM device. Provide any of udf1 through udf30."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the device."),
@@ -284,7 +281,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 
 	// datto_set_device_warranty
 	srv.AddTool(
-		mcp.NewTool("datto_set_device_warranty",
+		mcp.NewTool("set_device_warranty",
 			mcp.WithDescription("Set or clear the warranty date for a Datto RMM device."),
 			mcp.WithString("deviceUid",
 				mcp.Description("The UID of the device."),
@@ -307,14 +304,9 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 		},
 	)
 
-	} // end tier 3
-
-	// Tier 2
-	if tier >= 2 {
-
 	// datto_get_device_audit
 	srv.AddTool(
-		mcp.NewTool("datto_get_device_audit",
+		mcp.NewTool("get_device_audit",
 			mcp.WithDescription("Get audit information for a specific Datto RMM device."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithString("deviceUid",
@@ -331,8 +323,6 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 			return mcputil.JSONResult(result), nil
 		},
 	)
-
-	} // end tier 2
 
 	_ = logger
 }

@@ -29,9 +29,8 @@ func main() {
 
 	srv := server.NewMCPServer("datto-uc-mcp", version)
 
-	tier := config.AccessTier("DATTO_UC_ACCESS_TIER")
-	dattouc.RegisterTools(srv, client, logger, tier)
-	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-uc-mcp", Version: version, BuildDate: buildDate, Prefix: "datto_uc", AccessTier: tier})
+	dattouc.RegisterTools(srv, client, logger)
+	mcputil.RegisterServerInfoTool(srv, mcputil.ServerInfo{Name: "datto-uc-mcp", Version: version, BuildDate: buildDate})
 
 	if err := server.ServeStdio(srv); err != nil {
 		logger.Error("serve error", "err", err)

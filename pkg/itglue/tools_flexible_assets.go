@@ -12,7 +12,7 @@ import (
 
 func registerFlexibleAssetTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_list_flexible_asset_types",
+		mcp.NewTool("list_flexible_asset_types",
 			mcp.WithDescription("List all flexible asset types defined in IT Glue. Optionally filter by organization_id."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -47,7 +47,7 @@ func registerFlexibleAssetTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_search_flexible_assets",
+		mcp.NewTool("search_flexible_assets",
 			mcp.WithDescription("Search IT Glue flexible assets. flexible_asset_type_id is required. Optionally filter by organization_id and name."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),

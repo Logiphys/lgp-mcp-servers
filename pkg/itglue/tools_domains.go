@@ -11,7 +11,7 @@ import (
 
 func registerDomainTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_domains",
+		mcp.NewTool("search_domains",
 			mcp.WithDescription("Search IT Glue domains with optional filters. Returns a paginated list of domains."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),

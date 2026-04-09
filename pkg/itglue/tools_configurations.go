@@ -12,7 +12,7 @@ import (
 
 func registerConfigurationTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_configurations",
+		mcp.NewTool("search_configurations",
 			mcp.WithDescription("Search IT Glue configurations with optional filters. Returns a paginated list of configuration items."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -91,7 +91,7 @@ func registerConfigurationTools(srv *server.MCPServer, client *Client, logger *s
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_configuration",
+		mcp.NewTool("get_configuration",
 			mcp.WithDescription("Get a single IT Glue configuration item by ID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("id",

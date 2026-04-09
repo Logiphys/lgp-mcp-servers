@@ -11,7 +11,7 @@ import (
 
 func registerSystemTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("datto_get_system_status",
+		mcp.NewTool("get_system_status",
 			mcp.WithDescription("Retrieve the current system status of the Datto RMM platform."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -25,7 +25,7 @@ func registerSystemTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_rate_limit",
+		mcp.NewTool("get_rate_limit",
 			mcp.WithDescription("Retrieve the current API rate limit information for Datto RMM."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -39,7 +39,7 @@ func registerSystemTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_get_pagination_config",
+		mcp.NewTool("get_pagination_config",
 			mcp.WithDescription("Retrieve the pagination configuration for the Datto RMM API."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),

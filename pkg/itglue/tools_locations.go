@@ -12,7 +12,7 @@ import (
 
 func registerLocationTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("itglue_search_locations",
+		mcp.NewTool("search_locations",
 			mcp.WithDescription("Search IT Glue locations with optional filters. Returns a paginated list of locations."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithOpenWorldHintAnnotation(true),
@@ -79,7 +79,7 @@ func registerLocationTools(srv *server.MCPServer, client *Client, logger *slog.L
 	)
 
 	srv.AddTool(
-		mcp.NewTool("itglue_get_location",
+		mcp.NewTool("get_location",
 			mcp.WithDescription("Get a single IT Glue location by ID."),
 			mcp.WithReadOnlyHintAnnotation(true),
 			mcp.WithNumber("id",

@@ -11,7 +11,7 @@ import (
 
 func registerFilterTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	srv.AddTool(
-		mcp.NewTool("datto_list_default_filters",
+		mcp.NewTool("list_default_filters",
 			mcp.WithDescription("List the default device filters defined in the Datto RMM account, with pagination."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),
@@ -26,7 +26,7 @@ func registerFilterTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 	)
 
 	srv.AddTool(
-		mcp.NewTool("datto_list_custom_filters",
+		mcp.NewTool("list_custom_filters",
 			mcp.WithDescription("List the custom device filters defined in the Datto RMM account, with pagination."),
 			mcp.WithReadOnlyHintAnnotation(true),
 		),

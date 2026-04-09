@@ -13,8 +13,7 @@ import (
 )
 
 // RegisterTools registers all Datto Unified Continuity MCP tools on the given server.
-func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, tier int) {
-	// Tier 1 — Safe Read-Only
+func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerTestConnection(srv, client, logger)
 	registerListDevices(srv, client, logger)
 	registerGetDevice(srv, client, logger)
@@ -31,13 +30,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger, t
 	registerListDTCClientAssets(srv, client, logger)
 	registerGetDTCAsset(srv, client, logger)
 	registerListSaaSDomains(srv, client, logger)
-
-	// Tier 2 — Sensitive
-	if tier >= 2 {
-		registerGetActivityLog(srv, client, logger)
-		registerGetSaaSApplications(srv, client, logger)
-		registerGetSaaSSeats(srv, client, logger)
-	}
+	registerGetActivityLog(srv, client, logger)
+	registerGetSaaSApplications(srv, client, logger)
+	registerGetSaaSSeats(srv, client, logger)
 }
 
 // --- helpers ----------------------------------------------------------------
@@ -76,7 +71,7 @@ func buildListResult(items []any, pageInfo *PageInfo) *mcp.CallToolResult {
 // --- tool registrations -----------------------------------------------------
 
 func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_test_connection",
+	tool := mcp.NewTool("test_connection",
 		mcp.WithDescription("Test connectivity to the Datto Unified Continuity API. Returns success or an error message."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -90,7 +85,7 @@ func registerTestConnection(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListDevices(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_devices",
+	tool := mcp.NewTool("list_devices",
 		mcp.WithDescription("List all BCDR devices (SIRIS, ALTO, NAS). Supports pagination."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("perPage", mcp.Description("Number of results per page (default 100)"), mcp.Min(1), mcp.Max(1000)),
@@ -114,7 +109,7 @@ func registerListDevices(srv *server.MCPServer, client *Client, logger *slog.Log
 }
 
 func registerGetDevice(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_device",
+	tool := mcp.NewTool("get_device",
 		mcp.WithDescription("Get details of a specific BCDR device by serial number."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -136,7 +131,7 @@ func registerGetDevice(srv *server.MCPServer, client *Client, logger *slog.Logge
 }
 
 func registerListDeviceAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_device_assets",
+	tool := mcp.NewTool("list_device_assets",
 		mcp.WithDescription("List all assets (agents and shares) for a specific BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -163,7 +158,7 @@ func registerListDeviceAssets(srv *server.MCPServer, client *Client, logger *slo
 }
 
 func registerListDeviceAgents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_device_agents",
+	tool := mcp.NewTool("list_device_agents",
 		mcp.WithDescription("List agents for a specific BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -190,7 +185,7 @@ func registerListDeviceAgents(srv *server.MCPServer, client *Client, logger *slo
 }
 
 func registerListDeviceShares(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_device_shares",
+	tool := mcp.NewTool("list_device_shares",
 		mcp.WithDescription("List shares (NAS backup targets) for a specific BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -217,7 +212,7 @@ func registerListDeviceShares(srv *server.MCPServer, client *Client, logger *slo
 }
 
 func registerListDeviceAlerts(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_device_alerts",
+	tool := mcp.NewTool("list_device_alerts",
 		mcp.WithDescription("List alerts for a specific BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -244,7 +239,7 @@ func registerListDeviceAlerts(srv *server.MCPServer, client *Client, logger *slo
 }
 
 func registerListDeviceVMRestores(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_device_vm_restores",
+	tool := mcp.NewTool("list_device_vm_restores",
 		mcp.WithDescription("List VM restores for a specific BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -271,7 +266,7 @@ func registerListDeviceVMRestores(srv *server.MCPServer, client *Client, logger 
 }
 
 func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_agents",
+	tool := mcp.NewTool("list_agents",
 		mcp.WithDescription("List all BCDR agents (Endpoint Backup for PCs)."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("perPage", mcp.Description("Number of results per page (default 100)"), mcp.Min(1), mcp.Max(1000)),
@@ -291,7 +286,7 @@ func registerListAgents(srv *server.MCPServer, client *Client, logger *slog.Logg
 }
 
 func registerGetActivityLog(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_activity_log",
+	tool := mcp.NewTool("get_activity_log",
 		mcp.WithDescription("Get the Datto Unified Continuity activity log. Supports filtering by date and user."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("perPage", mcp.Description("Number of results per page (default 100)"), mcp.Min(1), mcp.Max(1000)),
@@ -319,7 +314,7 @@ func registerGetActivityLog(srv *server.MCPServer, client *Client, logger *slog.
 }
 
 func registerListSaaSDomains(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_saas_domains",
+	tool := mcp.NewTool("list_saas_domains",
 		mcp.WithDescription("List all SaaS Protection domains (M365/Google Workspace tenants)."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("perPage", mcp.Description("Number of results per page (default 100)"), mcp.Min(1), mcp.Max(1000)),
@@ -339,7 +334,7 @@ func registerListSaaSDomains(srv *server.MCPServer, client *Client, logger *slog
 }
 
 func registerGetSaaSSeats(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_saas_seats",
+	tool := mcp.NewTool("get_saas_seats",
 		mcp.WithDescription("List protected seats/users for a SaaS Protection customer."),
 		mcp.WithString("saasCustomerId", mcp.Description("The SaaS customer ID"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -366,7 +361,7 @@ func registerGetSaaSSeats(srv *server.MCPServer, client *Client, logger *slog.Lo
 }
 
 func registerGetSaaSApplications(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_saas_applications",
+	tool := mcp.NewTool("get_saas_applications",
 		mcp.WithDescription("List protected applications for a SaaS Protection customer."),
 		mcp.WithString("saasCustomerId", mcp.Description("The SaaS customer ID"), mcp.Required()),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -388,7 +383,7 @@ func registerGetSaaSApplications(srv *server.MCPServer, client *Client, logger *
 }
 
 func registerGetDeviceVolumeAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_device_volume_assets",
+	tool := mcp.NewTool("get_device_volume_assets",
 		mcp.WithDescription("Get assets for a specific volume on a BCDR device."),
 		mcp.WithString("serialNumber", mcp.Description("The device serial number"), mcp.Required()),
 		mcp.WithString("volumeName", mcp.Description("The volume name"), mcp.Required()),
@@ -417,7 +412,7 @@ func registerGetDeviceVolumeAssets(srv *server.MCPServer, client *Client, logger
 // --- Direct-to-Cloud (DTC) tools --------------------------------------------
 
 func registerListDTCAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_dtc_assets",
+	tool := mcp.NewTool("list_dtc_assets",
 		mcp.WithDescription("List all Direct-to-Cloud assets. Supports pagination."),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
 		mcp.WithNumber("perPage", mcp.Description("Number of results per page (default 100)"), mcp.Min(1), mcp.Max(1000)),
@@ -437,7 +432,7 @@ func registerListDTCAssets(srv *server.MCPServer, client *Client, logger *slog.L
 }
 
 func registerListDTCRMMTemplates(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_dtc_rmm_templates",
+	tool := mcp.NewTool("list_dtc_rmm_templates",
 		mcp.WithDescription("List RMM templates for Direct-to-Cloud."),
 		mcp.WithReadOnlyHintAnnotation(true),
 	)
@@ -452,7 +447,7 @@ func registerListDTCRMMTemplates(srv *server.MCPServer, client *Client, logger *
 }
 
 func registerGetDTCStoragePool(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_dtc_storage_pool",
+	tool := mcp.NewTool("get_dtc_storage_pool",
 		mcp.WithDescription("Get Direct-to-Cloud storage pool usage."),
 		mcp.WithString("poolName", mcp.Description("Optional storage pool name to filter by")),
 		mcp.WithReadOnlyHintAnnotation(true),
@@ -473,7 +468,7 @@ func registerGetDTCStoragePool(srv *server.MCPServer, client *Client, logger *sl
 }
 
 func registerListDTCClientAssets(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_list_dtc_client_assets",
+	tool := mcp.NewTool("list_dtc_client_assets",
 		mcp.WithDescription("List Direct-to-Cloud assets for a specific client."),
 		mcp.WithString("clientId", mcp.Description("The client ID"), mcp.Required()),
 		mcp.WithNumber("page", mcp.Description("Page number for pagination"), mcp.Min(1)),
@@ -500,7 +495,7 @@ func registerListDTCClientAssets(srv *server.MCPServer, client *Client, logger *
 }
 
 func registerGetDTCAsset(srv *server.MCPServer, client *Client, logger *slog.Logger) {
-	tool := mcp.NewTool("datto_uc_get_dtc_asset",
+	tool := mcp.NewTool("get_dtc_asset",
 		mcp.WithDescription("Get details of a specific Direct-to-Cloud asset."),
 		mcp.WithString("clientId", mcp.Description("The client ID"), mcp.Required()),
 		mcp.WithString("assetUuid", mcp.Description("The asset UUID"), mcp.Required()),
