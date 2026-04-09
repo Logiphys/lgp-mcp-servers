@@ -19,7 +19,7 @@ Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude w
 | `datto-edr-mcp` | [Datto EDR](https://www.datto.com/products/edr) | 21 | Endpoint detection & response — agents, alerts, rules, extensions, quarantine, isolation |
 | `datto-uc-mcp` | [Datto Unified Continuity](https://www.datto.com/products/unified-continuity) | 20 | BCDR appliances, SaaS Protection, Direct-to-Cloud backup, activity logs |
 | `rocketcyber-mcp` | [RocketCyber](https://www.rocketcyber.com) | 13 | Managed SOC — agents, events, incidents, firewalls, suppression rules |
-| `datto-network-mcp` | [Datto Networking](https://www.datto.com/products/networking) | 13 | Network devices, clients, WAN usage, application visibility |
+| `datto-network-mcp` | [Datto Networking](https://www.datto.com/products/networking) | 13 | Network devices, clients, WAN usage, application visibility — **not yet validated against live API** |
 | `datto-backup-mcp` | [Datto Backup](https://www.datto.com/products/backup) | 12 | Backup appliances, assets, alerts, customers, endpoint & SaaS backup |
 | `myitprocess-mcp` | [MyITProcess](https://www.myitprocess.com) | 11 | vCIO — clients, reviews, findings, initiatives, recommendations |
 

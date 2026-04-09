@@ -27,6 +27,10 @@ All notable changes to this project will be documented in this file.
 - Internal planning documents (`docs/plans/`) — not relevant for public release
 - `ACCESS_TIER` references from config examples
 
+### Known Issues
+
+- `datto-network-mcp` — implemented but not yet validated against a live Datto Networking API environment; may require endpoint or auth adjustments
+
 ### Fixed
 
 - All misspell violations (marshalling → marshaling, cancelled → canceled)
