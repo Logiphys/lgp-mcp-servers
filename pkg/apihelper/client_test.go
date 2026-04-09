@@ -118,7 +118,7 @@ func TestClient_Retry429(t *testing.T) {
 			w.WriteHeader(http.StatusTooManyRequests)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]string{"ok": "true"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"ok": "true"})
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL, MaxRetries: 3})
@@ -138,7 +138,7 @@ func TestClient_Retry5xx(t *testing.T) {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]string{"ok": "true"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"ok": "true"})
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL, MaxRetries: 2})

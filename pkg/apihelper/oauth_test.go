@@ -18,7 +18,7 @@ func TestTokenManager_FetchesToken(t *testing.T) {
 			w.WriteHeader(401)
 			return
 		}
-		json.NewEncoder(w).Encode(map[string]any{"access_token": "tok123", "token_type": "Bearer", "expires_in": 3600})
+		_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok123", "token_type": "Bearer", "expires_in": 3600})
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL + "/token", ClientID: "key", ClientSecret: "secret"})
@@ -35,7 +35,7 @@ func TestTokenManager_CachesToken(t *testing.T) {
 	var calls atomic.Int32
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		calls.Add(1)
-		json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 3600})
+		_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 3600})
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL, ClientID: "k", ClientSecret: "s"})
@@ -50,7 +50,7 @@ func TestTokenManager_RefreshesExpired(t *testing.T) {
 	var calls atomic.Int32
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		calls.Add(1)
-		json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 1})
+		_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 1})
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL, ClientID: "k", ClientSecret: "s"})
@@ -69,7 +69,7 @@ func TestTokenManager_DeduplicatesConcurrent(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		calls.Add(1)
 		time.Sleep(50 * time.Millisecond)
-		json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 3600})
+		_ = json.NewEncoder(w).Encode(map[string]any{"access_token": "tok", "expires_in": 3600})
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL, ClientID: "k", ClientSecret: "s"})

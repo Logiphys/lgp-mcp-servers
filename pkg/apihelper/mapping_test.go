@@ -71,9 +71,9 @@ func TestMappingCache_Clear(t *testing.T) {
 func TestMappingCache_Stats(t *testing.T) {
 	mc := NewMappingCache[int, string](30 * time.Minute)
 	fetch := func(int) (string, error) { return "v", nil }
-	mc.Get(context.Background(), 1, fetch) // miss
-	mc.Get(context.Background(), 1, fetch) // hit
-	mc.Get(context.Background(), 1, fetch) // hit
+	_, _ = mc.Get(context.Background(), 1, fetch) // miss
+	_, _ = mc.Get(context.Background(), 1, fetch) // hit
+	_, _ = mc.Get(context.Background(), 1, fetch) // hit
 	size, hitRate := mc.Stats()
 	if size != 1 {
 		t.Errorf("size = %d", size)
@@ -90,7 +90,7 @@ func TestMappingCache_ConcurrentAccess(t *testing.T) {
 		wg.Add(1)
 		go func(id int) {
 			defer wg.Done()
-			mc.Get(context.Background(), id%5, func(k int) (string, error) { return "val", nil })
+			_, _ = mc.Get(context.Background(), id%5, func(k int) (string, error) { return "val", nil })
 		}(i)
 	}
 	wg.Wait()
@@ -104,7 +104,7 @@ func TestMappingCache_SingleFlight(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			mc.Get(context.Background(), 1, func(int) (string, error) {
+			_, _ = mc.Get(context.Background(), 1, func(int) (string, error) {
 				calls.Add(1)
 				time.Sleep(20 * time.Millisecond)
 				return "val", nil

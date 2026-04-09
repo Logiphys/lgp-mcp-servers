@@ -42,7 +42,7 @@ func TestAuthHeaders(t *testing.T) {
 			t.Errorf("expected ApiIntegrationcode header 'TESTCODE', got %q", r.Header.Get("ApiIntegrationcode"))
 		}
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(map[string]any{"item": map[string]any{"id": 1}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"item": map[string]any{"id": 1}})
 	})
 
 	_, err := client.Get(context.Background(), "Tickets", 1)
@@ -59,7 +59,7 @@ func TestGet(t *testing.T) {
 		if r.URL.Path != "/Tickets/42" {
 			t.Errorf("expected path /Tickets/42, got %s", r.URL.Path)
 		}
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"item": map[string]any{
 				"id":    float64(42),
 				"title": "Test ticket",
@@ -100,7 +100,7 @@ func TestQuery(t *testing.T) {
 			t.Error("expected non-empty filter array in request body")
 		}
 
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"items": []map[string]any{
 				{"id": float64(1), "title": "Ticket 1"},
 				{"id": float64(2), "title": "Ticket 2"},
@@ -125,7 +125,7 @@ func TestCreateItemIdPattern(t *testing.T) {
 		if r.Method != http.MethodPost {
 			t.Errorf("expected POST, got %s", r.Method)
 		}
-		json.NewEncoder(w).Encode(map[string]any{"itemId": float64(999)})
+		_ = json.NewEncoder(w).Encode(map[string]any{"itemId": float64(999)})
 	})
 
 	id, err := client.Create(context.Background(), "Tickets", map[string]any{"title": "New"})
@@ -139,7 +139,7 @@ func TestCreateItemIdPattern(t *testing.T) {
 
 func TestCreateItemNestedIdPattern(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"item": map[string]any{"id": float64(888)},
 		})
 	})
@@ -155,7 +155,7 @@ func TestCreateItemNestedIdPattern(t *testing.T) {
 
 func TestCreateTopLevelIdPattern(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode(map[string]any{"id": float64(777)})
+		_ = json.NewEncoder(w).Encode(map[string]any{"id": float64(777)})
 	})
 
 	id, err := client.Create(context.Background(), "Tickets", map[string]any{"title": "New"})
@@ -175,7 +175,7 @@ func TestCreateChild(t *testing.T) {
 		if r.URL.Path != "/Tickets/123/Notes" {
 			t.Errorf("expected path /Tickets/123/Notes, got %s", r.URL.Path)
 		}
-		json.NewEncoder(w).Encode(map[string]any{"itemId": float64(456)})
+		_ = json.NewEncoder(w).Encode(map[string]any{"itemId": float64(456)})
 	})
 
 	id, err := client.CreateChild(context.Background(), "Tickets", 123, "Notes", map[string]any{"text": "note"})
@@ -215,7 +215,7 @@ func TestUpdate(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var reqBody map[string]any
-		json.Unmarshal(body, &reqBody)
+		_ = json.Unmarshal(body, &reqBody)
 		if reqBody["status"] != float64(5) {
 			t.Errorf("expected status 5 in body, got %v", reqBody["status"])
 		}
@@ -251,7 +251,7 @@ func TestGetFieldInfoWithEnvelope(t *testing.T) {
 		if r.URL.Path != "/Tickets/entityInformation/fields" {
 			t.Errorf("expected path /Tickets/entityInformation/fields, got %s", r.URL.Path)
 		}
-		json.NewEncoder(w).Encode(map[string]any{
+		_ = json.NewEncoder(w).Encode(map[string]any{
 			"fields": []map[string]any{
 				{"name": "id", "type": "integer"},
 				{"name": "title", "type": "string"},
@@ -273,7 +273,7 @@ func TestGetFieldInfoWithEnvelope(t *testing.T) {
 
 func TestGetFieldInfoBareArray(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
-		json.NewEncoder(w).Encode([]map[string]any{
+		_ = json.NewEncoder(w).Encode([]map[string]any{
 			{"name": "id", "type": "integer"},
 		})
 	})
@@ -293,14 +293,14 @@ func TestEnhanceWithNames(t *testing.T) {
 		callCount++
 		switch {
 		case strings.HasPrefix(r.URL.Path, "/Companies/"):
-			json.NewEncoder(w).Encode(map[string]any{
+			_ = json.NewEncoder(w).Encode(map[string]any{
 				"item": map[string]any{
 					"id":          float64(10),
 					"companyName": "Acme Corp",
 				},
 			})
 		case strings.HasPrefix(r.URL.Path, "/Resources/"):
-			json.NewEncoder(w).Encode(map[string]any{
+			_ = json.NewEncoder(w).Encode(map[string]any{
 				"item": map[string]any{
 					"id":        float64(20),
 					"firstName": "Jane",

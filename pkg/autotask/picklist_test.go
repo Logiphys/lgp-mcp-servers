@@ -69,7 +69,7 @@ func newTestPicklistServer(t *testing.T, callCount *atomic.Int32) *httptest.Serv
 				"isReference": false,
 			},
 		}
-		json.NewEncoder(w).Encode(fields)
+		_ = json.NewEncoder(w).Encode(fields)
 	}))
 }
 
