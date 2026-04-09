@@ -232,7 +232,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body any) (
 		}
 
 		respBody, _ := io.ReadAll(resp.Body) //nolint:errcheck
-		_ = resp.Body.Close()
+		_ = resp.Body.Close()                //nolint:errcheck
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 			return respBody, nil
