@@ -176,6 +176,6 @@ func TestClient_ContextCancellation(t *testing.T) {
 	defer cancel()
 	_, err := c.Get(ctx, "/test", nil)
 	if err == nil {
-		t.Error("should fail with cancelled context")
+		t.Error("should fail with canceled context")
 	}
 }

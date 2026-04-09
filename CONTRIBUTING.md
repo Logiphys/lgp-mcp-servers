@@ -11,7 +11,7 @@ Thank you for your interest in contributing! This project provides MCP servers f
 
 ## Prerequisites
 
-- Go 1.23+
+- Go 1.26+
 - [golangci-lint](https://golangci-lint.run/) for linting
 
 ## Development Workflow
@@ -35,7 +35,7 @@ Thank you for your interest in contributing! This project provides MCP servers f
 ## Project Structure
 
 - `pkg/` — shared libraries importable by all servers
-- `internal/` — server-specific logic (one package per server, not importable externally)
+- `pkg/<server>/` — server-specific logic (one package per server)
 - `cmd/` — binary entry points (one `main.go` per server)
 
 Each server follows the same pattern:
@@ -45,14 +45,14 @@ Each server follows the same pattern:
 
 ## Adding a New Tool
 
-1. Add the tool definition in the appropriate `internal/<server>/tools*.go` file
+1. Add the tool definition in the appropriate `pkg/<server>/tools*.go` file
 2. Register it in the `RegisterTools()` function
 3. Follow existing patterns for pagination, error handling, and response formatting
 4. Use `mcputil.JSONResult()` for structured responses and `mcputil.ErrorResult()` for errors
 
 ## Adding a New Server
 
-1. Create `internal/<servername>/client.go` and `tools.go`
+1. Create `pkg/<servername>/client.go` and `tools.go`
 2. Create `cmd/<server-name>-mcp/main.go`
 3. Add the server to the `SERVERS` list in `Makefile`
 4. Add configuration examples to `config/`

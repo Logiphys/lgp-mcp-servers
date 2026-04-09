@@ -200,7 +200,7 @@ func BuildJSONFilter(limit, skip int, order string) map[string]string {
 		filter["order"] = order
 	}
 	if len(filter) > 0 {
-		b, _ := json.Marshal(filter)
+		b, _ := json.Marshal(filter) //nolint:errcheck
 		params["filter"] = string(b)
 	}
 	return params

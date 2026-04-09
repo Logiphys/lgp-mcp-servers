@@ -43,6 +43,24 @@ test-cover:
 lint:
 	golangci-lint run ./...
 
+.PHONY: check-docs
+check-docs:
+	bash scripts/check-docs.sh
+
 .PHONY: clean
 clean:
-	rm -rf dist/
+	rm -rf dist/ coverage.out coverage.html
+
+.PHONY: help
+help:
+	@echo "LGP MCP Servers"
+	@echo ""
+	@echo "  make build            Build all servers for current platform"
+	@echo "  make build-all        Cross-compile for macOS + Windows"
+	@echo "  make build-<name>     Build single server (e.g. make build-autotask-mcp)"
+	@echo "  make test             Run all tests with race detection"
+	@echo "  make test-cover       Generate HTML coverage report"
+	@echo "  make lint             Run golangci-lint"
+	@echo "  make check-docs       Verify docs consistency with code"
+	@echo "  make clean            Remove build artifacts"
+	@echo "  make help             Show this message"

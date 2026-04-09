@@ -95,14 +95,14 @@ func registerUtilityTools(srv *server.MCPServer, client *Client, picklist *Pickl
 			if fieldName != "" {
 				for _, f := range fields {
 					if strings.EqualFold(f.Name, fieldName) {
-						b, _ := json.MarshalIndent(f, "", "  ")
+						b, _ := json.MarshalIndent(f, "", "  ") //nolint:errcheck
 						return mcputil.TextResult(string(b)), nil
 					}
 				}
 				return mcputil.TextResult(FormatNotFound("field", map[string]any{"entityType": normalized, "fieldName": fieldName})), nil
 			}
 
-			b, _ := json.MarshalIndent(fields, "", "  ")
+			b, _ := json.MarshalIndent(fields, "", "  ") //nolint:errcheck
 			return mcputil.TextResult(string(b)), nil
 		},
 	)

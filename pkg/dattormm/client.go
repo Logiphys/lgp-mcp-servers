@@ -115,7 +115,7 @@ func (t *tokenManager) fetchToken(ctx context.Context) (string, error) {
 	}
 	defer resp.Body.Close() //nolint:errcheck
 
-	body, _ := io.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body) //nolint:errcheck
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("token request returned HTTP %d: %s", resp.StatusCode, string(body))
 	}
@@ -189,7 +189,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body any) (
 		var err error
 		bodyBytes, err = json.Marshal(body)
 		if err != nil {
-			return nil, fmt.Errorf("marshalling request body: %w", err)
+			return nil, fmt.Errorf("marshaling request body: %w", err)
 		}
 	}
 
@@ -231,7 +231,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, body any) (
 			continue
 		}
 
-		respBody, _ := io.ReadAll(resp.Body)
+		respBody, _ := io.ReadAll(resp.Body) //nolint:errcheck
 		_ = resp.Body.Close()
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {

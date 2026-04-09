@@ -47,7 +47,7 @@ func FormatSearchResult(toolName string, items []map[string]any, page, pageSize 
 			"Use page:%d for more results, or use get_*_details for full data on specific items", page+1)
 	}
 
-	b, _ := json.MarshalIndent(result, "", "  ")
+	b, _ := json.MarshalIndent(result, "", "  ") //nolint:errcheck
 	return string(b)
 }
 
@@ -104,6 +104,6 @@ func FormatPicklistValues(label string, values []PicklistValue) string {
 		})
 	}
 	result["items"] = items
-	b, _ := json.MarshalIndent(result, "", "  ")
+	b, _ := json.MarshalIndent(result, "", "  ") //nolint:errcheck
 	return string(b)
 }

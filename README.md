@@ -1,5 +1,10 @@
 # LGP MCP Servers
 
+[![CI](https://github.com/Logiphys/lgp-mcp-servers/actions/workflows/ci.yml/badge.svg)](https://github.com/Logiphys/lgp-mcp-servers/actions/workflows/ci.yml)
+[![Release](https://github.com/Logiphys/lgp-mcp-servers/actions/workflows/release.yml/badge.svg)](https://github.com/Logiphys/lgp-mcp-servers/releases)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/Logiphys/lgp-mcp-servers)](https://golang.org)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude with structured access to IT service management, security, backup, and documentation platforms used at [Logiphys Datensysteme GmbH](https://logiphys.de).
 
 **258 tools** across **9 MCP servers**, built as single-binary deployments.
@@ -22,7 +27,7 @@ Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude w
 
 ### Prerequisites
 
-- Go 1.23+
+- Go 1.26+
 - API credentials for the platforms you want to connect
 
 ### Build
@@ -64,7 +69,7 @@ Each server is configured via environment variables. Add them to your Claude Cod
 }
 ```
 
-See `config/` for full configuration examples with all 9 servers.
+See `config/` for full configuration examples with all 9 servers. See [CONTRIBUTING](CONTRIBUTING.md) for development guidelines.
 
 ## Access Control
 
@@ -200,7 +205,7 @@ make lint          # Run golangci-lint
 make test-cover    # Generate coverage report
 ```
 
-Requires Go 1.23+ and [golangci-lint](https://golangci-lint.run/).
+Requires Go 1.26+ and [golangci-lint](https://golangci-lint.run/).
 
 ## License
 

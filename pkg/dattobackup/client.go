@@ -102,7 +102,7 @@ func (t *tokenManager) fetchToken(ctx context.Context) (string, error) {
 	}
 	defer resp.Body.Close() //nolint:errcheck
 
-	body, _ := io.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body) //nolint:errcheck
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("token request returned HTTP %d: %s", resp.StatusCode, string(body))
 	}
@@ -202,7 +202,7 @@ func (c *Client) doRequest(ctx context.Context, path string, params map[string]s
 			continue
 		}
 
-		respBody, _ := io.ReadAll(resp.Body)
+		respBody, _ := io.ReadAll(resp.Body) //nolint:errcheck
 		_ = resp.Body.Close()
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
@@ -288,6 +288,6 @@ func headerInt(h http.Header, key string) int {
 	if v == "" {
 		return 0
 	}
-	n, _ := strconv.Atoi(v)
+	n, _ := strconv.Atoi(v) //nolint:errcheck
 	return n
 }

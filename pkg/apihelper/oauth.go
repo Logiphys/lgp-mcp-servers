@@ -74,7 +74,7 @@ func (t *TokenManager) fetchToken(ctx context.Context) (string, error) {
 	}
 	defer resp.Body.Close() //nolint:errcheck
 
-	body, _ := io.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body) //nolint:errcheck
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("token request returned HTTP %d: %s", resp.StatusCode, string(body))
 	}

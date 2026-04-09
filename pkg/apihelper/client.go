@@ -85,7 +85,7 @@ func (c *Client) Delete(ctx context.Context, path string) error {
 func (c *Client) doWithBody(ctx context.Context, method, path string, body any) ([]byte, error) {
 	b, err := json.Marshal(body)
 	if err != nil {
-		return nil, fmt.Errorf("marshalling body: %w", err)
+		return nil, fmt.Errorf("marshaling body: %w", err)
 	}
 	req, err := http.NewRequestWithContext(ctx, method, c.baseURL+path, bytes.NewReader(b))
 	if err != nil {
@@ -104,7 +104,7 @@ func (c *Client) do(req *http.Request) ([]byte, error) {
 	// Save body for retries
 	var bodyBytes []byte
 	if req.Body != nil {
-		bodyBytes, _ = io.ReadAll(req.Body)
+		bodyBytes, _ = io.ReadAll(req.Body) //nolint:errcheck
 		req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
 	}
 
@@ -133,7 +133,7 @@ func (c *Client) do(req *http.Request) ([]byte, error) {
 			continue
 		}
 
-		body, _ := io.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body) //nolint:errcheck
 		_ = resp.Body.Close()
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {

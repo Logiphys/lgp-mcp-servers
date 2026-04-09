@@ -245,7 +245,7 @@ func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 				return mcputil.ErrorResult(fmt.Errorf("intent is required")), nil
 			}
 			result := RouteIntent(intent)
-			b, _ := json.MarshalIndent(result, "", "  ")
+			b, _ := json.MarshalIndent(result, "", "  ") //nolint:errcheck
 			return mcputil.TextResult(string(b)), nil
 		},
 	)

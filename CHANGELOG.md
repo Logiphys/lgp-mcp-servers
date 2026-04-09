@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.3.0] - 2026-04-09
+
+### Added
+
+- CI docs-consistency check (`scripts/check-docs.sh`) — validates tool counts, server lists, architecture paths, changelog entries, and stale feature references on every push/PR
+- `SECURITY.md` — vulnerability reporting policy
+- `CODE_OF_CONDUCT.md` — Contributor Covenant 2.1
+- GitHub issue templates (bug report, feature request) and PR template
+- `.golangci.yml` — explicit linter configuration (errcheck, govet, staticcheck, unused, misspell, etc.)
+- `make check-docs` and `make help` targets
+- README badges (CI, Release, Go version, License)
+- SHA256 checksums in release artifacts
+
+### Changed
+
+- CI pipeline split into parallel jobs (lint, test, docs, build)
+- CI build reads server list from Makefile instead of hardcoding
+- Go version requirement updated from 1.23+ to 1.26+ across all docs
+- README tool count corrected: autotask-mcp 78 → 82, total 254 → 258
+
+### Removed
+
+- Internal planning documents (`docs/plans/`) — not relevant for public release
+- `ACCESS_TIER` references from config examples
+
+### Fixed
+
+- All misspell violations (marshalling → marshaling, cancelled → canceled)
+- All remaining errcheck lint violations
+
 ## [v1.2.1] - 2026-04-09
 
 ### Fixed

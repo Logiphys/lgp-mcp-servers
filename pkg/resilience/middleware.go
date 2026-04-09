@@ -47,7 +47,7 @@ func NewMiddleware(cfg Config) *Middleware {
 
 func (m *Middleware) Execute(ctx context.Context, fn func() (any, error)) (any, error) {
 	if err := ctx.Err(); err != nil {
-		return nil, fmt.Errorf("context cancelled: %w", err)
+		return nil, fmt.Errorf("context canceled: %w", err)
 	}
 	if m.circuitBreaker != nil && !m.circuitBreaker.CanExecute() {
 		return nil, ErrCircuitOpen

@@ -48,7 +48,7 @@ func FormatCompact(entityType string, data []map[string]any, fields FieldSet) st
 				}
 			}
 		} else {
-			b, _ := json.MarshalIndent(item, "", "  ")
+			b, _ := json.MarshalIndent(item, "", "  ") //nolint:errcheck
 			sb.Write(b)
 			sb.WriteByte('\n')
 		}

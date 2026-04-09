@@ -53,10 +53,10 @@ func buildQueryFilters(filters []queryFilter) string {
 		return ""
 	}
 	if len(filters) == 1 {
-		b, _ := json.Marshal(filters[0])
+		b, _ := json.Marshal(filters[0]) //nolint:errcheck
 		return string(b)
 	}
-	b, _ := json.Marshal(filters)
+	b, _ := json.Marshal(filters) //nolint:errcheck
 	return string(b)
 }
 
