@@ -32,9 +32,9 @@ func TestMappingCache_TTLExpiry(t *testing.T) {
 	var calls atomic.Int32
 	mc := NewMappingCache[int, string](50 * time.Millisecond)
 	fetch := func(id int) (string, error) { calls.Add(1); return "value", nil }
-	mc.Get(context.Background(), 1, fetch)
+	_, _ = mc.Get(context.Background(), 1, fetch)
 	time.Sleep(60 * time.Millisecond)
-	mc.Get(context.Background(), 1, fetch)
+	_, _ = mc.Get(context.Background(), 1, fetch)
 	if calls.Load() != 2 {
 		t.Errorf("calls = %d, want 2", calls.Load())
 	}
@@ -60,7 +60,7 @@ func TestMappingCache_Warm(t *testing.T) {
 
 func TestMappingCache_Clear(t *testing.T) {
 	mc := NewMappingCache[int, string](30 * time.Minute)
-	mc.Get(context.Background(), 1, func(int) (string, error) { return "v", nil })
+	_, _ = mc.Get(context.Background(), 1, func(int) (string, error) { return "v", nil })
 	mc.Clear()
 	size, _ := mc.Stats()
 	if size != 0 {

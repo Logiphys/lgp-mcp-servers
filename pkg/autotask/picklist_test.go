@@ -103,8 +103,8 @@ func TestPicklistCache_Caching(t *testing.T) {
 	client := NewClient(Config{BaseURL: srv.URL, Username: "u", Secret: "s", IntegrationCode: "i"}, logger)
 	cache := NewPicklistCache(client, logger)
 
-	cache.GetFields(context.Background(), "Tickets")
-	cache.GetFields(context.Background(), "Tickets")
+	_, _ = cache.GetFields(context.Background(), "Tickets")
+	_, _ = cache.GetFields(context.Background(), "Tickets")
 	if calls.Load() != 1 {
 		t.Errorf("API called %d times, want 1 (should be cached)", calls.Load())
 	}
@@ -159,7 +159,7 @@ func TestPicklistCache_ConcurrentAccess(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			cache.GetFields(context.Background(), "Tickets")
+			_, _ = cache.GetFields(context.Background(), "Tickets")
 		}()
 	}
 	wg.Wait()
@@ -178,9 +178,9 @@ func TestPicklistCache_ClearCache(t *testing.T) {
 	client := NewClient(Config{BaseURL: srv.URL, Username: "u", Secret: "s", IntegrationCode: "i"}, logger)
 	cache := NewPicklistCache(client, logger)
 
-	cache.GetFields(context.Background(), "Tickets")
+	_, _ = cache.GetFields(context.Background(), "Tickets")
 	cache.ClearCache("Tickets")
-	cache.GetFields(context.Background(), "Tickets")
+	_, _ = cache.GetFields(context.Background(), "Tickets")
 	if calls.Load() != 2 {
 		t.Errorf("API called %d times after clear, want 2", calls.Load())
 	}

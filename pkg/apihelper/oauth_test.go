@@ -39,8 +39,8 @@ func TestTokenManager_CachesToken(t *testing.T) {
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL, ClientID: "k", ClientSecret: "s"})
-	tm.Token(context.Background())
-	tm.Token(context.Background())
+	_, _ = tm.Token(context.Background())
+	_, _ = tm.Token(context.Background())
 	if calls.Load() != 1 {
 		t.Errorf("token endpoint called %d times, want 1", calls.Load())
 	}
@@ -54,11 +54,11 @@ func TestTokenManager_RefreshesExpired(t *testing.T) {
 	}))
 	defer srv.Close()
 	tm := NewTokenManager(OAuth2Config{TokenURL: srv.URL, ClientID: "k", ClientSecret: "s"})
-	tm.Token(context.Background())
+	_, _ = tm.Token(context.Background())
 	tm.mu.Lock()
 	tm.expiry = time.Now().Add(-1 * time.Minute)
 	tm.mu.Unlock()
-	tm.Token(context.Background())
+	_, _ = tm.Token(context.Background())
 	if calls.Load() != 2 {
 		t.Errorf("calls = %d, want 2", calls.Load())
 	}
@@ -78,7 +78,7 @@ func TestTokenManager_DeduplicatesConcurrent(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			tm.Token(context.Background())
+			_, _ = tm.Token(context.Background())
 		}()
 	}
 	wg.Wait()

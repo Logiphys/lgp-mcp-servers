@@ -18,7 +18,7 @@ func TestClient_Get(t *testing.T) {
 		if r.URL.Query().Get("filter") != "active" {
 			t.Error("missing query param")
 		}
-		json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL, Timeout: 5 * time.Second})
@@ -27,7 +27,9 @@ func TestClient_Get(t *testing.T) {
 		t.Fatalf("Get failed: %v", err)
 	}
 	var result map[string]string
-	json.Unmarshal(body, &result)
+	if err := json.Unmarshal(body, &result); err != nil {
+		t.Fatalf("Unmarshal failed: %v", err)
+	}
 	if result["status"] != "ok" {
 		t.Errorf("status = %s", result["status"])
 	}
@@ -42,12 +44,12 @@ func TestClient_Post(t *testing.T) {
 			t.Error("missing content-type")
 		}
 		var body map[string]string
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = json.NewDecoder(r.Body).Decode(&body)
 		if body["name"] != "test" {
 			t.Error("body not decoded correctly")
 		}
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(map[string]any{"id": 1})
+		_ = json.NewEncoder(w).Encode(map[string]any{"id": 1})
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL})
@@ -56,7 +58,9 @@ func TestClient_Post(t *testing.T) {
 		t.Fatalf("Post failed: %v", err)
 	}
 	var result map[string]any
-	json.Unmarshal(body, &result)
+	if err := json.Unmarshal(body, &result); err != nil {
+		t.Fatalf("Unmarshal failed: %v", err)
+	}
 	if result["id"] != float64(1) {
 		t.Errorf("id = %v", result["id"])
 	}
@@ -67,7 +71,7 @@ func TestClient_Patch(t *testing.T) {
 		if r.Method != http.MethodPatch {
 			t.Errorf("method = %s, want PATCH", r.Method)
 		}
-		json.NewEncoder(w).Encode(map[string]string{"updated": "true"})
+		_ = json.NewEncoder(w).Encode(map[string]string{"updated": "true"})
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL})
@@ -103,7 +107,7 @@ func TestClient_CustomHeaders(t *testing.T) {
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL, UserAgent: "test-agent", Headers: map[string]string{"X-Api-Key": "secret"}})
-	c.Get(context.Background(), "/test", nil)
+	_, _ = c.Get(context.Background(), "/test", nil)
 }
 
 func TestClient_Retry429(t *testing.T) {
@@ -149,7 +153,7 @@ func TestClient_NoRetry4xx(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		attempts.Add(1)
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte(`{"error": "bad request"}`))
+		_, _ = w.Write([]byte(`{"error": "bad request"}`))
 	}))
 	defer srv.Close()
 	c := NewClient(ClientConfig{BaseURL: srv.URL, MaxRetries: 3})

@@ -90,7 +90,7 @@ func TestQuery(t *testing.T) {
 
 		body, _ := io.ReadAll(r.Body)
 		var reqBody map[string]any
-		json.Unmarshal(body, &reqBody)
+		_ = json.Unmarshal(body, &reqBody)
 
 		if reqBody["MaxRecords"] == nil {
 			t.Error("expected MaxRecords in request body")
@@ -330,7 +330,7 @@ func TestEnhanceWithNames(t *testing.T) {
 func TestHTTPError(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte(`{"error": "not found"}`))
+		_, _ = w.Write([]byte(`{"error": "not found"}`))
 	})
 
 	_, err := client.Get(context.Background(), "Tickets", 999)
@@ -419,7 +419,7 @@ func TestTestConnection(t *testing.T) {
 			t.Errorf("expected path /Companies/0, got %s", r.URL.Path)
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(`{}`))
+		_, _ = w.Write([]byte(`{}`))
 	})
 
 	err := client.TestConnection(context.Background())
@@ -432,14 +432,14 @@ func TestQueryDefaultPageSize(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
 		var reqBody map[string]any
-		json.Unmarshal(body, &reqBody)
+		_ = json.Unmarshal(body, &reqBody)
 
 		maxRecords := reqBody["MaxRecords"].(float64)
 		if maxRecords != 500 {
 			t.Errorf("expected default MaxRecords 500, got %v", maxRecords)
 		}
 
-		json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
 	})
 
 	_, err := client.Query(context.Background(), "Tickets", nil, QueryOpts{})
@@ -452,14 +452,14 @@ func TestQueryMaxSizeCap(t *testing.T) {
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		body, _ := io.ReadAll(r.Body)
 		var reqBody map[string]any
-		json.Unmarshal(body, &reqBody)
+		_ = json.Unmarshal(body, &reqBody)
 
 		maxRecords := reqBody["MaxRecords"].(float64)
 		if maxRecords != 50 {
 			t.Errorf("expected MaxRecords capped to 50, got %v", maxRecords)
 		}
 
-		json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
+		_ = json.NewEncoder(w).Encode(map[string]any{"items": []map[string]any{}})
 	})
 
 	_, err := client.Query(context.Background(), "Tickets", nil, QueryOpts{PageSize: 100, MaxSize: 50})

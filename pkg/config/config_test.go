@@ -73,7 +73,7 @@ func TestLogLevel(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.env, func(t *testing.T) {
 			if tt.env == "" {
-				os.Unsetenv("LOG_LEVEL")
+				_ = os.Unsetenv("LOG_LEVEL")
 			} else {
 				t.Setenv("LOG_LEVEL", tt.env)
 			}

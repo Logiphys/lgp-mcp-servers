@@ -72,7 +72,7 @@ func (t *TokenManager) fetchToken(ctx context.Context) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("token request failed: %w", err)
 	}
-	defer resp.Body.Close()
+	defer resp.Body.Close() //nolint:errcheck
 
 	body, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {

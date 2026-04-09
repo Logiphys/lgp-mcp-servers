@@ -39,7 +39,7 @@ func TestMiddleware_WithCompaction(t *testing.T) {
 
 func TestMiddleware_RateLimitExhausted(t *testing.T) {
 	mw := NewMiddleware(Config{RateLimit: 1})
-	mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
+	_, _ = mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
 	_, err := mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
 	if !errors.Is(err, ErrRateLimited) {
 		t.Errorf("error = %v, want ErrRateLimited", err)
@@ -50,7 +50,7 @@ func TestMiddleware_CircuitBreakerOpens(t *testing.T) {
 	mw := NewMiddleware(Config{FailureThreshold: 2, Cooldown: 1 * time.Second})
 	fail := errors.New("api error")
 	for i := 0; i < 2; i++ {
-		mw.Execute(context.Background(), func() (any, error) { return nil, fail })
+		_, _ = mw.Execute(context.Background(), func() (any, error) { return nil, fail })
 	}
 	_, err := mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
 	if !errors.Is(err, ErrCircuitOpen) {
@@ -60,12 +60,12 @@ func TestMiddleware_CircuitBreakerOpens(t *testing.T) {
 
 func TestMiddleware_RecordsSuccessAndFailure(t *testing.T) {
 	mw := NewMiddleware(Config{FailureThreshold: 5})
-	mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
+	_, _ = mw.Execute(context.Background(), func() (any, error) { return "ok", nil })
 	state, failures := mw.CircuitBreakerStatus()
 	if state != StateClosed || failures != 0 {
 		t.Errorf("after success: state=%v failures=%d", state, failures)
 	}
-	mw.Execute(context.Background(), func() (any, error) { return nil, errors.New("fail") })
+	_, _ = mw.Execute(context.Background(), func() (any, error) { return nil, errors.New("fail") })
 	_, failures = mw.CircuitBreakerStatus()
 	if failures != 1 {
 		t.Errorf("after failure: failures=%d, want 1", failures)
