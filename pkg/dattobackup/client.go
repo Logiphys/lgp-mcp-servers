@@ -203,7 +203,7 @@ func (c *Client) doRequest(ctx context.Context, path string, params map[string]s
 		}
 
 		respBody, _ := io.ReadAll(resp.Body)
-		resp.Body.Close()
+		_ = resp.Body.Close()
 
 		if resp.StatusCode >= 200 && resp.StatusCode < 300 {
 			return respBody, resp.Header, nil
