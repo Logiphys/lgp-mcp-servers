@@ -60,12 +60,6 @@ func buildQueryFilters(filters []queryFilter) string {
 	return string(b)
 }
 
-func addSortingRule(params map[string]string, field, direction string) {
-	rule := map[string]string{"field": field, "direction": direction}
-	b, _ := json.Marshal(rule)
-	params["sortingRules"] = string(b)
-}
-
 func buildListResult(items []any, pageInfo *PageInfo) *mcp.CallToolResult {
 	result := map[string]any{"data": items}
 	if pageInfo != nil {
