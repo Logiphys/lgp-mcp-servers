@@ -2,13 +2,13 @@
 
 Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude with structured access to IT service management, security, backup, and documentation platforms used at [Logiphys Datensysteme GmbH](https://logiphys.de).
 
-**254 tools** across **9 MCP servers**, built as single-binary deployments.
+**258 tools** across **9 MCP servers**, built as single-binary deployments.
 
 ## Servers
 
 | Server | Platform | Tools | Description |
 |--------|----------|------:|-------------|
-| `autotask-mcp` | [Autotask PSA](https://www.datto.com/products/autotask-psa) | 78 | Tickets, companies, contacts, projects, billing, time entries, service calls, quotes |
+| `autotask-mcp` | [Autotask PSA](https://www.datto.com/products/autotask-psa) | 82 | Tickets, companies, contacts, projects, billing, time entries, service calls, quotes |
 | `datto-rmm-mcp` | [Datto RMM](https://www.datto.com/products/rmm) | 55 | Remote monitoring & management — devices, sites, alerts, jobs, audit, variables |
 | `itglue-mcp` | [IT Glue](https://www.itglue.com) | 31 | IT documentation — organizations, configurations, passwords, contacts, domains, expirations |
 | `datto-edr-mcp` | [Datto EDR](https://www.datto.com/products/edr) | 21 | Endpoint detection & response — agents, alerts, rules, extensions, quarantine, isolation |
