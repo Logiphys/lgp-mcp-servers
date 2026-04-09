@@ -478,4 +478,3 @@ func registerRestoreHost(srv *server.MCPServer, client *Client, logger *slog.Log
 		return mcputil.JSONResult(result), nil
 	})
 }
-

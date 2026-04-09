@@ -390,4 +390,3 @@ func registerGetSuppressionRule(srv *server.MCPServer, client *Client, logger *s
 		return mcputil.JSONResult(result), nil
 	})
 }
-

@@ -369,10 +369,10 @@ func TestNewClientCustomBaseURL(t *testing.T) {
 
 func TestExtractID(t *testing.T) {
 	tests := []struct {
-		name     string
-		resp     map[string]any
-		wantID   int
-		wantOK   bool
+		name   string
+		resp   map[string]any
+		wantID int
+		wantOK bool
 	}{
 		{
 			name:   "itemId pattern",

@@ -76,11 +76,11 @@ func TestClient_Get(t *testing.T) {
 
 func TestClient_GetList(t *testing.T) {
 	tests := []struct {
-		name          string
-		response      any
-		params        map[string]string
-		wantLen       int
-		wantPageInfo  bool
+		name           string
+		response       any
+		params         map[string]string
+		wantLen        int
+		wantPageInfo   bool
 		wantTotalCount int
 	}{
 		{
@@ -101,10 +101,10 @@ func TestClient_GetList(t *testing.T) {
 			wantLen:  3,
 		},
 		{
-			name:     "empty data array",
-			response: map[string]any{"data": []any{}, "totalCount": float64(0)},
-			params:   map[string]string{"page": "1"},
-			wantLen:  0,
+			name:         "empty data array",
+			response:     map[string]any{"data": []any{}, "totalCount": float64(0)},
+			params:       map[string]string{"page": "1"},
+			wantLen:      0,
 			wantPageInfo: true,
 		},
 	}

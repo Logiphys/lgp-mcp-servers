@@ -31,12 +31,12 @@ var platformURLs = map[string]string{
 }
 
 const (
-	apiBasePath         = "/api/v2"
-	tokenRefreshBuffer  = 5 * time.Minute
-	defaultPlatform     = "merlot"
-	defaultTimeout      = 30 * time.Second
-	defaultMaxRetries   = 3
-	defaultRateLimit    = 1000 // requests per hour, conservative
+	apiBasePath        = "/api/v2"
+	tokenRefreshBuffer = 5 * time.Minute
+	defaultPlatform    = "merlot"
+	defaultTimeout     = 30 * time.Second
+	defaultMaxRetries  = 3
+	defaultRateLimit   = 1000 // requests per hour, conservative
 )
 
 // Config holds Datto RMM API credentials and settings.

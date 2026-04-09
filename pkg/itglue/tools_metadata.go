@@ -3,10 +3,10 @@ package itglue
 import (
 	"log/slog"
 
+	"context"
 	"github.com/Logiphys/lgp-mcp-servers/pkg/mcputil"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
-	"context"
 )
 
 func registerMetadataTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {

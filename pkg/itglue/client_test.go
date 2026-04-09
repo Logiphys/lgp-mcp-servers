@@ -133,10 +133,10 @@ func TestClient_Get(t *testing.T) {
 			wantAttrib: "Contoso",
 		},
 		{
-			name:    "server error",
-			path:    "/organizations/99",
+			name:     "server error",
+			path:     "/organizations/99",
 			response: "",
-			wantErr: true,
+			wantErr:  true,
 		},
 	}
 
