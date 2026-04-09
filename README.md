@@ -73,7 +73,7 @@ See `config/` for full configuration examples with all 9 servers. See [CONTRIBUT
 
 ## Access Control
 
-Access control (role-based tool filtering, GDPR/privacy tiers) is handled by the [LGP MCP Gateway](https://github.com/Logiphys/lgp-mcp-gateway). The standalone servers expose all tools — the gateway enforces which tools are available per user based on Entra ID roles.
+Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose all tools — the gateway enforces which tools are available per user.
 
 ## Server Details
 

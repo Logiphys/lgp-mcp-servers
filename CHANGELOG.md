@@ -49,7 +49,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Remove access tier logic from standalone servers** — Access control (GDPR tiers, role-based tool filtering) is now handled entirely by the [MCP Gateway](https://github.com/Logiphys/lgp-mcp-gateway). All `*_ACCESS_TIER` environment variables and `config.AccessTier()` have been removed.
+- **Remove access tier logic from standalone servers** — Access control (GDPR tiers, role-based tool filtering) is now handled by a separate gateway service. All `*_ACCESS_TIER` environment variables and `config.AccessTier()` have been removed.
 - Simplified `RegisterTools()` signatures across all 9 servers (no longer accept `tier` parameter)
 - Removed `AccessTier` from `ServerInfo`
 - Removed `autotask_` prefix from internal tool name mappings
@@ -58,7 +58,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- Move backend packages from `internal/` to `pkg/` for external import by the gateway
+- Move backend packages from `internal/` to `pkg/` for external import
 
 ## [v1.0.0] - 2026-04-02
 

@@ -947,19 +947,4 @@ Phase 1 ──→ Phase 2 ──→ Phase 3 ──→ Phase 6
 
 ## Appendix A: Gateway Mode (Optional)
 
-For cloud deployment scenarios (e.g., central instance for multiple technicians):
-
-```go
-// pkg/mcpserver/gateway.go
-// POST /mcp   — MCP request with credentials in headers
-// GET  /health — health check endpoint
-
-// Headers:
-// X-API-Key           → username / api key
-// X-API-Secret        → secret / api secret
-// X-Integration-Code  → integration code (Autotask only)
-// X-API-URL           → custom API URL (optional)
-```
-
-Fresh server instance per request with injected credentials.
-Not required for MVP — stdio transport is the default.
+A separate gateway service can be used for cloud deployment scenarios (e.g., central instance for multiple technicians with role-based access control). Not required for standalone use — stdio transport is the default.
