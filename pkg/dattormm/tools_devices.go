@@ -173,7 +173,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			deviceUid := req.GetString("deviceUid", "")
 			siteUid := req.GetString("siteUid", "")
-			if err := client.Put(ctx, fmt.Sprintf("/device/%s/site/%s", deviceUid, siteUid), nil); err != nil {
+			if _, err := client.Put(ctx, fmt.Sprintf("/device/%s/site/%s", deviceUid, siteUid), nil); err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
 			return mcputil.TextResult("Device moved successfully."), nil
@@ -207,7 +207,7 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 			if v, ok := args["variables"]; ok {
 				body["variables"] = v
 			}
-			result, err := client.Post(ctx, fmt.Sprintf("/device/%s/quickjob", deviceUid), body)
+			result, err := client.Put(ctx, fmt.Sprintf("/device/%s/quickjob", deviceUid), body)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}

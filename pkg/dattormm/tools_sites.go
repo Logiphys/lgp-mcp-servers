@@ -295,7 +295,7 @@ func registerSiteTools(srv *server.MCPServer, client *Client, logger *slog.Logge
 			if v, ok := args["splashtopAutoInstall"]; ok {
 				body["splashtopAutoInstall"] = v
 			}
-			if err := client.Put(ctx, "/site", body); err != nil {
+			if _, err := client.Put(ctx, "/site", body); err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
 			return mcputil.TextResult("Site created successfully."), nil

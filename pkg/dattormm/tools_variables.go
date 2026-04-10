@@ -44,7 +44,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 				"value":  value,
 				"masked": masked,
 			}
-			if err := c.Put(ctx, "/account/variable", body); err != nil {
+			if _, err := c.Put(ctx, "/account/variable", body); err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
 			return mcputil.TextResult("Account variable created."), nil
@@ -154,7 +154,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 				"value":  value,
 				"masked": masked,
 			}
-			if err := c.Put(ctx, fmt.Sprintf("/site/%s/variable", siteUid), body); err != nil {
+			if _, err := c.Put(ctx, fmt.Sprintf("/site/%s/variable", siteUid), body); err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
 			return mcputil.TextResult("Site variable created."), nil
@@ -296,7 +296,7 @@ func registerVariableTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 			if v, ok := args["password"].(string); ok && v != "" {
 				body["password"] = v
 			}
-			if err := c.Put(ctx, fmt.Sprintf("/site/%s/settings/proxy", siteUid), body); err != nil {
+			if _, err := c.Put(ctx, fmt.Sprintf("/site/%s/settings/proxy", siteUid), body); err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
 			return mcputil.TextResult("Site proxy updated."), nil

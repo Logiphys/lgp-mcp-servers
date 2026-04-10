@@ -389,7 +389,7 @@ func TestClient_Put(t *testing.T) {
 	defer ts.Close()
 
 	client := newTestClient(t, ts.URL)
-	err := client.Put(context.Background(), "/device/dev-1/site", map[string]any{
+	_, err := client.Put(context.Background(), "/device/dev-1/site", map[string]any{
 		"siteUid": "site-2",
 	})
 	if err != nil {

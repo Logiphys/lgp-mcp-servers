@@ -331,13 +331,29 @@ func (c *Client) Patch(ctx context.Context, path string, body any) (map[string]a
 	return result.(map[string]any), nil
 }
 
-// Put performs a PUT request with a JSON body. Used for operations like move-device.
-func (c *Client) Put(ctx context.Context, path string, body any) error {
-	_, err := c.middleware.Execute(ctx, func() (any, error) {
-		_, err := c.doRequest(ctx, http.MethodPut, path, body)
-		return nil, err
+// Put performs a PUT request with a JSON body and returns the parsed response.
+func (c *Client) Put(ctx context.Context, path string, body any) (map[string]any, error) {
+	result, err := c.middleware.Execute(ctx, func() (any, error) {
+		respBody, err := c.doRequest(ctx, http.MethodPut, path, body)
+		if err != nil {
+			return nil, err
+		}
+		if len(respBody) == 0 {
+			return map[string]any{}, nil
+		}
+		var resp map[string]any
+		if err := json.Unmarshal(respBody, &resp); err != nil {
+			return nil, fmt.Errorf("parsing response: %w", err)
+		}
+		return resp, nil
 	})
-	return err
+	if err != nil {
+		return nil, err
+	}
+	if result == nil {
+		return nil, nil
+	}
+	return result.(map[string]any), nil
 }
 
 // Delete performs a DELETE request.
