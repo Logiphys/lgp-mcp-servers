@@ -342,15 +342,15 @@ func TestHTTPError(t *testing.T) {
 	}
 }
 
-func TestNewClientDefaultBaseURL(t *testing.T) {
+func TestNewClientNoBaseURL(t *testing.T) {
 	cfg := Config{
 		Username:        "user",
 		Secret:          "secret",
 		IntegrationCode: "code",
 	}
 	client := NewClient(cfg, testLogger())
-	if client.baseURL != "https://webservices18.autotask.net/ATServicesRest/V1.0" {
-		t.Errorf("expected default base URL, got %s", client.baseURL)
+	if client.baseURL != "" {
+		t.Errorf("expected empty base URL when not provided, got %s", client.baseURL)
 	}
 }
 

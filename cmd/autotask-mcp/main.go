@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
+	"time"
 
 	"github.com/mark3labs/mcp-go/server"
 
@@ -19,11 +21,28 @@ func main() {
 		Level: config.LogLevel(),
 	}))
 
+	username := config.MustEnv("AUTOTASK_USERNAME")
+	var baseURL, webURL string
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	logger.Info("discovering Autotask zone", "user", username)
+	zi, err := autotask.DiscoverZone(ctx, username)
+	if err != nil {
+		logger.Error("zone discovery failed", "err", err)
+		os.Exit(1)
+	}
+	baseURL = zi.BaseURL
+	webURL = zi.WebURL
+	logger.Info("discovered Autotask zone", "baseURL", baseURL, "webURL", webURL)
+
 	cfg := autotask.Config{
-		Username:        config.MustEnv("AUTOTASK_USERNAME"),
+		Username:        username,
 		Secret:          config.MustEnv("AUTOTASK_SECRET"),
 		IntegrationCode: config.MustEnv("AUTOTASK_INTEGRATION_CODE"),
-		BaseURL:         config.OptEnv("AUTOTASK_BASE_URL", ""),
+		BaseURL:         baseURL,
+		WebURL:          webURL,
 	}
 
 	client := autotask.NewClient(cfg, logger)
