@@ -199,13 +199,16 @@ func registerDeviceTools(srv *server.MCPServer, client *Client, logger *slog.Log
 		),
 		func(ctx context.Context, req mcp.CallToolRequest) (*mcp.CallToolResult, error) {
 			deviceUid := req.GetString("deviceUid", "")
-			body := map[string]any{
-				"jobName":      req.GetString("jobName", ""),
+			jobComponent := map[string]any{
 				"componentUid": req.GetString("componentUid", ""),
 			}
 			args := req.GetArguments()
 			if v, ok := args["variables"]; ok {
-				body["variables"] = v
+				jobComponent["variables"] = v
+			}
+			body := map[string]any{
+				"jobName":      req.GetString("jobName", ""),
+				"jobComponent": jobComponent,
 			}
 			result, err := client.Put(ctx, fmt.Sprintf("/device/%s/quickjob", deviceUid), body)
 			if err != nil {

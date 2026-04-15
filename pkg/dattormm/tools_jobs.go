@@ -78,7 +78,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 			if deviceUid == "" {
 				return mcputil.ErrorResult(fmt.Errorf("deviceUid is required")), nil
 			}
-			result, err := c.Get(ctx, fmt.Sprintf("/job/%s/device/%s", jobUid, deviceUid), nil)
+			result, err := c.Get(ctx, fmt.Sprintf("/job/%s/results/%s", jobUid, deviceUid), nil)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
@@ -108,7 +108,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 			if deviceUid == "" {
 				return mcputil.ErrorResult(fmt.Errorf("deviceUid is required")), nil
 			}
-			raw, err := c.GetRaw(ctx, fmt.Sprintf("/job/%s/device/%s/stdout", jobUid, deviceUid), nil)
+			raw, err := c.GetRaw(ctx, fmt.Sprintf("/job/%s/results/%s/stdout", jobUid, deviceUid), nil)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
@@ -138,7 +138,7 @@ func registerJobTools(srv *server.MCPServer, c *Client, _ *slog.Logger) {
 			if deviceUid == "" {
 				return mcputil.ErrorResult(fmt.Errorf("deviceUid is required")), nil
 			}
-			raw, err := c.GetRaw(ctx, fmt.Sprintf("/job/%s/device/%s/stderr", jobUid, deviceUid), nil)
+			raw, err := c.GetRaw(ctx, fmt.Sprintf("/job/%s/results/%s/stderr", jobUid, deviceUid), nil)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
