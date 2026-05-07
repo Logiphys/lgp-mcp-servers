@@ -1,0 +1,3 @@
+[submodule "external/logiphys-marketplace"]
+	path = external/logiphys-marketplace
+	url = https://github.com/Logiphys/logiphys-marketplace
