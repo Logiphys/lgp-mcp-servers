@@ -12,7 +12,7 @@ var CompactFields = map[string][]string{
 	"Resources":                 {"id", "firstName", "lastName", "email", "isActive"},
 	"BillingItems":              {"id", "itemName", "companyID", "ticketID", "projectID", "postedDate", "totalAmount", "invoiceID", "billingItemType"},
 	"BillingItemApprovalLevels": {"id", "timeEntryID", "approvalLevel", "approvalResourceID", "approvalDateTime"},
-	"TimeEntries":               {"id", "resourceID", "ticketID", "projectID", "taskID", "dateWorked", "startDateTime", "endDateTime", "hoursWorked", "summaryNotes"},
+	"TimeEntries":               {"id", "resourceID", "ticketID", "projectID", "taskID", "dateWorked", "startDateTime", "endDateTime", "hoursWorked", "nonBillable", "summaryNotes"},
 	"TicketCharges":             {"id", "ticketID", "name", "chargeType", "unitQuantity", "unitPrice", "datePurchased"},
 }
 
