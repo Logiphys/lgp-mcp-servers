@@ -81,12 +81,13 @@ Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a s
 
 Connects to the [Autotask PSA REST API](https://autotask.net/help/DeveloperHelp/Content/APIs/REST/REST_API_Home.htm). Covers the full PSA workflow: tickets, companies, contacts, projects, billing items, time entries, quotes, service calls, expenses, and configuration items.
 
+The server automatically discovers the correct API zone based on your username.
+
 | Environment Variable | Required | Description |
 |---------------------|----------|-------------|
 | `AUTOTASK_USERNAME` | Yes | API user email |
 | `AUTOTASK_SECRET` | Yes | API secret |
 | `AUTOTASK_INTEGRATION_CODE` | Yes | Integration tracking code |
-| `AUTOTASK_BASE_URL` | No | Override API base URL |
 
 ### itglue-mcp
 

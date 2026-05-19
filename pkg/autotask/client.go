@@ -17,6 +17,7 @@ type Config struct {
 	Secret          string
 	IntegrationCode string
 	BaseURL         string
+	WebURL          string
 }
 
 // Filter represents an Autotask query filter.
@@ -38,6 +39,7 @@ type QueryOpts struct {
 type Client struct {
 	http       *apihelper.Client
 	baseURL    string
+	webURL     string
 	middleware *resilience.Middleware
 	logger     *slog.Logger
 	companies  *apihelper.MappingCache[int, string]
@@ -47,9 +49,6 @@ type Client struct {
 // NewClient creates a new Autotask API client.
 func NewClient(cfg Config, logger *slog.Logger) *Client {
 	baseURL := cfg.BaseURL
-	if baseURL == "" {
-		baseURL = "https://webservices18.autotask.net/ATServicesRest/V1.0"
-	}
 
 	httpClient := apihelper.NewClient(apihelper.ClientConfig{
 		BaseURL:    baseURL,
@@ -75,6 +74,7 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 	return &Client{
 		http:       httpClient,
 		baseURL:    baseURL,
+		webURL:     cfg.WebURL,
 		middleware: mw,
 		logger:     logger,
 		companies:  apihelper.NewMappingCache[int, string](30 * time.Minute),
