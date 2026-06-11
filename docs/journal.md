@@ -20,8 +20,7 @@ Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release fü
 ## Offene Entscheidungen / Blocker
 
 - Pax8-Backend am Gateway meldet 401 (vorbestehend, API-Key prüfen)
-- gateway-Repo: lokales main (`1373fbe`, Bridge-Refactor "phase R") ist von origin/main divergiert — vor nächstem Push auf neues origin/main (`f938398`) rebasen
-- Dependabot meldet 4 Vulnerabilities im gateway-Repo (2 high)
+- gateway-Repo: lokales main (`1373fbe`, Bridge-Refactor "phase R") ist von origin/main divergiert — vor nächstem Push auf neues origin/main rebasen (origin/main inzwischen weiter: Dependabot-Fixes via PR #83 gemerged)
 - VM `bin/` enthält ~20 alte Backup-Binaries — gelegentlich aufräumen
 - Marketplace: unfertige lgp-email-tools-Arbeit (sorter.py + neue Skills) liegt uncommitted im Working Tree
 
