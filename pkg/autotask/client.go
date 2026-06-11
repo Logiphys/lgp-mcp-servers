@@ -209,11 +209,17 @@ func (c *Client) CreateChild(ctx context.Context, parent string, parentID int, c
 }
 
 // Update updates an entity via PATCH.
-// PATCH /{entity}/{id} with body.
+// Autotask supports PATCH only on the entity collection with the ID in the
+// request body (PATCH /{entity} + {"id": ...}); PATCH /{entity}/{id} returns
+// HTTP 405.
 func (c *Client) Update(ctx context.Context, entity string, id int, data map[string]any) error {
 	_, err := c.middleware.Execute(ctx, func() (any, error) {
-		path := fmt.Sprintf("/%s/%d", entity, id)
-		_, err := c.http.Patch(ctx, path, data)
+		body := make(map[string]any, len(data)+1)
+		for k, v := range data {
+			body[k] = v
+		}
+		body["id"] = id
+		_, err := c.http.Patch(ctx, "/"+entity, body)
 		return nil, err
 	})
 	return err

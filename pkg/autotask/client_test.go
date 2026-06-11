@@ -205,17 +205,22 @@ func TestDeleteChild(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
+	// Autotask supports PATCH only on the entity collection with the ID in
+	// the body; PATCH /{entity}/{id} returns HTTP 405.
 	client, _ := setupTestServer(t, func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPatch {
 			t.Errorf("expected PATCH, got %s", r.Method)
 		}
-		if r.URL.Path != "/Tickets/42" {
-			t.Errorf("expected path /Tickets/42, got %s", r.URL.Path)
+		if r.URL.Path != "/Tickets" {
+			t.Errorf("expected path /Tickets, got %s", r.URL.Path)
 		}
 
 		body, _ := io.ReadAll(r.Body)
 		var reqBody map[string]any
 		_ = json.Unmarshal(body, &reqBody)
+		if reqBody["id"] != float64(42) {
+			t.Errorf("expected id 42 in body, got %v", reqBody["id"])
+		}
 		if reqBody["status"] != float64(5) {
 			t.Errorf("expected status 5 in body, got %v", reqBody["status"])
 		}
@@ -223,9 +228,13 @@ func TestUpdate(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	})
 
-	err := client.Update(context.Background(), "Tickets", 42, map[string]any{"status": 5})
+	data := map[string]any{"status": 5}
+	err := client.Update(context.Background(), "Tickets", 42, data)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
+	}
+	if _, ok := data["id"]; ok {
+		t.Error("caller's data map must not be mutated")
 	}
 }
 
