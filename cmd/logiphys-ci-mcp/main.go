@@ -50,14 +50,17 @@ func main() {
 // defaultSkillDir resolves the skill directory.
 //
 // Order:
-//  1. <bin>/../skills/logiphys-ci  (production deploy: /opt/lgp-mcp-gateway/skills/...)
-//  2. external/logiphys-marketplace/plugins/lgp-docs/skills/logiphys-ci  (local dev via submodule)
+//  1. <bin>/../skills/lgp-ci       (production deploy: /opt/lgp-mcp-gateway/skills/...)
+//  2. <bin>/../skills/logiphys-ci  (deploy layout before the marketplace skill rename, lgp-docs < 2.0)
+//  3. external/logiphys-marketplace/plugins/lgp-docs/skills/lgp-ci  (local dev via submodule)
 func defaultSkillDir() string {
 	if exe, err := os.Executable(); err == nil {
-		candidate := filepath.Join(filepath.Dir(exe), "..", "skills", "logiphys-ci")
-		if _, err := os.Stat(candidate); err == nil {
-			return candidate
+		for _, name := range []string{"lgp-ci", "logiphys-ci"} {
+			candidate := filepath.Join(filepath.Dir(exe), "..", "skills", name)
+			if _, err := os.Stat(candidate); err == nil {
+				return candidate
+			}
 		}
 	}
-	return "external/logiphys-marketplace/plugins/lgp-docs/skills/logiphys-ci"
+	return "external/logiphys-marketplace/plugins/lgp-docs/skills/lgp-ci"
 }
