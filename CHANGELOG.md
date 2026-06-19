@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.4.0] - 2026-04-15
+
+### Added
+
+- **Autotask Zone Discovery** — The server now automatically determines the correct zone-specific REST API and Web UI base URLs based on the `AUTOTASK_USERNAME`.
+- New `autotask.DiscoverZone` utility and URL normalization logic.
+
+### Changed
+
+- Autotask server now requires a successful zone discovery on startup.
+- `AUTOTASK_BASE_URL` environment variable has been removed as it is no longer necessary.
+
+### Fixed
+
+- Autotask connectivity issues for tenants not on the default zone (`webservices18`).
+
 ## [v1.3.0] - 2026-04-09
 
 ### Added
