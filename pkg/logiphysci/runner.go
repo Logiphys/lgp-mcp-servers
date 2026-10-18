@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log/slog"
 	"os"
@@ -67,7 +68,9 @@ func (r *Runner) RunBuilder(ctx context.Context, scriptName string, payload any,
 	}()
 
 	if err := json.NewEncoder(jsonFile).Encode(payload); err != nil {
-		_ = jsonFile.Close()
+		if closeErr := jsonFile.Close(); closeErr != nil {
+			err = errors.Join(err, fmt.Errorf("close tempfile: %w", closeErr))
+		}
 		return nil, fmt.Errorf("encode payload: %w", err)
 	}
 	if err := jsonFile.Close(); err != nil {

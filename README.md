@@ -7,7 +7,7 @@
 
 Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude with structured access to IT service management, security, backup, and documentation platforms used at [Logiphys Datensysteme GmbH](https://logiphys.de).
 
-**258 tools** across **9 MCP servers**, built as single-binary deployments.
+**266 tools** across **10 MCP servers**, built as single-binary deployments.
 
 ## Servers
 
@@ -22,6 +22,7 @@ Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude w
 | `datto-network-mcp` | [Datto Networking](https://www.datto.com/products/networking) | 13 | Network devices, clients, WAN usage, application visibility — **not yet validated against live API** |
 | `datto-backup-mcp` | [Datto Backup](https://www.datto.com/products/backup) | 12 | Backup appliances, assets, alerts, customers, endpoint & SaaS backup |
 | `myitprocess-mcp` | [MyITProcess](https://www.myitprocess.com) | 11 | vCIO — clients, reviews, findings, initiatives, recommendations |
+| `logiphys-ci-mcp` | Logiphys corporate identity (lgp-ci skill) | 8 | Branded PDF documents — offers, reports, letters, concepts, delivery notes, dunning letters |
 
 ## Quick Start
 
@@ -69,7 +70,7 @@ Each server is configured via environment variables. Add them to your Claude Cod
 }
 ```
 
-See `config/` for full configuration examples with all 9 servers. See [CONTRIBUTING](CONTRIBUTING.md) for development guidelines.
+See `config/` for configuration examples of the API servers. See [CONTRIBUTING](CONTRIBUTING.md) for development guidelines.
 
 ## Access Control
 
@@ -166,6 +167,16 @@ Connects to the [MyITProcess API](https://api.myitprocess.com). Virtual CIO plat
 |---------------------|----------|-------------|
 | `MYITPROCESS_API_KEY` | Yes | API key |
 
+### logiphys-ci-mcp
+
+Renders Logiphys-branded PDF documents (Angebot, Bericht, Brief, Konzept, Lieferschein, Mahnung) by running the Python scripts of the internal `lgp-ci` skill (Git submodule `external/logiphys-marketplace`, access restricted to Logiphys). The `version` tool reports the embedded skill SHA and tag for audit purposes. Requires Python 3 with the skill's dependencies.
+
+| Environment Variable | Required | Default | Description |
+|---------------------|----------|---------|-------------|
+| `LOGIPHYS_CI_SKILL_DIR` | No | `<bin>/../skills/lgp-ci`, then `<bin>/../skills/logiphys-ci`, then the submodule path | Skill root (contains `scripts/`, `assets/`) |
+| `LOGIPHYS_CI_PYTHON_BIN` | No | `python3` | Python interpreter |
+| `LOGIPHYS_CI_OUTPUT_DIR` | No | OS temp dir | Directory for intermediate files |
+
 ## Architecture
 
 ```
@@ -183,6 +194,7 @@ pkg/dattoedr/          Datto EDR logic (detection, response, quarantine)
 pkg/dattobackup/       Datto Backup logic (appliances, assets, alerts)
 pkg/dattonetwork/      Datto Networking logic (devices, clients, WAN)
 pkg/myitprocess/       MyITProcess logic (reviews, findings, initiatives)
+pkg/logiphysci/        Logiphys CI documents (PDF rendering via lgp-ci skill)
 
 cmd/autotask-mcp/      Binary entry points (one per server)
 cmd/itglue-mcp/
@@ -193,6 +205,7 @@ cmd/datto-edr-mcp/
 cmd/datto-backup-mcp/
 cmd/datto-network-mcp/
 cmd/myitprocess-mcp/
+cmd/logiphys-ci-mcp/
 ```
 
 All servers share a resilience middleware stack (rate limiting, circuit breaker, response compaction) and common HTTP client utilities. Each server is a standalone binary communicating over stdio using the [MCP protocol](https://modelcontextprotocol.io).
