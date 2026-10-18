@@ -5,6 +5,8 @@ on:
 
 jobs:
   release:
+    # Deliberately GitHub-hosted, not CI_RUNNER: release builds stay off the
+    # self-hosted runner (key-isolation boundary, see Logiphys/ci-infra).
     runs-on: ubuntu-latest
     permissions:
       contents: write

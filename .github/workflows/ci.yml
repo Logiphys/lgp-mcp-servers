@@ -5,29 +5,49 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# runs-on is swappable: the repository variable CI_RUNNER=lgp-ci moves CI onto
+# the self-hosted runner (Logiphys/ci-infra); unset → GitHub-hosted ubuntu-latest.
+# Release workflows stay GitHub-hosted (signing/key isolation, see ci-infra).
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version: '1.26'
+          # No Actions cache on the self-hosted runner: its persistent
+          # ~/go/pkg/mod + ~/.cache/go-build already are the cache, and saving
+          # the shared host cache costs minutes per job (see lgp-mcp-gateway).
+          cache: ${{ !vars.CI_RUNNER }}
       - uses: golangci/golangci-lint-action@v7
         with:
-          version: latest
+          version: v2.11.4
+          args: --timeout=5m
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version: '1.26'
-      - run: go test ./... -race -count=1
+          cache: ${{ !vars.CI_RUNNER }}
+      # -race needs cgo + gcc; the lean runner VM does not enable cgo by default.
+      - run: CGO_ENABLED=1 go test ./... -race -count=1
 
   docs:
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
         with:
@@ -43,12 +63,14 @@ jobs:
         exclude:
           - goos: windows
             goarch: arm64
-    runs-on: ubuntu-latest
+    runs-on: ${{ vars.CI_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-go@v6
         with:
           go-version: '1.26'
+          cache: ${{ !vars.CI_RUNNER }}
       - name: Build all servers
         run: |
           SERVERS=$(grep '^SERVERS' Makefile | sed 's/.*:= //')

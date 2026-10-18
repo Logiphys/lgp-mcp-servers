@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Changed
+
+- CI jobs run on `${{ vars.CI_RUNNER || 'ubuntu-latest' }}` — the repository variable `CI_RUNNER=lgp-ci` moves CI to the self-hosted runner (Logiphys/ci-infra); the release workflow stays GitHub-hosted
+- CI: golangci-lint pinned to v2.11.4, explicit `CGO_ENABLED=1` for `-race`, job timeouts, concurrency cancel for superseded runs
+- README and `scripts/check-docs.sh` include `logiphys-ci-mcp` (10 servers, 266 tools)
+
+### Fixed
+
+- logiphys-ci-mcp: close error of the payload tempfile is no longer discarded (errcheck)
+
+## [v1.3.1] - 2026-04-15
+
+### Fixed
+
+- datto-rmm-mcp: `create_quick_job` uses PUT, correct request body shape and job-results URL path
+
+### Changed
+
+- README: datto-network-mcp marked as not yet validated against the live API; references to the non-public gateway repository removed
+- `ATTRIBUTION.md` for referenced open-source projects
+
 ## [v1.3.0] - 2026-04-09
 
 ### Added
