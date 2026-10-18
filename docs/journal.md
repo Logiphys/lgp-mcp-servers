@@ -19,6 +19,7 @@ Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release fü
 
 ## Offene Entscheidungen / Blocker
 
+- CI auf eigenen Runner: Workflow ist umschaltbar (PR #6), aber Runner für dieses Repo noch **nicht registriert** und `CI_RUNNER` nicht gesetzt — manuell: `~/Developer/ci-infra/runner/register-runner.sh Logiphys/lgp-mcp-servers lgp-ci`, danach `gh variable set CI_RUNNER --repo Logiphys/lgp-mcp-servers --body lgp-ci` (Reihenfolge wichtig, sonst hängen Jobs in der Queue)
 - Pax8-Backend am Gateway meldet 401 (vorbestehend, API-Key prüfen)
 - gateway-Repo: lokales main (`1373fbe`, Bridge-Refactor "phase R") ist von origin/main divergiert — vor nächstem Push auf neues origin/main rebasen (origin/main inzwischen weiter: Dependabot-Fixes via PR #83 gemerged)
 - VM `bin/` enthält ~20 alte Backup-Binaries — gelegentlich aufräumen
@@ -34,6 +35,10 @@ Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release fü
 ---
 
 ## Historie
+
+### 2026-10-18 — Rote CI-Checks auf main + Runner-Umstellung (PR #6)
+
+`make lint` (errcheck `check-blank` in `pkg/logiphysci/runner.go`) und `make check-docs` (logiphys-ci-mcp fehlte in README und Skript-Mapping) waren auf main rot; behoben in `9c126dc`, lokal alles grün. `ci.yml` nutzt jetzt `vars.CI_RUNNER || 'ubuntu-latest'` wie Gateway/line-config (Muster aus Logiphys/ci-infra: repo-gebundene Runner in der OrbStack-VM `lgp-ci` auf dem Mac mini, arm64, kein Actions-Go-Cache, `CGO_ENABLED=1` für `-race`). Release bleibt GitHub-hosted (Key-Isolation). Learning: Repo ist public, Marketplace privat — keine Links auf private Repos in der README.
 
 ### 2026-06-11 — Autotask-405-Fix + logiphys-ci-Sync
 
