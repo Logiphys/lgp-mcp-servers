@@ -19,7 +19,7 @@ Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release fü
 
 ## Offene Entscheidungen / Blocker
 
-- CI auf eigenen Runner: Workflow ist umschaltbar (PR #6), aber Runner für dieses Repo noch **nicht registriert** und `CI_RUNNER` nicht gesetzt — manuell: `~/Developer/ci-infra/runner/register-runner.sh Logiphys/lgp-mcp-servers lgp-ci`, danach `gh variable set CI_RUNNER --repo Logiphys/lgp-mcp-servers --body lgp-ci` (Reihenfolge wichtig, sonst hängen Jobs in der Queue)
+- CI auf eigenem Runner: Runner `lgp-ci-mini` für dieses Repo am 2026-10-18 registriert (OrbStack-VM `lgp-ci`, `ci.slice`, 4C/8G) und `CI_RUNNER=lgp-ci` gesetzt. Wirkt auf `main` erst nach Merge von PR #6 (bis dahin hartkodiert `ubuntu-latest`). Verifiziert: CI-Lauf 39127876520 (PR #6) mit allen 6 Jobs auf `lgp-ci-mini` grün, Gesamtdauer ca. 2,5 min. Rückweg: `gh variable delete CI_RUNNER --repo Logiphys/lgp-mcp-servers`
 - Pax8-Backend am Gateway meldet 401 (vorbestehend, API-Key prüfen)
 - gateway-Repo: lokales main (`1373fbe`, Bridge-Refactor "phase R") ist von origin/main divergiert — vor nächstem Push auf neues origin/main rebasen (origin/main inzwischen weiter: Dependabot-Fixes via PR #83 gemerged)
 - VM `bin/` enthält ~20 alte Backup-Binaries — gelegentlich aufräumen
