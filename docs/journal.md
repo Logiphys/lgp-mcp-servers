@@ -11,10 +11,11 @@ Plan:
 4. `FormatCreateResult` liefert zusätzlich `itemId` (Gateway-Audit `from: result, path: itemId`), `id` bleibt.
 5. Tests table-driven mit `-race`; `make test`, `make lint`, `make check-docs`; PR mit `Refs #4`, nicht mergen.
 
-Stand 2026-10-18: Schritte 1–5 umgesetzt (`15015ad`), PR offen, wartet auf Andreas' Review/Freigabe.
+Stand 2026-10-18: Schritte 1–5 umgesetzt (`15015ad`), PR #5 von Andreas zum Merge freigegeben (nach PR #6 und grüner CI auf `lgp-ci`). Impersonation wirkt erst mit Gateway-Seite (lgp-mcp-gateway#22) und gesetzter Autotask-Berechtigung.
 
 ## Zuletzt erledigt (mit Commit-SHAs)
 
+- `d688636` Merge PR #6: Lint/check-docs auf main grün, CI über `CI_RUNNER` auf eigenem Runner (`9c126dc`)
 - `15015ad` feat(autotask): Gateway-Actor aus `_meta` + `ImpersonationResourceId` bei Writes, `itemId` in Anlege-Ergebnissen (#4) — TDD, `make test` grün
 - `6300032` fix(autotask): PATCH auf Entity-Collection mit ID im Body (405-Fix) — TDD, Suite grün
 - `5d78696` feat(logiphys-ci): Sync mit Marketplace lgp-ci 2.x — Submodule auf `af4301e` (lgp-docs 2.2.0), Skill-Dir-Rename `logiphys-ci`→`lgp-ci` (mit Prod-Fallback), neues Tool `build_konzept`, `build_angebot`-Schema generisch (nur noch `empfaenger_zeilen` Pflicht)
@@ -25,13 +26,13 @@ Stand 2026-10-18: Schritte 1–5 umgesetzt (`15015ad`), PR offen, wartet auf And
 
 ## Nächster konkreter Schritt
 
-PR für #4 reviewen/mergen (Andreas). Danach: Autotask-Berechtigung für Impersonation setzen und an einem Testobjekt prüfen, ob eine nicht erlaubte Impersonation fehlschlägt oder auf „API User“ zurückfällt. Submodul-Zeiger im Gateway **nicht** hier anheben — kommt mit lgp-mcp-gateway#197.
+Autotask-Berechtigung für Impersonation setzen und an einem Testobjekt prüfen, ob eine nicht erlaubte Impersonation fehlschlägt oder auf „API User“ zurückfällt. Submodul-Zeiger im Gateway **nicht** hier anheben — kommt mit lgp-mcp-gateway#197.
 
 Früher notiert: Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release für Techniker-Maschinen (lokale autotask-mcp-Instanzen haben den 405-Bug sonst weiterhin).
 
 ## Offene Entscheidungen / Blocker
 
-- Vorbestehend auf `main`: `make lint` (errcheck in `pkg/logiphysci/runner.go:70`) und `make check-docs` (README-Serverliste ohne logiphys-ci-mcp, kein pkg-Mapping) schlagen fehl — nicht Teil von #4
+- CI auf eigenem Runner: Runner `lgp-ci-mini` für dieses Repo am 2026-10-18 registriert (OrbStack-VM `lgp-ci`, `ci.slice`, 4C/8G), `CI_RUNNER=lgp-ci` gesetzt, mit PR #6 (`d688636`) auf main aktiv. Verifiziert: CI-Lauf 39127876520 mit allen 6 Jobs auf `lgp-ci-mini` grün (~2,5 min). Rückweg: `gh variable delete CI_RUNNER --repo Logiphys/lgp-mcp-servers`
 - Pax8-Backend am Gateway meldet 401 (vorbestehend, API-Key prüfen)
 - gateway-Repo: lokales main (`1373fbe`, Bridge-Refactor "phase R") ist von origin/main divergiert — vor nächstem Push auf neues origin/main rebasen (origin/main inzwischen weiter: Dependabot-Fixes via PR #83 gemerged)
 - VM `bin/` enthält ~20 alte Backup-Binaries — gelegentlich aufräumen
@@ -49,6 +50,10 @@ Früher notiert: Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Ac
 ---
 
 ## Historie
+
+### 2026-10-18 — Rote CI-Checks auf main + Runner-Umstellung (PR #6)
+
+`make lint` (errcheck `check-blank` in `pkg/logiphysci/runner.go`) und `make check-docs` (logiphys-ci-mcp fehlte in README und Skript-Mapping) waren auf main rot; behoben in `9c126dc`, lokal alles grün. `ci.yml` nutzt jetzt `vars.CI_RUNNER || 'ubuntu-latest'` wie Gateway/line-config (Muster aus Logiphys/ci-infra: repo-gebundene Runner in der OrbStack-VM `lgp-ci` auf dem Mac mini, arm64, kein Actions-Go-Cache, `CGO_ENABLED=1` für `-race`). Release bleibt GitHub-hosted (Key-Isolation). Learning: Repo ist public, Marketplace privat — keine Links auf private Repos in der README.
 
 ### 2026-10-18 — Issue #4: Gateway-Actor + Autotask-Impersonation
 

@@ -47,6 +47,7 @@ server_to_pkg() {
         itglue-mcp)         echo "pkg/itglue" ;;
         myitprocess-mcp)    echo "pkg/myitprocess" ;;
         rocketcyber-mcp)    echo "pkg/rocketcyber" ;;
+        logiphys-ci-mcp)    echo "pkg/logiphysci" ;;
         *) echo "" ;;
     esac
 }
