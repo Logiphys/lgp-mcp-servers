@@ -61,8 +61,17 @@ func TestFormatGetResult(t *testing.T) {
 
 func TestFormatCreateResult(t *testing.T) {
 	result := FormatCreateResult("Ticket", 123)
-	if !strings.Contains(result, "123") || !strings.Contains(result, "Ticket") {
-		t.Error("should contain entity type and ID")
+	var out map[string]any
+	if err := json.Unmarshal([]byte(result), &out); err != nil {
+		t.Fatalf("result is not JSON: %v (%s)", err, result)
+	}
+	for _, key := range []string{"itemId", "id"} {
+		if out[key] != float64(123) {
+			t.Errorf("%s = %v, want 123", key, out[key])
+		}
+	}
+	if msg, _ := out["message"].(string); !strings.Contains(msg, "Ticket") {
+		t.Errorf("message should mention entity type: %v", out["message"])
 	}
 }
 

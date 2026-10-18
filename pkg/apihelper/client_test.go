@@ -179,3 +179,79 @@ func TestClient_ContextCancellation(t *testing.T) {
 		t.Error("should fail with canceled context")
 	}
 }
+
+func TestRequestHeadersFromContext(t *testing.T) {
+	tests := []struct {
+		name    string
+		ctx     context.Context
+		static  map[string]string
+		want    map[string]string
+		wantNot []string
+	}{
+		{
+			name:    "no request headers",
+			ctx:     context.Background(),
+			static:  map[string]string{"Secret": "s"},
+			want:    map[string]string{"Secret": "s"},
+			wantNot: []string{"X-Extra"},
+		},
+		{
+			name:   "request header added",
+			ctx:    WithRequestHeaders(context.Background(), map[string]string{"X-Extra": "1"}),
+			static: map[string]string{"Secret": "s"},
+			want:   map[string]string{"Secret": "s", "X-Extra": "1"},
+		},
+		{
+			name:   "request header cannot override static auth header",
+			ctx:    WithRequestHeaders(context.Background(), map[string]string{"Secret": "evil"}),
+			static: map[string]string{"Secret": "s"},
+			want:   map[string]string{"Secret": "s"},
+		},
+		{
+			name: "nested calls merge headers",
+			ctx: WithRequestHeaders(
+				WithRequestHeaders(context.Background(), map[string]string{"X-A": "a"}),
+				map[string]string{"X-B": "b"}),
+			want: map[string]string{"X-A": "a", "X-B": "b"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, method := range []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete} {
+				var got http.Header
+				srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+					got = r.Header.Clone()
+					w.WriteHeader(http.StatusOK)
+				}))
+				c := NewClient(ClientConfig{BaseURL: srv.URL, Headers: tt.static})
+
+				var err error
+				switch method {
+				case http.MethodGet:
+					_, err = c.Get(tt.ctx, "/x", nil)
+				case http.MethodPost:
+					_, err = c.Post(tt.ctx, "/x", map[string]any{})
+				case http.MethodPatch:
+					_, err = c.Patch(tt.ctx, "/x", map[string]any{})
+				case http.MethodDelete:
+					err = c.Delete(tt.ctx, "/x")
+				}
+				srv.Close()
+				if err != nil {
+					t.Fatalf("%s: unexpected error: %v", method, err)
+				}
+				for k, v := range tt.want {
+					if got.Get(k) != v {
+						t.Errorf("%s: header %s = %q, want %q", method, k, got.Get(k), v)
+					}
+				}
+				for _, k := range tt.wantNot {
+					if got.Get(k) != "" {
+						t.Errorf("%s: header %s unexpectedly set to %q", method, k, got.Get(k))
+					}
+				}
+			}
+		})
+	}
+}

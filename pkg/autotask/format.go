@@ -60,9 +60,16 @@ func FormatGetResult(item map[string]any) string {
 	return string(b)
 }
 
-// FormatCreateResult formats a create success message.
+// FormatCreateResult formats a create success message. The new object's ID
+// is returned as itemId (read by the gateway audit) and, for compatibility,
+// as id.
 func FormatCreateResult(entityType string, id int) string {
-	return fmt.Sprintf(`{"message": "%s created successfully", "id": %d}`, entityType, id)
+	b, _ := json.Marshal(map[string]any{ //nolint:errcheck
+		"message": entityType + " created successfully",
+		"itemId":  id,
+		"id":      id,
+	})
+	return string(b)
 }
 
 // FormatUpdateResult formats an update success message.

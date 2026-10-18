@@ -15,6 +15,11 @@
 - **Issue:** Default pagination can time out or return errors on very large collections.
 - **Workaround:** Use `postedAfter` date filter to narrow the result set before paginating.
 
+### Impersonation (`ImpersonationResourceId`)
+- **Behavior:** autotask-mcp sends `ImpersonationResourceId: <resource id>` on create/update/delete when the gateway actor carries `autotask_resource_id` (Autotask docs: REST security and authentication).
+- **Prerequisites (Autotask admin):** The API user's security level must allow impersonation for the entity type, the impersonated resource's security level must allow impersonation, and the resource itself needs permission for the action. Time entries are additionally subject to proxy time-entry security.
+- **Open point:** The docs do not state whether a disallowed impersonation fails the request or falls back to "API User". Verify on a test object before relying on it; the server does not retry without the header (no silent loss of attribution).
+
 ## IT Glue
 
 ### Document Listing -- Root vs. Folder Documents

@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- `mcputil.Actor`, `ActorFromRequest`, `WithActor`/`ActorFromContext` and `WithActorContext` — read the gateway actor from `_meta["logiphys.de/actor"]` (#4)
+- `apihelper.WithRequestHeaders` — request-scoped extra headers via context; configured credential headers cannot be overridden
+- autotask-mcp: `ImpersonationResourceId` header on create/update/delete when the gateway actor carries an Autotask resource ID; reads never impersonate (#4)
+
+### Changed
+
+- autotask-mcp: create tools return the new object's ID as `itemId` in addition to `id` (#4)
+
 ## [v1.3.0] - 2026-04-09
 
 ### Added
