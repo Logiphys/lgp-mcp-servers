@@ -11,7 +11,7 @@ Plan:
 4. `FormatCreateResult` liefert zusätzlich `itemId` (Gateway-Audit `from: result, path: itemId`), `id` bleibt.
 5. Tests table-driven mit `-race`; `make test`, `make lint`, `make check-docs`; PR mit `Refs #4`, nicht mergen.
 
-Stand 2026-10-18: Schritte 1–5 umgesetzt (`15015ad`), PR #5 von Andreas zum Merge freigegeben (nach PR #6 und grüner CI auf `lgp-ci`). Impersonation wirkt erst mit Gateway-Seite (lgp-mcp-gateway#22) und gesetzter Autotask-Berechtigung.
+Stand 2026-10-18: Backend-Seite erledigt — PR #5 gemergt (`fbff38c`, nach PR #6 `d688636`), CI grün auf `lgp-ci-mini`. Autotask-Impersonation ist beim API-Benutzer eingerichtet (laut lgp-mcp-gateway#22). Wirkt erst mit der Gateway-Seite (lgp-mcp-gateway#22, A4) und nach Auslieferung der Backend-Binaries (lgp-mcp-gateway#197). Vertrag + offene Punkte: Kommentare in #4 und lgp-mcp-gateway#22, Spec auf `feat/traceability` (`7b10920`). Issue #4 offen bis zum Test am Testobjekt.
 
 ## Zuletzt erledigt (mit Commit-SHAs)
 
@@ -26,7 +26,7 @@ Stand 2026-10-18: Schritte 1–5 umgesetzt (`15015ad`), PR #5 von Andreas zum Me
 
 ## Nächster konkreter Schritt
 
-Autotask-Berechtigung für Impersonation setzen und an einem Testobjekt prüfen, ob eine nicht erlaubte Impersonation fehlschlägt oder auf „API User“ zurückfällt. Submodul-Zeiger im Gateway **nicht** hier anheben — kommt mit lgp-mcp-gateway#197.
+Sobald Gateway (#22) und Auslieferung (#197) da sind: an einem Testobjekt prüfen, ob eine nicht erlaubte Impersonation fehlschlägt oder auf „API User“ zurückfällt und ob Delete mit Header funktioniert; danach #4 schließen. Submodul-Zeiger im Gateway **nicht** hier anheben — kommt mit lgp-mcp-gateway#197.
 
 Früher notiert: Optional: Release-Tag `v1.4.0` im Monorepo setzen → GitHub-Actions-Release für Techniker-Maschinen (lokale autotask-mcp-Instanzen haben den 405-Bug sonst weiterhin).
 
