@@ -4,8 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- `mcputil.Actor`, `ActorFromRequest`, `WithActor`/`ActorFromContext` and `WithActorContext` — read the gateway actor from `_meta["logiphys.de/actor"]` (#4)
+- `apihelper.WithRequestHeaders` — request-scoped extra headers via context; configured credential headers cannot be overridden
+- autotask-mcp: `ImpersonationResourceId` header on create/update/delete when the gateway actor carries an Autotask resource ID; reads never impersonate (#4)
+
 ### Changed
 
+- autotask-mcp: create tools return the new object's ID as `itemId` in addition to `id` (#4)
 - CI jobs run on `${{ vars.CI_RUNNER || 'ubuntu-latest' }}` — the repository variable `CI_RUNNER=lgp-ci` moves CI to the self-hosted runner (Logiphys/ci-infra); the release workflow stays GitHub-hosted
 - CI: golangci-lint pinned to v2.11.4, explicit `CGO_ENABLED=1` for `-race`, job timeouts, concurrency cancel for superseded runs
 - README and `scripts/check-docs.sh` include `logiphys-ci-mcp` (10 servers, 266 tools)

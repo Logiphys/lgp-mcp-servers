@@ -28,6 +28,24 @@ type Client struct {
 	headers map[string]string
 }
 
+type requestHeadersKey struct{}
+
+// WithRequestHeaders returns a context whose requests made through Client
+// carry the given extra headers. Headers from ClientConfig.Headers (e.g.
+// credentials) take precedence and cannot be overridden this way.
+func WithRequestHeaders(ctx context.Context, headers map[string]string) context.Context {
+	merged := make(map[string]string, len(headers))
+	if prev, ok := ctx.Value(requestHeadersKey{}).(map[string]string); ok {
+		for k, v := range prev {
+			merged[k] = v
+		}
+	}
+	for k, v := range headers {
+		merged[k] = v
+	}
+	return context.WithValue(ctx, requestHeadersKey{}, merged)
+}
+
 func NewClient(cfg ClientConfig) *Client {
 	timeout := cfg.Timeout
 	if timeout == 0 {
@@ -97,6 +115,11 @@ func (c *Client) doWithBody(ctx context.Context, method, path string, body any) 
 
 func (c *Client) do(req *http.Request) ([]byte, error) {
 	req.Header.Set("User-Agent", c.agent)
+	if extra, ok := req.Context().Value(requestHeadersKey{}).(map[string]string); ok {
+		for k, v := range extra {
+			req.Header.Set(k, v)
+		}
+	}
 	for k, v := range c.headers {
 		req.Header.Set(k, v)
 	}

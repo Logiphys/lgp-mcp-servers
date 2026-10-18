@@ -157,7 +157,10 @@ func (c *Client) Query(ctx context.Context, entity string, filters []Filter, opt
 
 // Create creates a new entity.
 // POST /{entity} with body -> extracts ID from response.
+// Write operations (Create, CreateChild, Update, Delete, DeleteChild)
+// impersonate the gateway actor's Autotask resource, if known.
 func (c *Client) Create(ctx context.Context, entity string, data map[string]any) (int, error) {
+	ctx = writeContext(ctx)
 	result, err := c.middleware.Execute(ctx, func() (any, error) {
 		body, err := c.http.Post(ctx, "/"+entity, data)
 		if err != nil {
@@ -184,6 +187,7 @@ func (c *Client) Create(ctx context.Context, entity string, data map[string]any)
 // CreateChild creates a child entity under a parent.
 // POST /{parent}/{parentID}/{child} with body.
 func (c *Client) CreateChild(ctx context.Context, parent string, parentID int, child string, data map[string]any) (int, error) {
+	ctx = writeContext(ctx)
 	result, err := c.middleware.Execute(ctx, func() (any, error) {
 		path := fmt.Sprintf("/%s/%d/%s", parent, parentID, child)
 		body, err := c.http.Post(ctx, path, data)
@@ -213,6 +217,7 @@ func (c *Client) CreateChild(ctx context.Context, parent string, parentID int, c
 // request body (PATCH /{entity} + {"id": ...}); PATCH /{entity}/{id} returns
 // HTTP 405.
 func (c *Client) Update(ctx context.Context, entity string, id int, data map[string]any) error {
+	ctx = writeContext(ctx)
 	_, err := c.middleware.Execute(ctx, func() (any, error) {
 		body := make(map[string]any, len(data)+1)
 		for k, v := range data {
@@ -228,6 +233,7 @@ func (c *Client) Update(ctx context.Context, entity string, id int, data map[str
 // Delete deletes an entity.
 // DELETE /{entity}/{id}.
 func (c *Client) Delete(ctx context.Context, entity string, id int) error {
+	ctx = writeContext(ctx)
 	_, err := c.middleware.Execute(ctx, func() (any, error) {
 		path := fmt.Sprintf("/%s/%d", entity, id)
 		return nil, c.http.Delete(ctx, path)
@@ -238,6 +244,7 @@ func (c *Client) Delete(ctx context.Context, entity string, id int) error {
 // DeleteChild deletes a child entity.
 // DELETE /{parent}/{parentID}/{child}/{childID}.
 func (c *Client) DeleteChild(ctx context.Context, parent string, parentID int, child string, childID int) error {
+	ctx = writeContext(ctx)
 	_, err := c.middleware.Execute(ctx, func() (any, error) {
 		path := fmt.Sprintf("/%s/%d/%s/%d", parent, parentID, child, childID)
 		return nil, c.http.Delete(ctx, path)

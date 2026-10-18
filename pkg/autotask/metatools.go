@@ -26,7 +26,10 @@ func RegisterHandler(name string, handler server.ToolHandlerFunc) {
 }
 
 // addTool registers a tool on the MCP server and also stores its handler for meta-dispatch.
+// The handler sees the gateway actor via mcputil.ActorFromContext; for
+// execute_tool the actor travels in the context to the dispatched handler.
 func addTool(srv *server.MCPServer, tool mcp.Tool, handler server.ToolHandlerFunc) {
+	handler = mcputil.WithActorContext(handler)
 	RegisterHandler(tool.Name, handler)
 	srv.AddTool(tool, handler)
 }

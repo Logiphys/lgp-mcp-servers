@@ -76,6 +76,12 @@ See `config/` for configuration examples of the API servers. See [CONTRIBUTING](
 
 Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose all tools — the gateway enforces which tools are available per user.
 
+### Gateway actor and Autotask impersonation
+
+The gateway passes the person behind each `tools/call` in `_meta["logiphys.de/actor"]` as `{"user", "channel", "autotask_resource_id"}` (only known fields; client-supplied values are stripped by the gateway). Servers read it with `mcputil.ActorFromRequest` or, inside handlers wrapped by `mcputil.WithActorContext`, with `mcputil.ActorFromContext`.
+
+The autotask-mcp server sends the `ImpersonationResourceId` header on write calls (create, update, delete) when `autotask_resource_id` is present, so Autotask attributes the change to that resource instead of the API user. Read calls never impersonate; without an actor the behavior is unchanged. Create tools return the new object's ID as `itemId` (plus `id` for compatibility). Actor data is not logged.
+
 ## Server Details
 
 ### autotask-mcp
