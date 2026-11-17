@@ -8,6 +8,15 @@ import (
 
 // FormatSearchResult formats search results with compact fields and pagination metadata.
 func FormatSearchResult(toolName string, items []map[string]any, page, pageSize int) string {
+	return formatSearchResult(toolName, items, page, pageSize, nil, "")
+}
+
+// FormatCompanyPage preserves the search envelope with authoritative pagination.
+func FormatCompanyPage(result QueryPage, page, pageSize int, searchTerm string) string {
+	return formatSearchResult("search_companies", result.Items, page, pageSize, &result, searchTerm)
+}
+
+func formatSearchResult(toolName string, items []map[string]any, page, pageSize int, pagination *QueryPage, searchTerm string) string {
 	entityType, isCompact := CompactSearchTools[toolName]
 
 	var formatted []map[string]any
@@ -33,6 +42,12 @@ func FormatSearchResult(toolName string, items []map[string]any, page, pageSize 
 	}
 
 	hasMore := len(items) >= pageSize
+	if pagination != nil {
+		hasMore = pagination.NextPageURL != nil
+		if formatted == nil {
+			formatted = []map[string]any{}
+		}
+	}
 	result := map[string]any{
 		"summary": map[string]any{
 			"returned": len(formatted),
@@ -47,6 +62,20 @@ func FormatSearchResult(toolName string, items []map[string]any, page, pageSize 
 			"Use page:%d for more results, or use get_*_details for full data on specific items", page+1)
 	}
 
+	if pagination != nil {
+		summary := result["summary"].(map[string]any)
+		summary["nextPageUrl"] = pagination.NextPageURL
+		if hasMore {
+			summary["hint"] = "Pass nextPageUrl with the same filters and pageSize; page is only a display label when using a cursor"
+		}
+		if len(items) == 0 {
+			message := "No companies found"
+			if searchTerm != "" {
+				message += " matching: searchTerm=" + searchTerm
+			}
+			result["error"] = message
+		}
+	}
 	b, _ := json.MarshalIndent(result, "", "  ") //nolint:errcheck
 	return string(b)
 }

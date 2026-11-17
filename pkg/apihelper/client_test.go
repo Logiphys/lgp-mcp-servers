@@ -3,6 +3,7 @@ package apihelper
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"sync/atomic"
@@ -251,6 +252,34 @@ func TestRequestHeadersFromContext(t *testing.T) {
 						t.Errorf("%s: header %s unexpectedly set to %q", method, k, got.Get(k))
 					}
 				}
+			}
+		})
+	}
+}
+
+func TestRedirectPolicy(t *testing.T) {
+	for _, block := range []bool{false, true} {
+		t.Run(fmt.Sprint(block), func(t *testing.T) {
+			var reached atomic.Int32
+			target := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				reached.Add(1)
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			defer target.Close()
+			source := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				http.Redirect(w, r, target.URL, http.StatusTemporaryRedirect)
+			}))
+			defer source.Close()
+			cfg := ClientConfig{BaseURL: source.URL}
+			if block {
+				cfg.CheckRedirect = func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }
+			}
+			_, err := NewClient(cfg).Get(context.Background(), "/", nil)
+			if block && (err == nil || reached.Load() != 0) {
+				t.Fatalf("redirect not blocked: %v", err)
+			}
+			if !block && (err != nil || reached.Load() != 1) {
+				t.Fatalf("default redirect behavior changed: %v", err)
 			}
 		})
 	}

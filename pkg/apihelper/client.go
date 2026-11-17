@@ -13,11 +13,12 @@ import (
 )
 
 type ClientConfig struct {
-	BaseURL    string
-	Timeout    time.Duration
-	MaxRetries int
-	UserAgent  string
-	Headers    map[string]string
+	CheckRedirect func(req *http.Request, via []*http.Request) error
+	BaseURL       string
+	Timeout       time.Duration
+	MaxRetries    int
+	UserAgent     string
+	Headers       map[string]string
 }
 
 type Client struct {
@@ -60,7 +61,7 @@ func NewClient(cfg ClientConfig) *Client {
 		agent = "lgp-mcp-servers/dev"
 	}
 	return &Client{
-		http:    &http.Client{Timeout: timeout},
+		http:    &http.Client{Timeout: timeout, CheckRedirect: cfg.CheckRedirect},
 		baseURL: cfg.BaseURL,
 		retries: retries,
 		agent:   agent,

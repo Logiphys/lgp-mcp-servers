@@ -1,5 +1,14 @@
 # Journal — lgp-mcp-servers
 
+## 2026-11-17 — Company search pagination (gateway #339)
+
+Added an explicit next-page contract to `search_companies`, preserving legacy
+page-number calls and the existing result envelope. Autotask pagination metadata
+now determines continuation and completion; upstream failures remain errors.
+Synthetic tests cover traversal, empty/final pages, failures, cancellation and
+credential-safe cursor handling. Gateway consumer and pin updates remain in
+Logiphys/lgp-mcp-gateway#340; no backend release or deployment is part of this change.
+
 ## Aktueller Fokus
 
 Issue #4 (Branch `feat/autotask-impersonation`): Gateway-Benutzer aus `_meta["logiphys.de/actor"]` übernehmen, `ImpersonationResourceId` bei schreibenden Autotask-Aufrufen. Gehört zu Logiphys/lgp-mcp-gateway#22 (Spec A4 auf Branch `feat/traceability`).
