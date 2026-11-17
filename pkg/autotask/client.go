@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log/slog"
+	"net/http"
 	"time"
 
 	"github.com/Logiphys/lgp-mcp-servers/pkg/apihelper"
@@ -52,10 +53,11 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 	}
 
 	httpClient := apihelper.NewClient(apihelper.ClientConfig{
-		BaseURL:    baseURL,
-		Timeout:    30 * time.Second,
-		MaxRetries: 3,
-		UserAgent:  "lgp-mcp-servers/autotask",
+		BaseURL:       baseURL,
+		CheckRedirect: func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse },
+		Timeout:       30 * time.Second,
+		MaxRetries:    3,
+		UserAgent:     "lgp-mcp-servers/autotask",
 		Headers: map[string]string{
 			"UserName":           cfg.Username,
 			"Secret":             cfg.Secret,
@@ -112,26 +114,7 @@ func (c *Client) Get(ctx context.Context, entity string, id int) (map[string]any
 // POST /{entity}/query with {"filter": [...], "MaxRecords": N}
 func (c *Client) Query(ctx context.Context, entity string, filters []Filter, opts QueryOpts) ([]map[string]any, error) {
 	result, err := c.middleware.Execute(ctx, func() (any, error) {
-		pageSize := opts.PageSize
-		if pageSize == 0 {
-			pageSize = 500
-		}
-		if opts.MaxSize > 0 && pageSize > opts.MaxSize {
-			pageSize = opts.MaxSize
-		}
-
-		// Autotask API rejects null filters — ensure at least one
-		if filters == nil {
-			filters = []Filter{{Op: "gte", Field: "id", Value: 0}}
-		}
-
-		// Autotask query endpoint requires filters wrapped in an "and" group.
-		filterPayload := []Filter{{Op: "and", Items: filters}}
-
-		queryBody := map[string]any{
-			"filter":     filterPayload,
-			"MaxRecords": pageSize,
-		}
+		queryBody := queryPayload(filters, opts)
 
 		body, err := c.http.Post(ctx, "/"+entity+"/query", queryBody)
 		if err != nil {

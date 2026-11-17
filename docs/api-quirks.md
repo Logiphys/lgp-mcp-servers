@@ -15,6 +15,47 @@
 - **Issue:** Default pagination can time out or return errors on very large collections.
 - **Workaround:** Use `postedAfter` date filter to narrow the result set before paginating.
 
+### Company Search Pagination
+
+`search_companies` returns one real upstream page. Start with, for example:
+
+```json
+{"isActive": true, "pageSize": 200, "page": 1}
+```
+
+The JSON text response retains `items` and `summary.returned`, `page`,
+`pageSize`, and `hasMore`, and adds `summary.nextPageUrl` (URL or `null`).
+For each subsequent call, pass that URL as `nextPageUrl`, keeping `isActive`,
+`searchTerm` and `pageSize` unchanged. Increment `page` if desired: with a cursor
+it is a display label, not an instruction to replay previous pages.
+
+```json
+{"items": [], "summary": {"returned": 0, "page": 3, "pageSize": 200, "hasMore": false, "nextPageUrl": null}, "error": "No companies found"}
+```
+
+Stop only when `nextPageUrl` is `null`. A full page may be final; an empty
+page may still have a continuation. Empty results retain the legacy `error`
+text field for compatibility, but are not MCP errors. Consumers must use the
+pagination metadata rather than that text or the item count to detect the end.
+HTTP failures, invalid responses and missing pagination metadata are MCP errors;
+do not treat a partially collected catalogue as complete. Consumers should reject
+repeated cursors across calls and restart an expired query explicitly, not silently
+append a restarted first page. Pagination is not a snapshot of concurrently changing data.
+
+Legacy `page > 1` calls without a cursor replay the upstream chain from page 1,
+returning only the requested page. Use the cursor for linear catalogue traversal.
+Defaults remain page 1 and page size 25; sizes must be integers from 1 to 200.
+The existing generic `Client.Query` and other search tools are unchanged.
+
+Continuations use POST with the original filter body and `MaxRecords`. Only URLs
+on the configured API origin and the Companies next-page endpoint are accepted;
+Autotask HTTP redirects are rejected to protect credentials. Configure the final
+zone API URL directly. No new credentials or configuration settings are required.
+
+Source: [Autotask Advanced query features — Paginating results](https://www.autotask.net/help/developerhelp/content/apis/REST/API_Calls/REST_Advanced_Query_Features.htm),
+verified 2026-11-17. Forward traversal is not limited to the 50-page history used
+for backward navigation.
+
 ### Impersonation (`ImpersonationResourceId`)
 - **Behavior:** autotask-mcp sends `ImpersonationResourceId: <resource id>` on create/update/delete when the gateway actor carries `autotask_resource_id` (Autotask docs: REST security and authentication).
 - **Prerequisites (Autotask admin):** The API user's security level must allow impersonation for the entity type, the impersonated resource's security level must allow impersonation, and the resource itself needs permission for the action. Time entries are additionally subject to proxy time-entry security.

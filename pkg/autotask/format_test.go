@@ -102,3 +102,35 @@ func TestFormatPicklistValues(t *testing.T) {
 		t.Error("should contain count")
 	}
 }
+
+func TestFormatCompanyPageContract(t *testing.T) {
+	next := "https://example.invalid/Companies/query/next?paging=two"
+	for _, tc := range []struct {
+		name  string
+		items []map[string]any
+		next  *string
+	}{
+		{"full final", []map[string]any{{"id": 1, "companyName": "Test", "extra": "hidden", "_companyName": "Enhanced"}}, nil},
+		{"empty continuing", nil, &next}, {"empty final", nil, nil},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			raw := FormatCompanyPage(QueryPage{Items: tc.items, NextPageURL: tc.next}, 1, 1, `quoted "name"`)
+			var out struct {
+				companyResult
+				Error string `json:"error"`
+			}
+			if err := json.Unmarshal([]byte(raw), &out); err != nil {
+				t.Fatal(err)
+			}
+			if out.Summary.HasMore != (tc.next != nil) || out.Items == nil {
+				t.Fatalf("invalid envelope: %s", raw)
+			}
+			if len(tc.items) == 0 && out.Error != `No companies found matching: searchTerm=quoted "name"` {
+				t.Fatalf("legacy empty message: %s", raw)
+			}
+			if len(tc.items) > 0 && (out.Items[0]["extra"] != nil || out.Items[0]["companyName"] != "Test" || out.Items[0]["_companyName"] != "Enhanced") {
+				t.Fatalf("compaction changed: %s", raw)
+			}
+		})
+	}
+}
