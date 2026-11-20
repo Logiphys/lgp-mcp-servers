@@ -14,10 +14,11 @@ import (
 
 // Config holds Autotask API credentials and settings.
 type Config struct {
-	Username        string
-	Secret          string
-	IntegrationCode string
-	BaseURL         string
+	EnableContractServices bool
+	Username               string
+	Secret                 string
+	IntegrationCode        string
+	BaseURL                string
 }
 
 // Filter represents an Autotask query filter.
@@ -37,12 +38,13 @@ type QueryOpts struct {
 
 // Client is the Autotask REST API client.
 type Client struct {
-	http       *apihelper.Client
-	baseURL    string
-	middleware *resilience.Middleware
-	logger     *slog.Logger
-	companies  *apihelper.MappingCache[int, string]
-	resources  *apihelper.MappingCache[int, string]
+	enableContractServices bool
+	http                   *apihelper.Client
+	baseURL                string
+	middleware             *resilience.Middleware
+	logger                 *slog.Logger
+	companies              *apihelper.MappingCache[int, string]
+	resources              *apihelper.MappingCache[int, string]
 }
 
 // NewClient creates a new Autotask API client.
@@ -75,12 +77,13 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 	})
 
 	return &Client{
-		http:       httpClient,
-		baseURL:    baseURL,
-		middleware: mw,
-		logger:     logger,
-		companies:  apihelper.NewMappingCache[int, string](30 * time.Minute),
-		resources:  apihelper.NewMappingCache[int, string](30 * time.Minute),
+		enableContractServices: cfg.EnableContractServices,
+		http:                   httpClient,
+		baseURL:                baseURL,
+		middleware:             mw,
+		logger:                 logger,
+		companies:              apihelper.NewMappingCache[int, string](30 * time.Minute),
+		resources:              apihelper.NewMappingCache[int, string](30 * time.Minute),
 	}
 }
 

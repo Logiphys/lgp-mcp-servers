@@ -33,11 +33,11 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 			if v, ok := args["isActive"]; ok {
 				filters = append(filters, Filter{Op: "eq", Field: "isActive", Value: v})
 			}
-			page, err := companyPageNumber(args, "page", 1, math.MaxInt32)
+			page, err := mcputil.IntArgument(args, "page", 1, 1, math.MaxInt32)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
-			size, err := companyPageNumber(args, "pageSize", 25, 200)
+			size, err := mcputil.IntArgument(args, "pageSize", 25, 1, 200)
 			if err != nil {
 				return mcputil.ErrorResult(err), nil
 			}
@@ -49,28 +49,9 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 					return mcputil.ErrorResult(fmt.Errorf("nextPageUrl must be a non-empty string")), nil
 				}
 			}
-			count := page
-			if next != "" {
-				count = 1
-			}
-			seen := make(map[string]bool)
-			var result QueryPage
-			for i := 0; i < count; i++ {
-				if seen[next] {
-					return mcputil.ErrorResult(fmt.Errorf("repeated query continuation")), nil
-				}
-				seen[next] = true
-				result, err = client.QueryPage(ctx, "Companies", filters, QueryOpts{PageSize: size, MaxSize: 200}, next)
-				if err != nil {
-					return mcputil.ErrorResult(err), nil
-				}
-				if i+1 < count {
-					if result.NextPageURL == nil {
-						result.Items = []map[string]any{}
-						break
-					}
-					next = *result.NextPageURL
-				}
+			result, err := client.numberedPage(ctx, "Companies", filters, QueryOpts{PageSize: size, MaxSize: 200}, page, next)
+			if err != nil {
+				return mcputil.ErrorResult(err), nil
 			}
 			result.Items = client.EnhanceWithNames(ctx, result.Items)
 			return mcputil.TextResult(FormatCompanyPage(result, page, size, req.GetString("searchTerm", ""))), nil
@@ -265,25 +246,4 @@ func registerCompanyTools(srv *server.MCPServer, client *Client, _ *slog.Logger)
 		},
 	)
 	_ = server.ToolHandlerFunc(nil)
-}
-
-// Validate numeric inputs before converting, rather than silently truncating fractions.
-func companyPageNumber(args map[string]any, name string, fallback, maximum int) (int, error) {
-	raw, exists := args[name]
-	if !exists {
-		return fallback, nil
-	}
-	var value float64
-	switch v := raw.(type) {
-	case float64:
-		value = v
-	case int:
-		value = float64(v)
-	default:
-		return 0, fmt.Errorf("%s must be a positive integer", name)
-	}
-	if math.IsNaN(value) || math.IsInf(value, 0) || value < 1 || value > float64(maximum) || math.Trunc(value) != value {
-		return 0, fmt.Errorf("%s must be an integer between 1 and %d", name, maximum)
-	}
-	return int(value), nil
 }

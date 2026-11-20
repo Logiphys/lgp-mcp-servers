@@ -14,6 +14,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, picklist *PicklistCach
 	registerTicketTools(srv, client, picklist, logger)
 	registerProjectTools(srv, client, logger)
 	registerFinancialTools(srv, client, logger)
+	if client.enableContractServices {
+		registerContractServiceTool(srv, client)
+	}
 	registerTimeBillingTools(srv, client, logger)
 	registerServiceCallTools(srv, client, logger)
 	registerProductTools(srv, client, logger)

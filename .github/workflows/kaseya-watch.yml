@@ -1,0 +1,73 @@
+name: Weekly Kaseya capability review
+
+on:
+  schedule:
+    - cron: '17 7 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: kaseya-capability-review
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Compare public catalogs and APIs
+        run: |
+          python3 scripts/kaseya_watch.py --snapshot "$RUNNER_TEMP/kaseya-reviewed.json" --report "$RUNNER_TEMP/kaseya-review.md"
+          if [[ -s "$RUNNER_TEMP/kaseya-review.md" ]]; then
+            cat "$RUNNER_TEMP/kaseya-review.md" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'No changes since the reviewed baseline.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Preserve the exact candidate for review
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: kaseya-capability-review
+          path: |
+            ${{ runner.temp }}/kaseya-reviewed.json
+            ${{ runner.temp }}/kaseya-review.md
+      - name: Reconcile the review issue on the default branch
+        if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          report="$RUNNER_TEMP/kaseya-review.md"
+          marker='<!-- lgp-kaseya-capability-review -->'
+          existing=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=all&creator=github-actions%5Bbot%5D&per_page=100" \
+            | jq -sr --arg marker "$marker" '[.[][] | select(.pull_request == null and ((.body // "") | startswith($marker)))] | first // empty')
+          number=$(jq -r '.number' <<< "$existing")
+          state=$(jq -r '.state' <<< "$existing")
+          if [[ ! -s "$report" ]]; then
+            if [[ "$state" == open ]]; then
+              gh issue close "$number" --comment 'Current publications match the reviewed baseline.'
+            fi
+            exit 0
+          fi
+          hash=$(sha256sum "$report" | cut -d' ' -f1)
+          fingerprint="<!-- snapshot-report $hash -->"
+          body="$RUNNER_TEMP/kaseya-issue.md"
+          { echo "$marker"; echo "$fingerprint"; echo; cat "$report"; echo; echo "[Download the candidate from this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; } > "$body"
+          if [[ -z "$number" ]]; then
+            gh issue create --title 'Review Kaseya capability changes' --body-file "$body"
+          else
+            if [[ "$state" == closed ]]; then
+              gh issue reopen "$number"
+            fi
+            if ! jq -e --arg fingerprint "$fingerprint" '.body | contains($fingerprint)' <<< "$existing" > /dev/null; then
+              gh issue edit "$number" --body-file "$body"
+            fi
+          fi
