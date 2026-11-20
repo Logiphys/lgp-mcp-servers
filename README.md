@@ -7,14 +7,14 @@
 
 Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude with structured access to IT service management, security, backup, and documentation platforms used at [Logiphys Datensysteme GmbH](https://logiphys.de).
 
-**266 tools** across **10 MCP servers**, built as single-binary deployments.
+**268 tools** across **10 MCP servers**, built as single-binary deployments. Two read tools require an explicit opt-in. With the default settings, 266 are registered.
 
 ## Servers
 
 | Server | Platform | Tools | Description |
 |--------|----------|------:|-------------|
-| `autotask-mcp` | [Autotask PSA](https://www.datto.com/products/autotask-psa) | 82 | Tickets, companies, contacts, projects, billing, time entries, service calls, quotes |
-| `datto-rmm-mcp` | [Datto RMM](https://www.datto.com/products/rmm) | 55 | Remote monitoring & management — devices, sites, alerts, jobs, audit, variables |
+| `autotask-mcp` | [Autotask PSA](https://www.datto.com/products/autotask-psa) | 83 | Tickets, companies, contacts, projects, billing, time entries, service calls, quotes, opt-in contract service lines |
+| `datto-rmm-mcp` | [Datto RMM](https://www.datto.com/products/rmm) | 56 | Remote monitoring & management — devices, sites, alerts, jobs, audit, variables, opt-in patch inventory |
 | `itglue-mcp` | [IT Glue](https://www.itglue.com) | 31 | IT documentation — organizations, configurations, passwords, contacts, domains, expirations |
 | `datto-edr-mcp` | [Datto EDR](https://www.datto.com/products/edr) | 21 | Endpoint detection & response — agents, alerts, rules, extensions, quarantine, isolation |
 | `datto-uc-mcp` | [Datto Unified Continuity](https://www.datto.com/products/unified-continuity) | 20 | BCDR appliances, SaaS Protection, Direct-to-Cloud backup, activity logs |
@@ -74,7 +74,7 @@ See `config/` for configuration examples of the API servers. See [CONTRIBUTING](
 
 ## Access Control
 
-Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose all tools — the gateway enforces which tools are available per user.
+Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose their registered tools. The gateway enforces which tools are available per user. For the new patch and contract reads, configure the gateway tiers before enabling the tools. [Production rollout and live acceptance](docs/kaseya-read-pilot.md#live-rollout-on-the-existing-gateway)
 
 ### Gateway actor and Autotask impersonation
 
@@ -94,6 +94,7 @@ Connects to the [Autotask PSA REST API](https://autotask.net/help/DeveloperHelp/
 | `AUTOTASK_SECRET` | Yes | API secret |
 | `AUTOTASK_INTEGRATION_CODE` | Yes | Integration tracking code |
 | `AUTOTASK_BASE_URL` | No | Override API base URL |
+| `AUTOTASK_ENABLE_CONTRACT_SERVICES` | No | Set to `true` to register `search_contract_services` for dated quantities and prices. Off by default. |
 
 ### itglue-mcp
 
@@ -115,6 +116,7 @@ Connects to the [Datto RMM API](https://rmm-api-d.datto.com/). Full remote monit
 | `DATTO_API_SECRET` | Yes | | API secret |
 | `DATTO_PLATFORM` | No | `merlot` | Platform region (merlot, pinotage, concord, vidal, zinfandel, syrah) |
 | `DATTO_BASE_URL` | No | | Override API base URL |
+| `DATTO_ENABLE_PATCH_READS` | No | `false` | Set to `true` to register `list_patches` for one device or site. |
 
 ### rocketcyber-mcp
 
@@ -225,6 +227,8 @@ make test-cover    # Generate coverage report
 ```
 
 Requires Go 1.26+ and [golangci-lint](https://golangci-lint.run/).
+
+The weekly Kaseya review compares public MCP tools, releases and selected product API documentation with a reviewed inventory. Maintainers can reproduce a difference and decide which changes to adopt. [Weekly review workflow](docs/kaseya-read-pilot.md#weekly-kaseya-review) · [Nine-product comparison](docs/kaseya-mcp-comparison.md)
 
 ## License
 

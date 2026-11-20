@@ -20,10 +20,11 @@ func main() {
 	}))
 
 	cfg := dattormm.Config{
-		APIKey:    config.MustEnv("DATTO_API_KEY"),
-		APISecret: config.MustEnv("DATTO_API_SECRET"),
-		Platform:  config.OptEnv("DATTO_PLATFORM", "merlot"),
-		BaseURL:   config.OptEnv("DATTO_BASE_URL", ""),
+		EnablePatchReads: config.OptEnv("DATTO_ENABLE_PATCH_READS", "") == "true",
+		APIKey:           config.MustEnv("DATTO_API_KEY"),
+		APISecret:        config.MustEnv("DATTO_API_SECRET"),
+		Platform:         config.OptEnv("DATTO_PLATFORM", "merlot"),
+		BaseURL:          config.OptEnv("DATTO_BASE_URL", ""),
 	}
 
 	client := dattormm.NewClient(cfg, logger)

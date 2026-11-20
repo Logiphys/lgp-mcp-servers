@@ -20,10 +20,11 @@ func main() {
 	}))
 
 	cfg := autotask.Config{
-		Username:        config.MustEnv("AUTOTASK_USERNAME"),
-		Secret:          config.MustEnv("AUTOTASK_SECRET"),
-		IntegrationCode: config.MustEnv("AUTOTASK_INTEGRATION_CODE"),
-		BaseURL:         config.OptEnv("AUTOTASK_BASE_URL", ""),
+		EnableContractServices: config.OptEnv("AUTOTASK_ENABLE_CONTRACT_SERVICES", "") == "true",
+		Username:               config.MustEnv("AUTOTASK_USERNAME"),
+		Secret:                 config.MustEnv("AUTOTASK_SECRET"),
+		IntegrationCode:        config.MustEnv("AUTOTASK_INTEGRATION_CODE"),
+		BaseURL:                config.OptEnv("AUTOTASK_BASE_URL", ""),
 	}
 
 	client := autotask.NewClient(cfg, logger)

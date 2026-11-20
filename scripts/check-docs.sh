@@ -139,6 +139,11 @@ if [ -d config/ ]; then
     fi
 fi
 
+# The weekly capability report must recognize catalog edits without API access.
+echo ""
+echo "=== Checking Kaseya review fixtures ==="
+python3 -B -m unittest discover -s scripts -p 'test_kaseya_watch.py'
+
 # --- Summary ---
 echo ""
 echo "=== Summary ==="

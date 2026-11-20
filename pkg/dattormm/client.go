@@ -41,10 +41,11 @@ const (
 
 // Config holds Datto RMM API credentials and settings.
 type Config struct {
-	APIKey    string
-	APISecret string
-	Platform  string // default "merlot"
-	BaseURL   string // optional override
+	EnablePatchReads bool
+	APIKey           string
+	APISecret        string
+	Platform         string // default "merlot"
+	BaseURL          string // optional override
 }
 
 // PageInfo holds pagination metadata from a Datto RMM list response.
@@ -139,12 +140,13 @@ func (t *tokenManager) fetchToken(ctx context.Context) (string, error) {
 
 // Client is the Datto RMM REST API client.
 type Client struct {
-	baseURL    string
-	httpClient *http.Client
-	tokenMgr   *tokenManager
-	middleware *resilience.Middleware
-	logger     *slog.Logger
-	maxRetries int
+	enablePatchReads bool
+	baseURL          string
+	httpClient       *http.Client
+	tokenMgr         *tokenManager
+	middleware       *resilience.Middleware
+	logger           *slog.Logger
+	maxRetries       int
 }
 
 // NewClient creates a new Datto RMM API client.
@@ -172,12 +174,13 @@ func NewClient(cfg Config, logger *slog.Logger) *Client {
 	})
 
 	return &Client{
-		baseURL:    baseURL,
-		httpClient: &http.Client{Timeout: defaultTimeout},
-		tokenMgr:   newTokenManager(cfg.APIKey, cfg.APISecret, baseURL),
-		middleware: mw,
-		logger:     logger,
-		maxRetries: defaultMaxRetries,
+		enablePatchReads: cfg.EnablePatchReads,
+		baseURL:          baseURL,
+		httpClient:       &http.Client{Timeout: defaultTimeout},
+		tokenMgr:         newTokenManager(cfg.APIKey, cfg.APISecret, baseURL),
+		middleware:       mw,
+		logger:           logger,
+		maxRetries:       defaultMaxRetries,
 	}
 }
 

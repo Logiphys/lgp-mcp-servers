@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- Autotask `search_contract_services` returns recurring contract line prices and the quantity and period price on a specified date (#3).
+- Datto RMM `list_patches` reads patch status for a device or site. Both new reads are opt-in and have a two-role gateway acceptance test.
+- A weekly Kaseya catalog and public API comparison opens or updates one review issue for pending differences.
 - `mcputil.Actor`, `ActorFromRequest`, `WithActor`/`ActorFromContext` and `WithActorContext` — read the gateway actor from `_meta["logiphys.de/actor"]` (#4)
 - `apihelper.WithRequestHeaders` — request-scoped extra headers via context; configured credential headers cannot be overridden
 - autotask-mcp: `ImpersonationResourceId` header on create/update/delete when the gateway actor carries an Autotask resource ID; reads never impersonate (#4)

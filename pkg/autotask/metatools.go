@@ -231,6 +231,17 @@ func registerMetaTools(srv *server.MCPServer, _ *Client, _ *slog.Logger) {
 					arguments[k] = v
 				}
 			}
+			// The opt-in financial read belongs to this server instance. Publish
+			// it through role-filtered tools/list, outside the static catalog.
+			if toolName == contractServiceTool {
+				target := srv.GetTool(toolName)
+				if target == nil {
+					return mcputil.ErrorResult(fmt.Errorf("unknown tool: %s", toolName)), nil
+				}
+				req.Params.Name = toolName
+				req.Params.Arguments = arguments
+				return target.Handler(ctx, req)
+			}
 			return ExecuteTool(ctx, toolName, arguments)
 		},
 	)

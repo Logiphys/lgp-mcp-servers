@@ -105,3 +105,26 @@ func (c *Client) continuationPath(entity, continuation string) (string, error) {
 	}
 	return prefix + entity + "/query/next?" + next.RawQuery, nil
 }
+
+// numberedPage replays upstream continuations for a numeric page or resumes a supplied cursor.
+func (c *Client) numberedPage(ctx context.Context, entity string, filters []Filter, opts QueryOpts, page int, next string) (QueryPage, error) {
+	if next != "" {
+		page = 1
+	}
+	seen := make(map[string]bool)
+	for {
+		if seen[next] {
+			return QueryPage{}, fmt.Errorf("repeated query continuation")
+		}
+		seen[next] = true
+		result, err := c.QueryPage(ctx, entity, filters, opts, next)
+		if err != nil || page == 1 {
+			return result, err
+		}
+		if result.NextPageURL == nil {
+			return QueryPage{Items: []map[string]any{}}, nil
+		}
+		next = *result.NextPageURL
+		page--
+	}
+}

@@ -13,6 +13,9 @@ func RegisterTools(srv *server.MCPServer, client *Client, logger *slog.Logger) {
 	registerAlertTools(srv, client, logger)
 	registerJobTools(srv, client, logger)
 	registerAuditTools(srv, client, logger)
+	if client.enablePatchReads {
+		registerPatchTool(srv, client)
+	}
 	registerFilterTools(srv, client, logger)
 	registerVariableTools(srv, client, logger)
 	registerSystemTools(srv, client, logger)
