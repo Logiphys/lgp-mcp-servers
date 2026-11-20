@@ -47,13 +47,14 @@ jobs:
           set -euo pipefail
           report="$RUNNER_TEMP/kaseya-review.md"
           marker='<!-- lgp-kaseya-capability-review -->'
-          existing=$(gh api --paginate "repos/$GITHUB_REPOSITORY/issues?state=all&creator=github-actions%5Bbot%5D&per_page=100" \
+          endpoint="repos/$GITHUB_REPOSITORY/issues"
+          existing=$(gh api --paginate "$endpoint?state=all&creator=github-actions%5Bbot%5D&per_page=100" \
             | jq -sr --arg marker "$marker" '[.[][] | select(.pull_request == null and ((.body // "") | startswith($marker)))] | first // empty')
           number=$(jq -r '.number' <<< "$existing")
           state=$(jq -r '.state' <<< "$existing")
           if [[ ! -s "$report" ]]; then
             if [[ "$state" == open ]]; then
-              gh issue close "$number" --comment 'Current publications match the reviewed baseline.'
+              gh api --silent --method PATCH "$endpoint/$number" -f state=closed
             fi
             exit 0
           fi
@@ -62,12 +63,7 @@ jobs:
           body="$RUNNER_TEMP/kaseya-issue.md"
           { echo "$marker"; echo "$fingerprint"; echo; cat "$report"; echo; echo "[Download the candidate from this run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)."; } > "$body"
           if [[ -z "$number" ]]; then
-            gh issue create --title 'Review Kaseya capability changes' --body-file "$body"
-          else
-            if [[ "$state" == closed ]]; then
-              gh issue reopen "$number"
-            fi
-            if ! jq -e --arg fingerprint "$fingerprint" '.body | contains($fingerprint)' <<< "$existing" > /dev/null; then
-              gh issue edit "$number" --body-file "$body"
-            fi
+            gh api --silent --method POST "$endpoint" -f title='Review Kaseya capability changes' -F "body=@$body"
+          elif [[ "$state" == closed ]] || ! jq -e --arg fingerprint "$fingerprint" '.body | contains($fingerprint)' <<< "$existing" > /dev/null; then
+            gh api --silent --method PATCH "$endpoint/$number" -f state=open -F "body=@$body"
           fi
