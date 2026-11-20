@@ -196,6 +196,8 @@ The gateway's `internal/proxy/dispatch.go` (`checkDispatch`) checks the target t
 
 ## Pilot sequence and acceptance evidence
 
+The two native reads for Datto RMM patches and Autotask contract lines have a production rollout and portal acceptance procedure on the existing gateway. The sequence below evaluates prospective official server connections. [Native read rollout](kaseya-read-pilot.md#live-rollout-on-the-existing-gateway)
+
 1. **Capture the reference.** In an isolated tenant/gateway, record the binary versions, protocol versions, account/region and authenticated role. Save the full paginated `tools/list` and sanitized call/result fixtures for each currently exposed name. Include unfiltered server discovery, client-visible prefixes, required fields, defaults, annotations, content type, error and empty results. Compare the effective deployment to the 258 registrations and document intentional role exclusions.
 2. **Connect one product at a time.** Use a distinct prefix and restricted test grants. Start with the official RMM patch and inventory reads, then IT Glue OAuth/folder reads, then constrained Autotask reads (including contract service lines). Compare both sides on the same stable read fixtures. Classify each official addition before exposing it. Keep one backend responsible for each write.
 3. **Prove the policy and writes.** Run the checks below on disposable records with an operator who can inspect product history. Keep identifiers and evidence inside the test environment. Capture sanitized schemas and expected outcomes for later regression checks.

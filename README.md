@@ -74,7 +74,7 @@ See `config/` for configuration examples of the API servers. See [CONTRIBUTING](
 
 ## Access Control
 
-Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose their registered tools. The gateway enforces which tools are available per user. For the new patch and contract reads, configure the gateway tiers before enabling the tools. [Pilot setup and acceptance checks](docs/kaseya-read-pilot.md)
+Access control (role-based tool filtering, GDPR/privacy tiers) is handled by a separate gateway service. The standalone servers expose their registered tools. The gateway enforces which tools are available per user. For the new patch and contract reads, configure the gateway tiers before enabling the tools. [Production rollout and live acceptance](docs/kaseya-read-pilot.md#live-rollout-on-the-existing-gateway)
 
 ### Gateway actor and Autotask impersonation
 

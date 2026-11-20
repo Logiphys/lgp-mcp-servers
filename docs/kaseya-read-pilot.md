@@ -1,4 +1,4 @@
-# Datto RMM and Autotask read pilot
+# Datto RMM and Autotask production reads
 
 The two opt-in tools run inside the existing stdio binaries and use the product REST credentials configured for those binaries. Datto RMM exposes patch status for a device or site. Autotask exposes recurring contract service lines for the controlling team's billed-versus-installed comparison. [Nine-product decision](kaseya-mcp-comparison.md) · [Team request](https://github.com/Logiphys/lgp-mcp-servers/issues/3)
 
@@ -22,37 +22,53 @@ The two opt-in tools run inside the existing stdio binaries and use the product 
 
 The tool reads both entities, checks the line identities and follows every matching period page. When an adjustment takes effect on a shared boundary, the latest applicable start on that UTC day wins. Conflicting periods with the same latest start, unreadable pages and permission errors fail the call. Product prices retain their sign and currency fields. The response excludes cost fields, internal descriptions and invoice text. [ContractServices](https://autotask.net/help/DeveloperHelp/Content/APIs/REST/Entities/ContractServicesEntity.htm) · [ContractServiceUnits](https://autotask.net/help/DeveloperHelp/Content/APIs/REST/Entities/ContractServiceUnitsEntity.htm)
 
-## Repeat the gateway test locally
+## Live rollout on the existing gateway
+
+1. Record the two installed backend revisions, the active server configuration and the tools visible to the current basic and sensitive-read roles. Choose an existing authorized device, a known device the RMM credential is denied, and a contract line with a dated period. Record the expected values independently in the product portals. Keep that file and both role credentials in the deployment environment. Use the private fixture shape below.
+2. Build only the two backends from the reviewed commit in a clean checkout. The production host runs Linux/amd64. Retain the revision and checksums with the deployment record.
+
+   ```bash
+   GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make VERSION="$(git rev-parse HEAD)" build-autotask-mcp build-datto-rmm-mcp
+   (cd dist && sha256sum autotask-mcp datto-rmm-mcp > SHA256SUMS.live)
+   ```
+
+3. Using the regular production admin path, save restorable copies of the two binaries and their server configurations with their existing permissions. Stage the binaries, verify `sha256sum -c SHA256SUMS.live` in the staging directory and compare the tool lists with the installed revisions. Account for any changes since the last backend deployment, including pre-existing writes that need a privacy tier. The two new tools start disabled.
+4. Add the entries below to the **effective** server configuration and verify the dispatcher target check **before** enabling the flags. Preserve other entries and the current user grants. Every existing role at or above the configured tier can read these tools. The backend credential limits which customers it can see. Confirm that the existing roles are entitled to that scope and the financial fields. Use a higher tier or a separately scoped route where required.
+
+   | Server | Append to `tiering.tier2` for the standard sensitive-read tier | Dispatcher mapping | Opt-in flag |
+   |---|---|---|---|
+   | Autotask | `autotask_search_contract_services` | `execute_tool: toolName` | `AUTOTASK_ENABLE_CONTRACT_SERVICES=true` |
+   | Datto RMM | `datto_rmm_list_patches` | — | `DATTO_ENABLE_PATCH_READS=true` |
+
+5. Replace each backend binary atomically on its installed filesystem. Enable its flag and restart that backend through the gateway's server controls. Check its health and its tool list in fresh role sessions before proceeding to the next backend. The gateway runs these binaries as separate processes. [Backend deployment history](journal.md)
+6. Run the live acceptance command below. Record the UTC time, backend revisions, roles and pass/fail outcome in the private deployment record. If visibility, a denial, portal values or existing tools differ, disable the affected flag, restore its saved binary and configuration, restart that backend, and verify the previous tool list and health.
+
+## Compare with the live portals
+
+Provide the production HTTPS MCP endpoint as `LGP_PILOT_GATEWAY_URL`, the existing role credentials as `LGP_PILOT_ALLOWED_KEY` and `LGP_PILOT_BASIC_KEY`, and an absolute path to the private portal reference JSON as `LGP_PILOT_FIXTURE`. The basic role must be able to call the Autotask dispatcher to exercise its target check. Leave `LGP_PILOT_GATEWAY_BIN` unset. All values in this example are synthetic.
+
+```json
+{
+  "deviceUID": "device-1", "deniedDeviceUID": "restricted",
+  "patchID": "p1", "installStatus": "APPROVED_PENDING", "patchPage": 0,
+  "contractID": 7, "lineID": 11, "asOf": "2026-04-15",
+  "quantity": 4, "unitPrice": 9.99, "periodPrice": 4.04
+}
+```
+
+```bash
+go test -tags=pilot -count=1 -v -run '^TestPilot$' ./tests/pilot -args -live
+```
+
+Live mode requires HTTPS and rejects a local fixture gateway. It checks role visibility and basic-role denials, including the dispatcher, before reading the reference records. The RMM credential must reject the designated restricted device. The permitted patch status and both direct and dispatched contract reads must match the portal evidence. The command returns a failure on disagreement and keeps customer data out of test output.
+
+## Optional local regression test
 
 From the repository root, point the test at an existing gateway executable. It builds both product servers, launches a separate gateway on loopback, generates two temporary keys and serves synthetic product responses. The test checks tool visibility, direct and dispatched calls, one inaccessible device and the number of requests reaching each product. The temporary environment is removed on exit.
 
 ```bash
 LGP_PILOT_GATEWAY_BIN=/absolute/path/to/lgp-mcp-gateway go test -race -tags=pilot -count=1 -v ./tests/pilot
 ```
-
-## Enable a test tenant when available
-
-1. Use an isolated gateway with Autotask dispatch-target tier checks. Add the following entries to its existing server configuration **before** enabling either tool. Keep existing tier lists and dispatcher entries. Unclassified names default to tier 1. Use a higher tier if required by the customer's policy.
-
-   | Server configuration | Append to `tiering.tier2` | Dispatcher mapping | Binary environment |
-   |---|---|---|---|
-   | `config/servers/autotask.yaml` | `autotask_search_contract_services` | `dispatchers.execute_tool: toolName` | `AUTOTASK_ENABLE_CONTRACT_SERVICES=true` |
-   | `config/servers/datto-rmm.yaml` | `datto_rmm_list_patches` | — | `DATTO_ENABLE_PATCH_READS=true` |
-
-2. Give the pilot identity the sensitive-read tier for both backends and a second identity tier 1. Use product credentials scoped to the intended RMM sites and Autotask contracts. The gateway grants access to tools. Everyone routed to the same binary shares its product credentials. If users require different customer visibility, give those groups separate backend credentials/routes and verify the effective scope with a known inaccessible record.
-3. Install the new binaries on the test gateway, enable the flags and restart the corresponding processes. Confirm the two names in the pilot identity's `tools/list`. To withdraw a pilot, remove its flag and restart that process.
-4. Record reference values independently in the two product portals. Choose an existing out-of-scope device and a contract line with a visible period. Store the following JSON shape in a private file outside the repository. Example values are synthetic.
-
-   ```json
-   {
-     "deviceUID": "device-1", "deniedDeviceUID": "restricted",
-     "patchID": "p1", "installStatus": "APPROVED_PENDING", "patchPage": 0,
-     "contractID": 7, "lineID": 11, "asOf": "2026-04-15",
-     "quantity": 4, "unitPrice": 9.99, "periodPrice": 4.04
-   }
-   ```
-
-5. Supply the test gateway's HTTPS MCP endpoint in `LGP_PILOT_GATEWAY_URL`, the two keys in `LGP_PILOT_ALLOWED_KEY` and `LGP_PILOT_BASIC_KEY`, and the file path in `LGP_PILOT_FIXTURE`. Leave `LGP_PILOT_GATEWAY_BIN` unset to select the tenant test. Run `go test -tags=pilot -count=1 -v ./tests/pilot`. The basic identity must be able to call the Autotask dispatcher so its target check can be verified. Record the outcome and software revisions without customer records or keys. Tenant results and portal agreement remain to be verified.
 
 ## Weekly Kaseya review
 

@@ -5,6 +5,7 @@ package pilot_test
 import (
 	"context"
 	"encoding/json"
+	"flag"
 	"maps"
 	"net"
 	"net/http"
@@ -21,10 +22,15 @@ import (
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
-// TestPilot reads only explicitly supplied test fixtures. Keep product data and
+var live = flag.Bool("live", false, "check the deployed HTTPS gateway against portal reference values")
+
+// TestPilot reads only explicitly supplied fixtures. Keep product data and
 // credentials out of test output, including when the upstream rejects a call.
 func TestPilot(t *testing.T) {
 	if binary := os.Getenv("LGP_PILOT_GATEWAY_BIN"); binary != "" {
+		if *live {
+			t.Fatal("unset LGP_PILOT_GATEWAY_BIN for live acceptance")
+		}
 		startLocalFixture(t, binary)
 	}
 	var f struct {
@@ -65,6 +71,30 @@ func TestPilot(t *testing.T) {
 			}
 		}
 	}
+	denied := func(c *client.Client, name string, args map[string]any, reasons ...string) {
+		t.Helper()
+		result, callErr := call(ctx, c, name, args)
+		var message string
+		switch {
+		case callErr != nil:
+			message = callErr.Error()
+		case result != nil && result.IsError && len(result.Content) > 0:
+			if body, ok := result.Content[0].(mcp.TextContent); ok {
+				message = body.Text
+			}
+		}
+		if !slices.ContainsFunc(reasons, func(s string) bool { return strings.Contains(strings.ToLower(message), s) }) {
+			t.Fatalf("missing expected denial for %s", name)
+		}
+	}
+	// Check the basic role without supplying a customer identifier. If a
+	// request reaches a misconfigured backend, argument validation still
+	// prevents a product read.
+	denied(basic, patches, nil, "not found", "unknown tool", "not available", "not allowed", "access denied")
+	denied(basic, lines, nil, "not found", "unknown tool", "not available", "not allowed", "access denied")
+	denied(basic, dispatch, map[string]any{"toolName": "search_contract_services"}, "nicht freigegeben", "not allowed", "access denied")
+	denied(allowed, patches, map[string]any{"deviceUid": f.DeniedDeviceUID}, "http 403", "http 404")
+
 	patchArgs := map[string]any{"deviceUid": f.DeviceUID, "installStatus": f.InstallStatus}
 	if f.PatchPage != nil {
 		patchArgs["page"] = *f.PatchPage
@@ -109,26 +139,6 @@ func TestPilot(t *testing.T) {
 	if !reflect.DeepEqual(dispatched, contracts) {
 		t.Fatal("direct and dispatched reads differ")
 	}
-	denied := func(c *client.Client, name string, args map[string]any, reasons ...string) {
-		t.Helper()
-		result, callErr := call(ctx, c, name, args)
-		var message string
-		switch {
-		case callErr != nil:
-			message = callErr.Error()
-		case result != nil && result.IsError && len(result.Content) > 0:
-			if body, ok := result.Content[0].(mcp.TextContent); ok {
-				message = body.Text
-			}
-		}
-		if !slices.ContainsFunc(reasons, func(s string) bool { return strings.Contains(strings.ToLower(message), s) }) {
-			t.Fatalf("missing expected denial for %s", name)
-		}
-	}
-	denied(basic, patches, patchArgs, "not found", "unknown tool", "not available", "not allowed", "access denied")
-	denied(basic, lines, lineArgs, "not found", "unknown tool", "not available", "not allowed", "access denied")
-	denied(basic, dispatch, meta, "nicht freigegeben", "not allowed", "access denied")
-	denied(allowed, patches, map[string]any{"deviceUid": f.DeniedDeviceUID}, "http 403", "http 404")
 }
 
 func pilotClient(t *testing.T, ctx context.Context, keyName string) *client.Client {
@@ -136,11 +146,11 @@ func pilotClient(t *testing.T, ctx context.Context, keyName string) *client.Clie
 	endpoint := os.Getenv("LGP_PILOT_GATEWAY_URL")
 	u, err := url.Parse(endpoint)
 	if err != nil || u.Host == "" || u.User != nil {
-		t.Fatal("invalid test gateway URL")
+		t.Fatal("invalid LGP_PILOT_GATEWAY_URL")
 	}
 	localHTTP := u.Scheme == "http" && (u.Hostname() == "localhost" || net.ParseIP(u.Hostname()).IsLoopback())
-	if u.Scheme != "https" && !localHTTP {
-		t.Fatal("expected HTTPS test gateway (or loopback HTTP)")
+	if u.Scheme != "https" && (*live || !localHTTP) {
+		t.Fatal("the deployed gateway requires HTTPS")
 	}
 	key := os.Getenv(keyName)
 	if key == "" {
@@ -149,17 +159,17 @@ func pilotClient(t *testing.T, ctx context.Context, keyName string) *client.Clie
 	c, err := client.NewStreamableHttpClient(endpoint, transport.WithHTTPHeaders(map[string]string{"Authorization": "Bearer " + key}),
 		transport.WithHTTPBasicClient(&http.Client{CheckRedirect: func(_ *http.Request, _ []*http.Request) error { return http.ErrUseLastResponse }}))
 	if err != nil {
-		t.Fatal("could not create test client")
+		t.Fatal("could not create gateway client")
 	}
 	if err = c.Start(ctx); err != nil {
-		t.Fatal("could not start test client")
+		t.Fatal("could not start gateway client")
 	}
 	t.Cleanup(func() { _ = c.Close() })
 	init := mcp.InitializeRequest{}
 	init.Params.ProtocolVersion = mcp.LATEST_PROTOCOL_VERSION
 	init.Params.ClientInfo = mcp.Implementation{Name: "lgp-pilot-test", Version: "1"}
 	if _, err = c.Initialize(ctx, init); err != nil {
-		t.Fatalf("test gateway rejected initialization for %s", keyName)
+		t.Fatalf("gateway rejected initialization for %s", keyName)
 	}
 	return c
 }
