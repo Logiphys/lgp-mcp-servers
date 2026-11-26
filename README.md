@@ -7,13 +7,14 @@
 
 Go monorepo for Logiphys MCP (Model Context Protocol) servers. Provides Claude with structured access to IT service management, security, backup, and documentation platforms used at [Logiphys Datensysteme GmbH](https://logiphys.de).
 
-**268 tools** across **10 MCP servers**, built as single-binary deployments. Two read tools require an explicit opt-in. With the default settings, 266 are registered.
+**270 tools** across **11 MCP servers**, built as single-binary deployments. Two read tools require an explicit opt-in. With the default settings, 268 are registered.
 
 ## Servers
 
 | Server | Platform | Tools | Description |
 |--------|----------|------:|-------------|
 | `autotask-mcp` | [Autotask PSA](https://www.datto.com/products/autotask-psa) | 83 | Tickets, companies, contacts, projects, billing, time entries, service calls, quotes, opt-in contract service lines |
+| `autotask-contracts-mcp` | Autotask PSA | 2 | Monthly contract service and bundle quantities (read-only) |
 | `datto-rmm-mcp` | [Datto RMM](https://www.datto.com/products/rmm) | 56 | Remote monitoring & management — devices, sites, alerts, jobs, audit, variables, opt-in patch inventory |
 | `itglue-mcp` | [IT Glue](https://www.itglue.com) | 31 | IT documentation — organizations, configurations, passwords, contacts, domains, expirations |
 | `datto-edr-mcp` | [Datto EDR](https://www.datto.com/products/edr) | 21 | Endpoint detection & response — agents, alerts, rules, extensions, quarantine, isolation |
@@ -95,6 +96,14 @@ Connects to the [Autotask PSA REST API](https://autotask.net/help/DeveloperHelp/
 | `AUTOTASK_INTEGRATION_CODE` | Yes | Integration tracking code |
 | `AUTOTASK_BASE_URL` | No | Override API base URL |
 | `AUTOTASK_ENABLE_CONTRACT_SERVICES` | No | Set to `true` to register `search_contract_services` for dated quantities and prices. Off by default. |
+
+### autotask-contracts-mcp
+
+With a personal gateway key, use the existing company and contract searches to find a contract ID. Call `autotask_contracts_get_service_month` with a contract and month, for example `{"contractID":7,"month":"2026-04"}`. Each period has inclusive UTC dates, direct quantities per contract line and service, and quantities per bundle line. Gaps represent periods without returned unit records.
+
+Whenever a period has a nonzero bundle quantity, `serviceTotalsComplete` is false and affected `totalUnits` are null. `currentCatalogEstimates` shows the period's bundle quantity for each current member, with `catalogReadAt` identifying the lookup time. Historical bundle acceptance requires a readable dated membership source or explicit acceptance of the limited report. [Autotask membership fields](https://autotask.net/help/developerhelp/Content/APIs/REST/Entities/ServiceBundleServicesEntity.htm)
+
+Run the dedicated binary with the same Autotask account and base URL as the gateway backend. Register it as `autotask-contracts` with prefix `autotask_contracts`. Grant that server at tier 1 to Administrators and Sales. Existing personal keys require the corresponding server grant. Its business reads use `Contracts`, `ContractServiceUnits`, `ContractServiceBundleUnits`, `Services`, `ServiceBundles` and `ServiceBundleServices`. [Gateway server configuration example](config/autotask-contracts.gateway.yaml.example)
 
 ### itglue-mcp
 
@@ -194,6 +203,7 @@ pkg/mcputil/           MCP response helpers, annotations, formatters
 pkg/config/            Environment variable loading
 
 pkg/autotask/          Autotask PSA logic (tickets, billing, projects)
+pkg/autotaskcontracts/ Monthly contract service and bundle quantities
 pkg/itglue/            IT Glue logic (documentation, passwords, configs)
 pkg/dattormm/          Datto RMM logic (devices, sites, alerts, jobs)
 pkg/rocketcyber/       RocketCyber logic (SOC events, incidents, agents)
@@ -205,6 +215,7 @@ pkg/myitprocess/       MyITProcess logic (reviews, findings, initiatives)
 pkg/logiphysci/        Logiphys CI documents (PDF rendering via lgp-ci skill)
 
 cmd/autotask-mcp/      Binary entry points (one per server)
+cmd/autotask-contracts-mcp/
 cmd/itglue-mcp/
 cmd/datto-rmm-mcp/
 cmd/rocketcyber-mcp/

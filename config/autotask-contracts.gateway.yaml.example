@@ -1,0 +1,11 @@
+# Grant this server at tier 1 to the Administrators and Sales groups.
+name: autotask-contracts
+prefix: autotask_contracts
+type: binary
+enabled: false
+command: ./bin/autotask-contracts-mcp
+env:
+  AUTOTASK_USERNAME: ""
+  AUTOTASK_SECRET: ""
+  AUTOTASK_INTEGRATION_CODE: ""
+  AUTOTASK_BASE_URL: ""
