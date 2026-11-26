@@ -39,6 +39,7 @@ echo "=== Checking tool counts ==="
 server_to_pkg() {
     case "$1" in
         autotask-mcp)       echo "pkg/autotask" ;;
+        autotask-contracts-mcp) echo "pkg/autotaskcontracts" ;;
         datto-backup-mcp)   echo "pkg/dattobackup" ;;
         datto-edr-mcp)      echo "pkg/dattoedr" ;;
         datto-network-mcp)  echo "pkg/dattonetwork" ;;

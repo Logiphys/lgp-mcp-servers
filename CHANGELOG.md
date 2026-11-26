@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- `autotask-contracts-mcp` reports a contract's direct service and bundle quantities for each interval in a month, with dated estimates for current bundle members.
 - Autotask `search_contract_services` returns recurring contract line prices and the quantity and period price on a specified date (#3).
 - Datto RMM `list_patches` reads patch status for a device or site. Both new reads are opt-in and have a two-role gateway acceptance test.
 - A weekly Kaseya catalog and public API comparison opens or updates one review issue for pending differences.

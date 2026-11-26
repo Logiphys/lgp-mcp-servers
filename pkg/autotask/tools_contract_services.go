@@ -16,7 +16,7 @@ const contractServiceTool = "search_contract_services"
 
 func registerContractServiceTool(srv *server.MCPServer, c *Client) {
 	// Keep the opt-in read on this instance, including meta-dispatch.
-	srv.AddTool(mcp.NewTool(contractServiceTool,
+	srv.AddTool(mcp.NewTool("search_contract_services",
 		mcp.WithDescription("Read recurring contract service lines and their quantity and period price on a UTC date. Scope by contractID, contractIDs or exact line id."),
 		mcp.WithNumber("contractID", mcp.Min(1)),
 		mcp.WithArray("contractIDs", mcp.WithNumberItems(mcp.Min(1)), mcp.MinItems(1), mcp.MaxItems(500)),
@@ -114,9 +114,9 @@ func (c *Client) searchContractServices(ctx context.Context, req mcp.CallToolReq
 	}), nil
 }
 
-// Autotask datetimes without an offset are UTC. Date-only fields may also be
-// returned at midnight. Compare instants so offset and fractional forms agree.
-func contractTime(raw any) (time.Time, error) {
+// ParseContractTime accepts date-only and timestamp fields. Autotask timestamps
+// without an offset are UTC.
+func ParseContractTime(raw any) (time.Time, error) {
 	value, _ := raw.(string)
 	for _, layout := range []string{time.RFC3339Nano, "2006-01-02T15:04:05", time.DateOnly} {
 		if t, err := time.Parse(layout, value); err == nil {
@@ -204,11 +204,11 @@ func (c *Client) contractServicePeriods(ctx context.Context, lines []map[string]
 			if item == nil || period["contractID"] != item["contractID"] || period["serviceID"] != item["serviceID"] {
 				return nil, fmt.Errorf("period does not match a requested contract service")
 			}
-			start, err := contractTime(period["startDate"])
+			start, err := ParseContractTime(period["startDate"])
 			if err != nil {
 				return nil, err
 			}
-			end, err := contractTime(period["endDate"])
+			end, err := ParseContractTime(period["endDate"])
 			if err != nil {
 				return nil, err
 			}
